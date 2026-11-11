@@ -1,0 +1,4 @@
+components/hub/src/main.js usr/share/jewbuntu/hub/src/
+components/hub/data/jewbuntu-hub usr/bin/
+components/hub/data/org.jewbuntu.Hub.desktop usr/share/applications/
+components/hub/data/org.jewbuntu.Hub.svg usr/share/icons/hicolor/scalable/apps/

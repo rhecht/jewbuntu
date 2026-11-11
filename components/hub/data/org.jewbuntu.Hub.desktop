@@ -1,0 +1,12 @@
+[Desktop Entry]
+Type=Application
+Name=Jewbuntu Hub
+Name[he]=מרכז ג'ובונטו
+Comment=Hebrew date, zmanim, Shabbat times and Jewbuntu settings
+Exec=jewbuntu-hub
+Icon=org.jewbuntu.Hub
+Terminal=false
+Categories=Utility;Calendar;GTK;
+Keywords=zmanim;shabbat;shabbos;calendar;hebrew;luach;
+StartupNotify=true
+DBusActivatable=false

@@ -61,6 +61,7 @@ Depends: jewbuntu-core (= ${binary:Version}),
 Recommends: jewbuntu-upgrade-tools (= ${binary:Version}),
             jewbuntu-gnome (= ${binary:Version}),
             jewbuntu-jewish-service (= ${binary:Version}),
+            jewbuntu-hub (= ${binary:Version}),
             zenity
 Description: Jewbuntu desktop (metapackage and Mac-inspired defaults)
  Selects the tested Jewbuntu desktop components on top of Ubuntu's own
@@ -94,3 +95,17 @@ Description: Jewbuntu Jewish calendar service
  .
  Started on demand; recomputes only at real boundaries (zmanim, midnight,
  settings changes, resume). It does not use the network.
+
+Package: jewbuntu-hub
+Architecture: all
+Depends: gjs (>= 1.80), gir1.2-gtk-4.0, gir1.2-adw-1,
+         jewbuntu-jewish-service (= ${binary:Version}),
+         jewbuntu-core (= ${binary:Version}),
+         ${misc:Depends}
+Description: Jewbuntu Hub - Hebrew date, zmanim and settings
+ Standalone GTK4/libadwaita app: today's Hebrew date (with sunset rollover),
+ the next zman with countdown, candle lighting and havdalah, labelled zmanim,
+ a calendar view, and settings for location, calendar region, methods,
+ startup sound and the desktop look. Works without the panel extension and,
+ if the calendar service is not running, computes the same data itself.
+ Nearby minyanim will come from Shulgo once its integration is available.

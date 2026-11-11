@@ -12,7 +12,7 @@ docker run --rm -v "$DIST:/dist:ro" -v "$ROOT/ci/desktop-skin-check.sh:/skin-che
   apt-get update -qq
   START=$(date +%s)
   apt-get install -y -qq --no-install-recommends /dist/jewbuntu-core_*.deb /dist/jewbuntu-branding_*.deb \
-      /dist/jewbuntu-hebrew_*.deb /dist/jewbuntu-upgrade-tools_*.deb /dist/jewbuntu-desktop_*.deb $(ls /dist/jewbuntu-gnome_*.deb /dist/jewbuntu-skin_*.deb /dist/jewbuntu-jewish-service_*.deb 2>/dev/null) > /tmp/apt.log 2>&1 \
+      /dist/jewbuntu-hebrew_*.deb /dist/jewbuntu-upgrade-tools_*.deb /dist/jewbuntu-desktop_*.deb $(ls /dist/jewbuntu-gnome_*.deb /dist/jewbuntu-skin_*.deb /dist/jewbuntu-jewish-service_*.deb /dist/jewbuntu-hub_*.deb 2>/dev/null) > /tmp/apt.log 2>&1 \
       || { tail -30 /tmp/apt.log; exit 1; }
   echo "installed in $(( $(date +%s) - START ))s; packages now: $(dpkg -l | grep -c ^ii)"
   grep -i "schema" /tmp/apt.log | grep -i -E "warn|error|ignor" || echo "no schema compile warnings in apt log"
@@ -25,6 +25,7 @@ docker run --rm -v "$DIST:/dist:ro" -v "$ROOT/ci/desktop-skin-check.sh:/skin-che
   done
   echo "--- jewbuntu defaults status:"
   XDG_CURRENT_DESKTOP=ubuntu:GNOME GSETTINGS_BACKEND=memory jewbuntu defaults status
+  echo "--- hub install layout:"; for f in /usr/bin/jewbuntu-hub /usr/share/jewbuntu/hub/src/main.js /usr/share/jewbuntu/jewish-service/src/day.js /usr/share/applications/org.jewbuntu.Hub.desktop /usr/share/icons/hicolor/scalable/apps/org.jewbuntu.Hub.svg /usr/share/dbus-1/services/org.jewbuntu.Jewish1.service; do [ -e $f ] && echo "PASS: $f" || { echo "FAIL: missing $f"; exit 1; }; done
   echo "--- existing-user skin test:"
   sh /skin-check.sh
   echo "--- jewbuntu upgrade-check:"

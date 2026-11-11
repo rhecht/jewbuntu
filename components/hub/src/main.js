@@ -7,9 +7,11 @@ import Gtk from 'gi://Gtk?version=4.0';
 import Adw from 'gi://Adw?version=1';
 import System from 'system';
 
-const SHARE = GLib.getenv('JEWBUNTU_SERVICE_DIR') || '/usr/share/jewbuntu/jewish-service';
-const {computeDay, PRESETS, HAVDALAH_METHODS} = await import(`file://${SHARE}/src/day.js`);
-const {readSettings} = await import(`file://${SHARE}/src/settings.js`);
+// Static imports on purpose: a top-level `await` would make app.run() execute inside a
+// promise job, and GJS would then never resume later awaits (the UI would stay empty).
+// Same relative layout in the source tree and under /usr/share/jewbuntu/.
+import {computeDay, PRESETS, HAVDALAH_METHODS} from '../../jewish-service/src/day.js';
+import {readSettings} from '../../jewish-service/src/settings.js';
 
 const BUS = 'org.jewbuntu.Jewish1';
 const PATH = '/org/jewbuntu/Jewish1';

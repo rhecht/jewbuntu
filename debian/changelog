@@ -1,3 +1,11 @@
+jewbuntu (0.1.0~m1.7+26.04) resolute; urgency=medium
+
+  * New jewbuntu-hub package: Today, Calendar, Minyanim (Shulgo pending),
+    Resources and Settings; D-Bus with in-process fallback. Fixed blank
+    pages caused by a top-level await around app.run().
+
+ -- Jewbuntu Developers <maintainers@jewbuntu.invalid>  Wed, 11 Nov 2026 14:18:00 -0500
+
 jewbuntu (0.1.0~m1.6+26.04) resolute; urgency=medium
 
   * Desktop look follows the Jewbuntu Skin (fork of MacTahoe, packaged as
