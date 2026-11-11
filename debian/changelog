@@ -1,3 +1,21 @@
+jewbuntu (0.1.0~m1.13+26.04) resolute; urgency=medium
+
+  * Top bar: clear (Blur my Shell panel blur off); Jewbuntu Look picks dark
+    or white bar text from the wallpaper behind it (WCAG contrast).
+  * Dock: no rectangular blur box; the skin draws the rounded glass dock.
+  * Default wallpaper (desktop, lock screen): Star of David on blue waves.
+
+ -- Jewbuntu Developers <maintainers@jewbuntu.invalid>  Wed, 11 Nov 2026 15:10:00 -0500
+
+jewbuntu (0.1.0~m1.12+26.04) resolute; urgency=medium
+
+  * Login screen: Jewbuntu wordmark replaces the Ubuntu logo; requires the
+    skin build with a real login background.
+  * Settings migration autostart: drop X-GNOME-Autostart-Phase, which
+    GNOME 50 rejects ("gnome-session no longer manages session services").
+
+ -- Jewbuntu Developers <maintainers@jewbuntu.invalid>  Wed, 11 Nov 2026 15:05:00 -0500
+
 jewbuntu (0.1.0~m1.11+26.04) resolute; urgency=medium
 
   * jewbuntu-shulgo: re-vendor rhecht/shulgo@be2cafb (settings sliders no

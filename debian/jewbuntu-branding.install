@@ -7,3 +7,4 @@ assets/wallpapers/jewbuntu-dawn.svg usr/share/backgrounds/jewbuntu/
 assets/wallpapers/jewbuntu-dusk.svg usr/share/backgrounds/jewbuntu/
 packaging/branding/jewbuntu-wallpapers.xml usr/share/gnome-background-properties/
 packaging/branding/jewbuntu-startup-sound.desktop etc/xdg/autostart/
+assets/logos/jewbuntu-logo-text-dark.svg usr/share/jewbuntu/branding/

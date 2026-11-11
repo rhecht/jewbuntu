@@ -4,11 +4,11 @@
 # Ubuntu session. The plain "GNOME" session ignores :ubuntu sections and stays stock.
 
 [org.gnome.desktop.background:ubuntu]
-picture-uri='file:///usr/share/backgrounds/Jewbuntu/Jewbuntu-day.jpeg'
-picture-uri-dark='file:///usr/share/backgrounds/Jewbuntu/Jewbuntu-night.jpeg'
+picture-uri='file:///usr/share/backgrounds/Jewbuntu/Jewbuntu-star-blue.png'
+picture-uri-dark='file:///usr/share/backgrounds/Jewbuntu/Jewbuntu-star-blue.png'
 
 [org.gnome.desktop.screensaver:ubuntu]
-picture-uri='file:///usr/share/backgrounds/Jewbuntu/Jewbuntu-night.jpeg'
+picture-uri='file:///usr/share/backgrounds/Jewbuntu/Jewbuntu-star-blue.png'
 
 [org.gnome.desktop.interface:ubuntu]
 accent-color='blue'
@@ -27,7 +27,7 @@ center-new-windows=true
 [org.gnome.desktop.peripherals.touchpad:ubuntu]
 tap-to-click=true
 
-# Mac-style dock: floating, compact, rounded, translucent, dot indicators,
+# Mac-style dock: floating, compact, rounded (the skin draws the glass), dot indicators,
 # always visible (maximised windows stop above it), trash at the end.
 [org.gnome.shell.extensions.dash-to-dock:ubuntu]
 dock-position='BOTTOM'
@@ -37,10 +37,6 @@ intellihide=true
 always-center-icons=true
 custom-theme-shrink=true
 force-straight-corner=false
-transparency-mode='FIXED'
-background-opacity=0.35
-custom-background-color=true
-background-color='#e8ecf4'
 running-indicator-style='DOTS'
 dash-max-icon-size=56
 show-apps-at-top=false
@@ -51,3 +47,15 @@ click-action='minimize-or-previews'
 # Shell theme from the Jewbuntu Skin (needs the User Themes extension, enabled by 'jewbuntu skin apply').
 [org.gnome.shell.extensions.user-theme:ubuntu]
 name='Jewbuntu-Light'
+
+# Login screen logo (replaces the Ubuntu logo set by 10_ubuntu-settings; same plain section).
+[org.gnome.login-screen]
+logo='/usr/share/jewbuntu/branding/jewbuntu-logo-text-dark.svg'
+
+# Blur my Shell: no blur behind the top bar (kept clear by Jewbuntu Look) or the dock
+# (its rectangular blur showed as a box around the skin's rounded dock).
+[org.gnome.shell.extensions.blur-my-shell.panel]
+blur=false
+
+[org.gnome.shell.extensions.blur-my-shell.dash-to-dock]
+blur=false

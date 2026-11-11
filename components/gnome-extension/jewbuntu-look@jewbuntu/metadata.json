@@ -1,12 +1,12 @@
 {
   "uuid": "jewbuntu-look@jewbuntu",
   "name": "Jewbuntu Look",
-  "description": "Reserved for Jewbuntu panel integration (Jewish calendar indicator, later). Currently changes nothing.",
+  "description": "Clear Mac-style top bar whose text turns dark on light wallpapers and white on darker ones (WCAG contrast). Disabling it restores the theme's bar.",
   "shell-version": [
     "50"
   ],
   "session-modes": [
     "user"
   ],
-  "version": 2
+  "version": 3
 }

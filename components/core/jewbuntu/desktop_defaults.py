@@ -25,7 +25,7 @@ import time
 from . import paths
 
 # Extensions the skin needs, enabled per user by apply_skin() (appended, never replacing others).
-SKIN_EXTENSIONS = ["user-theme@gnome-shell-extensions.gcampax.github.com", "blur-my-shell@aunetx"]
+SKIN_EXTENSIONS = ["user-theme@gnome-shell-extensions.gcampax.github.com", "blur-my-shell@aunetx", "jewbuntu-look@jewbuntu"]
 SKIN_THEME_DIR = paths.Path("/usr/share/themes/Jewbuntu-Light/gtk-4.0")
 LIBADWAITA_FILES = ["gtk.css", "gtk-dark.css", "assets", "windows-assets"]
 INPUT_SOURCES = ("org.gnome.desktop.input-sources", "sources")

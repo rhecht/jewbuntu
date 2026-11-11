@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="64" viewBox="0 0 300 64">
+  <!-- Jewbuntu wordmark for dark backgrounds (login screen). Original artwork. -->
+  <g fill="none" stroke="#f6e7c4" stroke-width="3.6" stroke-linejoin="round">
+    <path d="M32 9 L53 45 L11 45 Z"/>
+    <path d="M32 57 L11 21 L53 21 Z"/>
+  </g>
+  <text x="68" y="44" font-family="Inter, 'Noto Sans', sans-serif" font-size="34" font-weight="600" fill="#ffffff" letter-spacing="0.5">Jewbuntu</text>
+</svg>

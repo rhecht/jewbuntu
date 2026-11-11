@@ -6,4 +6,3 @@ Exec=/usr/bin/jewbuntu config migrate --quiet
 NoDisplay=true
 X-GNOME-Autostart-enabled=true
 X-GNOME-AutoRestart=false
-X-GNOME-Autostart-Phase=Initialization

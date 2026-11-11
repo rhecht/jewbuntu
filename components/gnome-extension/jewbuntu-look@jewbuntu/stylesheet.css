@@ -1,1 +1,20 @@
-/* Intentionally empty: the Jewbuntu Skin shell theme provides the panel look. */
+/* Jewbuntu Look: clear top bar; text colour chosen by extension.js from the wallpaper. */
+#panel.jewbuntu-panel {
+  background-color: transparent;
+  box-shadow: none;
+}
+#panel.jewbuntu-panel .panel-button {
+  color: #ffffff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+}
+#panel.jewbuntu-panel.jewbuntu-panel-dark-text .panel-button,
+#panel.jewbuntu-panel.jewbuntu-panel-dark-text .panel-button .clock,
+#panel.jewbuntu-panel.jewbuntu-panel-dark-text .panel-button .system-status-icon,
+#panel.jewbuntu-panel.jewbuntu-panel-dark-text .panel-button StIcon {
+  color: #1c1c1e;
+  text-shadow: none;
+  icon-shadow: none;
+}
+#panel.jewbuntu-panel.jewbuntu-panel-dark-text .workspace-dot {
+  background-color: #1c1c1e;
+}

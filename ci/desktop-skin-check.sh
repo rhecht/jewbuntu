@@ -44,3 +44,10 @@ done
 gsettings list-keys org.jewbuntu.shulgo >/dev/null && echo "PASS: ShulGo settings schema compiled system-wide" || { echo "FAIL: shulgo schema"; exit 1; }
 [ ! -e /usr/share/gnome-shell/extensions/shulgo@jewbuntu.org/schemas ] && echo "PASS: no local schemas folder in the ShulGo extension" || { echo "FAIL: shulgo schemas folder"; exit 1; }
 ! grep -rIl "sg_live_[A-Za-z0-9]" /usr/share/jewbuntu-shulgo /usr/share/gnome-shell/extensions/shulgo@jewbuntu.org >/dev/null && echo "PASS: no API key shipped" || { echo "FAIL: API key found in package"; exit 1; }
+
+B=$(mktemp); gresource extract "$V" /org/gnome/shell/theme/assets/login-background.jpg > "$B"
+[ "$(stat -c %s "$B")" -gt 20000 ] && echo "PASS: real login background in the bundle ($(stat -c %s "$B") bytes)" || { echo "FAIL: login background missing or placeholder"; exit 1; }
+gresource list "$V" | grep -q "/org/gnome/shell/theme/gdm-dark.css" && echo "PASS: gdm-dark.css variant present" || { echo "FAIL: no gdm-dark.css"; exit 1; }
+L=$(XDG_CURRENT_DESKTOP=GNOME-Greeter:GNOME GSETTINGS_BACKEND=memory gsettings get org.gnome.login-screen logo)
+[ "$L" = "'/usr/share/jewbuntu/branding/jewbuntu-logo-text-dark.svg'" ] && [ -f /usr/share/jewbuntu/branding/jewbuntu-logo-text-dark.svg ] && echo "PASS: login screen logo is Jewbuntu's" || { echo "FAIL: logo $L"; exit 1; }
+grep -q "X-GNOME-Autostart-Phase" /etc/xdg/autostart/jewbuntu-migrate.desktop && { echo "FAIL: migrate autostart still sets a Phase"; exit 1; } || echo "PASS: migrate autostart runs under GNOME 50"
