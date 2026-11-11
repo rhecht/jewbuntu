@@ -61,7 +61,9 @@ def share_path(*parts):
     if installed.exists():
         return installed
     repo_root = Path(__file__).resolve().parents[3]
-    for candidate in (repo_root.joinpath(*parts), repo_root / "profiles" / parts[-1]):
+    candidates = [repo_root.joinpath(*parts), repo_root / "profiles" / parts[-1]]
+    candidates += sorted((repo_root / "packaging").glob(f"*/{parts[-1]}"))
+    for candidate in candidates:
         if candidate.exists():
             return candidate
     return installed

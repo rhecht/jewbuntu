@@ -128,6 +128,28 @@ def cmd_defaults(args):
         print("\n".join(changes) if changes else "All Jewbuntu-managed keys already at Jewbuntu defaults.")
 
 
+def cmd_skin(args):
+    from . import desktop_defaults as dd
+    if args.action == "status":
+        state = dd.read_state()
+        changes = dd.pending_changes()
+        print(f"Skin applied for this user: {state.get('applied', False)}  (first-login question: {state.get('prompt_answer', 'asked' if state.get('prompted') else 'not yet asked')})")
+        print(f"Top-bar extension: {dd.extension_state()}")
+        print("Would change:" if changes else "Nothing to change: this account already has the Jewbuntu look.")
+        for c in changes:
+            print(f"  - {c}")
+    elif args.action == "apply":
+        for line in dd.apply_skin() or ["already applied; nothing changed"]:
+            print(line)
+        print("Log out and back in to see every change.")
+    elif args.action == "undo":
+        for line in dd.undo_skin():
+            print(line)
+    elif args.action == "prompt":
+        print(dd.prompt())
+    return 0
+
+
 def cmd_startup_sound(args):
     try:
         from . import startup_sound
@@ -193,6 +215,10 @@ def build_parser():
     s.add_argument("action", choices=["status", "restore"])
     s.add_argument("--dry-run", action="store_true")
     s.set_defaults(func=cmd_defaults)
+
+    s = sub.add_parser("skin", help="apply or undo the Jewbuntu look for your account")
+    s.add_argument("action", choices=["status", "apply", "undo", "prompt"])
+    s.set_defaults(func=cmd_skin)
 
     s = sub.add_parser("startup-sound", help="preview or switch the startup jingle")
     s.add_argument("action", choices=["preview", "on", "off"])

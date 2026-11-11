@@ -7,12 +7,12 @@ set -eu
 DIST="$(cd "$1" && pwd)"
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 LOG="${LOG:-$ROOT/dist/container-desktop-test.log}"
-docker run --rm -v "$DIST:/dist:ro" jewbuntu-build:26.04 sh -euc '
+docker run --rm -v "$DIST:/dist:ro" -v "$ROOT/ci/desktop-skin-check.sh:/skin-check.sh:ro" jewbuntu-build:26.04 sh -euc '
   export DEBIAN_FRONTEND=noninteractive
   apt-get update -qq
   START=$(date +%s)
   apt-get install -y -qq --no-install-recommends /dist/jewbuntu-core_*.deb /dist/jewbuntu-branding_*.deb \
-      /dist/jewbuntu-hebrew_*.deb /dist/jewbuntu-upgrade-tools_*.deb /dist/jewbuntu-desktop_*.deb > /tmp/apt.log 2>&1 \
+      /dist/jewbuntu-hebrew_*.deb /dist/jewbuntu-upgrade-tools_*.deb /dist/jewbuntu-desktop_*.deb $(ls /dist/jewbuntu-gnome_*.deb 2>/dev/null) > /tmp/apt.log 2>&1 \
       || { tail -30 /tmp/apt.log; exit 1; }
   echo "installed in $(( $(date +%s) - START ))s; packages now: $(dpkg -l | grep -c ^ii)"
   grep -i "schema" /tmp/apt.log | grep -i -E "warn|error|ignor" || echo "no schema compile warnings in apt log"
@@ -25,6 +25,8 @@ docker run --rm -v "$DIST:/dist:ro" jewbuntu-build:26.04 sh -euc '
   done
   echo "--- jewbuntu defaults status:"
   XDG_CURRENT_DESKTOP=ubuntu:GNOME GSETTINGS_BACKEND=memory jewbuntu defaults status
+  echo "--- existing-user skin test:"
+  sh /skin-check.sh
   echo "--- jewbuntu upgrade-check:"
   jewbuntu upgrade-check | head -12
 ' 2>&1 | tee "$LOG"

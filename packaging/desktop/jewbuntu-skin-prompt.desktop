@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=Jewbuntu look
+Comment=Asks once per account whether to apply the Jewbuntu look (undo: jewbuntu skin undo)
+Exec=/usr/bin/jewbuntu skin prompt
+NoDisplay=true
+OnlyShowIn=GNOME;
+X-GNOME-Autostart-enabled=true
+X-GNOME-AutoRestart=false
+X-GNOME-Autostart-Delay=4

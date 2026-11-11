@@ -1,6 +1,7 @@
 # Jewbuntu desktop defaults (vendor override: changes defaults only;
 # users' own changes always win). Keep in sync with desktop-defaults.json.
-# Sorted after Ubuntu's 10_ubuntu-settings override so these defaults apply.
+# Sorted after Ubuntu's 10_ubuntu-* overrides so these defaults apply in the
+# Ubuntu session. The plain "GNOME" session ignores :ubuntu sections and stays stock.
 
 [org.gnome.desktop.background:ubuntu]
 picture-uri='file:///usr/share/backgrounds/jewbuntu/jewbuntu-dawn.svg'
@@ -11,9 +12,13 @@ picture-uri='file:///usr/share/backgrounds/jewbuntu/jewbuntu-dusk.svg'
 
 [org.gnome.desktop.interface:ubuntu]
 accent-color='blue'
+font-name='Inter 11'
+document-font-name='Inter 11'
+clock-show-weekday=true
 
 [org.gnome.desktop.wm.preferences:ubuntu]
 button-layout='close,minimize,maximize:appmenu'
+titlebar-font='Inter Semi-Bold 11'
 
 [org.gnome.mutter:ubuntu]
 center-new-windows=true
@@ -21,11 +26,23 @@ center-new-windows=true
 [org.gnome.desktop.peripherals.touchpad:ubuntu]
 tap-to-click=true
 
+# Mac-style dock: floating, compact, rounded, translucent, dot indicators,
+# always visible (maximised windows stop above it), trash at the end.
 [org.gnome.shell.extensions.dash-to-dock:ubuntu]
 dock-position='BOTTOM'
 extend-height=false
-dock-fixed=false
+dock-fixed=true
 intellihide=true
-dash-max-icon-size=48
+always-center-icons=true
+custom-theme-shrink=true
+force-straight-corner=false
+transparency-mode='FIXED'
+background-opacity=0.35
+custom-background-color=true
+background-color='#e8ecf4'
+running-indicator-style='DOTS'
+dash-max-icon-size=52
 show-apps-at-top=false
+show-trash=true
+show-mounts=false
 click-action='minimize-or-previews'

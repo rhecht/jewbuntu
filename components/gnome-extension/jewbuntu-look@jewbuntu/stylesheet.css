@@ -1,0 +1,8 @@
+/* Translucent top bar. The dark tint keeps white panel text above WCAG AA
+   contrast on both Jewbuntu wallpapers (pale "Dawn" and dark "Dusk"). */
+#panel.jewbuntu-panel {
+  background-color: rgba(16, 20, 32, 0.55);
+}
+#panel.jewbuntu-panel .clock-display {
+  font-weight: 500;
+}

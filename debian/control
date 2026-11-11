@@ -54,11 +54,28 @@ Depends: jewbuntu-core (= ${binary:Version}),
          jewbuntu-branding (= ${binary:Version}),
          jewbuntu-hebrew (= ${binary:Version}),
          ubuntu-desktop-minimal,
+         fonts-inter,
          ${misc:Depends}
-Recommends: jewbuntu-upgrade-tools (= ${binary:Version})
+Recommends: jewbuntu-upgrade-tools (= ${binary:Version}),
+            jewbuntu-gnome (= ${binary:Version}),
+            zenity
 Description: Jewbuntu desktop (metapackage and Mac-inspired defaults)
  Selects the tested Jewbuntu desktop components on top of Ubuntu's own
  desktop, and sets Mac-inspired GNOME defaults (bottom dock, left window
- buttons, blue accent, Jewbuntu wallpaper) through a vendor settings override.
+ buttons, translucent rounded dock, Inter font, blue accent, Jewbuntu wallpaper)
+ through a vendor settings override.
  Users' own settings always take precedence; 'jewbuntu defaults restore'
  resets only the keys Jewbuntu manages.
+
+Package: jewbuntu-gnome
+Architecture: all
+Depends: ${misc:Depends}
+Enhances: gnome-shell
+Description: Jewbuntu GNOME Shell integration (Mac-style top bar)
+ A small GNOME Shell extension that moves the clock to the right of the top
+ bar and makes the bar translucent. It is declared only for tested GNOME
+ Shell versions (currently 50); on any other version GNOME disables it and
+ the stock Ubuntu top bar is used. Nothing else depends on it.
+ .
+ Later milestones add the Jewish calendar indicator here; calendar data and
+ logic stay in a separate service so the desktop never depends on this.

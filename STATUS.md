@@ -26,6 +26,18 @@ Last updated: 2026-11-11. Legend: **Implemented** (code exists) ·
 **Milestone 1 stays open until** the packages are installed on a clean Ubuntu 26.04.1 VM
 and the checklist in `docs/vm-setup.md` is recorded.
 
+## Milestone 1.3 additions (2026-11-11)
+
+| Item | State | Test status |
+| --- | --- | --- |
+| Mac-style dock (floating, translucent, rounded, dots, always visible), Inter font, weekday clock | Implemented | Defaults Auto-verified on GNOME 50.1 schemas; visual Not tested |
+| `jewbuntu-gnome`: "Jewbuntu Look" extension, translucent top bar, clock on the right (GNOME 50 only) | Implemented | Syntax-checked; **runtime Not tested** (needs VM session) |
+| `jewbuntu skin apply/undo/status` + one-time first-login question for existing accounts | Implemented | Auto-verified (unit + container with real schemas: apply and undo) |
+| Hebrew keyboard for existing users (appended, not replaced) | Implemented via skin | Auto-verified in container; VM Not tested |
+| Muted audio after VM startup | Investigating (Jewbuntu never changes volume) | Not diagnosed |
+| True blur ("frosted glass") | Not available: no blur extension packaged in Ubuntu 26.04 | n/a |
+| Install Shulgo's Linux widget | Waiting for Shulgo build | n/a |
+
 ## Milestone 2: useful Jewish desktop (planned)
 
 Hebcal-in-GJS spike → `jewbuntu-jewish-service` (D-Bus) → Hub (GTK4/libadwaita:
