@@ -89,7 +89,7 @@ Restore to `01` whenever you need a clean install test.
 - `jewbuntu defaults status`, change the dock position yourself, `jewbuntu defaults restore` puts back only Jewbuntu's keys.
 - Upgrade m1.1 → m1.2, log out and in, `jewbuntu config show` keeps your values (schema 2).
 
-Record results in `docs/test-results/` using the template below.
+Run `bash vm-check.sh` (served alongside the packages; source `tests/vm/vm-check.sh`) in the VM after logging in again. It records the automatic facts and lists the manual checks. Record results in `docs/test-results/` using the template below.
 
 ## Recording template
 
