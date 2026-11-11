@@ -1,5 +1,13 @@
 #!/usr/bin/make -f
 export PYTHONDONTWRITEBYTECODE=1
+include /usr/share/dpkg/pkg-info.mk
 
 %:
 	dh $@
+
+# Reproducibility: set every packaged file and directory mtime to the changelog
+# date (SOURCE_DATE_EPOCH). dpkg-deb only clamps *newer* mtimes, which leaves
+# build-time stamps when the changelog date is later than the build.
+override_dh_builddeb:
+	for p in $$(dh_listpackages); do find debian/$$p -exec touch -h -d @$(SOURCE_DATE_EPOCH) {} +; done
+	dh_builddeb

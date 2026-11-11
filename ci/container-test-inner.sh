@@ -97,18 +97,22 @@ if [ "${HAVE_NEW}" = 1 ]; then
   as_user jewbuntu config migrate
   as_user jewbuntu config migrate | grep -q '"current"' && ok "migration idempotent" || fail "migration idempotent"
   as_user cat /home/tester/.config/jewbuntu/settings.json
-  as_user python3 /dev/stdin <<'EOF'
+  cat > /tmp/check_upgrade.py <<'EOF'
 import json, glob
 d = json.load(open("/home/tester/.config/jewbuntu/settings.json"))
 assert d["location"]["timezone"] == "America/Toronto", d
 assert d["location"]["latitude"] == 43.65
 assert d["calendar"]["region"] == "israel"
 assert d["unknown_future_key"] == {"keep": True}
+if d["schema_version"] >= 2:
+    assert d["sound"]["startup"]["enabled"] is False, d["sound"]
 print("schema_version", d["schema_version"], "sound", d.get("sound"))
 backups = glob.glob("/home/tester/.local/state/jewbuntu/backups/*.json")
 assert backups, "backup expected"
 print("backup:", backups)
 EOF
+  chmod 644 /tmp/check_upgrade.py
+  as_user python3 /tmp/check_upgrade.py
   ok "settings preserved through upgrade + migration, backup kept"
   as_user jewbuntu config validate && ok "migrated settings validate" || fail "migrated settings validate"
 fi

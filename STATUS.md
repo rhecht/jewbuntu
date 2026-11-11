@@ -1,0 +1,46 @@
+# Status
+
+Last updated: 2026-11-11. Legend: **Implemented** (code exists) ·
+**Auto-verified** (automated test passed) · **Manually verified** (seen by a person) ·
+**Experimental** · **Planned**. Test status: Pass / Fail / Not tested.
+
+## Milestone 1: installable foundation and upgrade skeleton (in progress)
+
+| Item | State | Test status |
+| --- | --- | --- |
+| Source control, repo layout, ADRs, CLAUDE.md | Implemented | n/a |
+| Exact base recorded (26.04.1 resolute, GNOME 50.1, GJS 1.88, Python 3.14) | Implemented (from container image) | ISO checksum: Not tested yet |
+| `jewbuntu-core`: settings schema, atomic writes, backups, migrations, export/import/reset | Implemented | Auto-verified (unit + container) |
+| Hardware doctor (`jewbuntu doctor`) | Implemented | Auto-verified (fixtures, container); real hardware Not tested |
+| Compatibility/readiness report, matrix-gated repo enrollment | Implemented | Auto-verified (container) |
+| `jewbuntu-branding`: wallpapers, startup jingle (rendered at build), once-per-boot player | Implemented | Logic Auto-verified; **playback Not tested** (no audio in container); melody needs ear check |
+| `jewbuntu-hebrew`: us+il default, nikud fonts, fontconfig | Implemented | Auto-verified (container); typing in apps Not tested |
+| `jewbuntu-desktop`: metapackage + Mac-inspired vendor defaults | Implemented | Defaults Auto-verified against GNOME 50.1 schemas; **visual result Not tested** |
+| Upgrade between two Jewbuntu versions without losing settings | Implemented | **Pass** in container (m1.1 → m1.2) |
+| Uninstall preserves data | Implemented | **Pass** in container |
+| Install on a clean VM | Not started (needs VM) | Not tested |
+| Startup-sound setting in onboarding/settings UI | Planned (M2 Hub); CLI `jewbuntu startup-sound on/off/preview` exists | n/a |
+| Optional Mac-style shortcut preset | Planned | n/a |
+| Man pages for `jewbuntu`, `jewbuntu-startup-sound` | Planned (lintian warnings) | n/a |
+
+**Milestone 1 stays open until** the packages are installed on a clean Ubuntu 26.04.1 VM
+and the checklist in `docs/vm-setup.md` is recorded.
+
+## Milestone 2: useful Jewish desktop (planned)
+
+Hebcal-in-GJS spike → `jewbuntu-jewish-service` (D-Bus) → Hub (GTK4/libadwaita:
+Today, Calendar, Nearby Minyanim, Resources, Settings) → onboarding → Shulgo adapter
+with fixtures and demo mode → thin `jewbuntu-gnome` extension for GNOME 50.
+Replace the startup sound's weekly quiet-window fallback with calendar times.
+
+## Milestones 3-5: planned
+
+ISO from the same packages (ADR 0009), node profile, dev pack, AI tooling with
+admission control, signed hosted repository.
+
+## Blockers / needs from Rafi
+
+- **VM host**: the installed VMware Fusion 12.2.0 is Intel-only and cannot run VMs on the M1. Install UTM (or Fusion 13+) for an arm64 VM. Say which OS the HP runs, to decide whether it can host the amd64 VM.
+- Listen to the jingle and confirm or correct the melody (`assets/sounds/hava-nagila-8bit.json`).
+- Licence choice (ADR 0007).
+- Permission to read `/Applications/MAMP/htdocs/shulgo` for the Shulgo API contract (M2).

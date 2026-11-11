@@ -42,12 +42,13 @@ class StartupSoundTests(IsolatedHome):
             self.assertEqual(len(env.played), 2)
 
     def test_volume_is_stream_relative_and_restrained(self):
+        config.set_key("sound.startup.volume", "0.3")
         with FakeEnv() as env:
             startup_sound.run(sound_file=self.wav)
-            self.assertLessEqual(env.played[0][1], 1.0)
+            self.assertEqual(env.played[0][1], 0.3)
 
     def test_respects_off_setting(self):
-        config.set_key("sound.startup", "false")
+        config.set_key("sound.startup.enabled", "false")
         with FakeEnv() as env:
             self.assertEqual(startup_sound.run(sound_file=self.wav), "skipped: startup sound is off")
             self.assertEqual(env.played, [])
@@ -79,7 +80,7 @@ class StartupSoundTests(IsolatedHome):
             del os.environ["JEWBUNTU_PROFILE"]
 
     def test_preview_ignores_setting_and_marker_but_not_mute(self):
-        config.set_key("sound.startup", "false")
+        config.set_key("sound.startup.enabled", "false")
         with FakeEnv() as env:
             self.assertTrue(startup_sound.run(preview=True, sound_file=self.wav).startswith("played"))
             self.assertTrue(startup_sound.run(preview=True, sound_file=self.wav).startswith("played"))

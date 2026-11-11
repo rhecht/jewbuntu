@@ -23,7 +23,8 @@ class ConfigTests(IsolatedHome):
     def test_validation_rejects_bad_values_and_keeps_file(self):
         config.set_key("location.latitude", "43.7")
         for key, value in (("location.latitude", "200"), ("location.timezone", "Mars/Olympus"),
-                           ("calendar.region", "\"moon\""), ("sound.startup", "\"loud\"")):
+                           ("calendar.region", "\"moon\""), ("sound.startup.enabled", "\"loud\""),
+                           ("sound.startup.volume", "5")):
             with self.assertRaises(config.ConfigError):
                 config.set_key(key, value)
         self.assertEqual(config.read_raw()["location"]["latitude"], 43.7)
@@ -32,7 +33,7 @@ class ConfigTests(IsolatedHome):
         path = paths.settings_file()
         path.parent.mkdir(parents=True)
         path.write_text(json.dumps({"schema_version": 1, "future_feature": {"x": 1}}))
-        config.set_key("sound.startup", "false")
+        config.set_key("sound.startup.enabled", "false")
         self.assertEqual(config.read_raw()["future_feature"], {"x": 1})
 
     def test_atomic_write_leaves_no_temp_files_and_private_mode(self):
@@ -67,7 +68,7 @@ class ConfigTests(IsolatedHome):
         path = paths.settings_file()
         path.parent.mkdir(parents=True)
         start = config.SCHEMA_VERSION
-        path.write_text(json.dumps({"schema_version": start, "keep_me": True, "sound": {"startup": False}}))
+        path.write_text(json.dumps({"schema_version": start, "keep_me": True}))
         saved_version, saved_migrations = config.SCHEMA_VERSION, dict(config.MIGRATIONS)
         try:
             config.MIGRATIONS[start] = lambda d: {**d, "added_by_test": 1}
@@ -85,6 +86,42 @@ class ConfigTests(IsolatedHome):
             config.SCHEMA_VERSION = saved_version
             config.MIGRATIONS.clear()
             config.MIGRATIONS.update(saved_migrations)
+
+    def test_v1_to_v2_migration(self):
+        path = paths.settings_file()
+        path.parent.mkdir(parents=True)
+        v1 = {"schema_version": 1, "sound": {"startup": False}, "quiet_schedule": {"enabled": True},
+              "location": {"timezone": "America/Toronto"}, "extra": [1, 2]}
+        path.write_text(json.dumps(v1))
+        self.assertFalse(config.load()["sound"]["startup"]["enabled"], "load migrates in memory")
+        self.assertEqual(json.loads(path.read_text()), v1, "load must not write")
+        result = config.migrate()
+        self.assertEqual(result["applied"], [2])
+        raw = config.read_raw()
+        self.assertEqual(raw["sound"]["startup"], {"enabled": False})
+        self.assertEqual(raw["quiet_schedule"], {"enabled": True, "mode": "weekly-fallback"})
+        self.assertEqual(raw["extra"], [1, 2])
+        self.assertEqual(config.load()["sound"]["startup"]["volume"], 0.6, "new key defaulted, not stored")
+        self.assertEqual(config.validate(config.load()), [])
+
+    def test_interrupted_migration_leaves_original_intact(self):
+        path = paths.settings_file()
+        path.parent.mkdir(parents=True)
+        original = json.dumps({"schema_version": 1, "sound": {"startup": True}})
+        path.write_text(original)
+        real_write = config.atomic_write_json
+
+        def crash(*a, **k):
+            raise OSError("simulated power loss during write")
+        config.atomic_write_json = crash
+        try:
+            with self.assertRaises(OSError):
+                config.migrate()
+        finally:
+            config.atomic_write_json = real_write
+        self.assertEqual(path.read_text(), original, "original must be untouched")
+        self.assertEqual(len(list(paths.backup_dir().glob("*.json"))), 1, "backup made before writing")
+        self.assertEqual(config.migrate()["status"], "migrated", "retry succeeds")
 
     def test_migrate_without_settings(self):
         self.assertEqual(config.migrate()["status"], "no-settings")
@@ -108,7 +145,7 @@ class UserDataTests(IsolatedHome):
         self.assertEqual(config.load()["calendar"]["region"], "israel")
 
     def test_reset_makes_final_export_by_default(self):
-        config.set_key("sound.startup", "false")
+        config.set_key("sound.startup.enabled", "false")
         result = userdata.reset()
         self.assertTrue(os.path.exists(result["final_export"]))
 

@@ -1,0 +1,155 @@
+
+=== environment
+Ubuntu 26.04.1 LTS (resolute) aarch64
+
+=== signed local repository (ephemeral test key; never a release key)
+PASS: repository signed by scoped key is accepted
+
+=== install old version
+PASS: installed 0.1.0~m1.1+26.04
+jewbuntu 0.1.0~m1.1
+Jewbuntu 0.1.0~m1.1 (settings schema 1)
+  jewbuntu-branding 0.1.0~m1.1+26.04
+  jewbuntu-core 0.1.0~m1.1+26.04
+  jewbuntu-hebrew 0.1.0~m1.1+26.04
+  jewbuntu-upgrade-tools 0.1.0~m1.1+26.04
+PASS: per-user migration unit enabled globally
+PASS: conffile /etc/jewbuntu/repository.conf present
+input-sources default under ubuntu session: [('xkb', 'us'), ('xkb', 'il')]
+PASS: Hebrew keyboard default applied via vendor override
+PASS: fontconfig prefers Noto Sans Hebrew for Hebrew sans
+PASS: Culmus and Ezra SIL nikud fonts installed
+
+=== doctor and readiness report (inspection only)
+Jewbuntu Doctor - hardware report
+
+Machine     : unknown unknown (unknown)
+OS          : Ubuntu 26.04.1 LTS  kernel 5.10.104-linuxkit
+Desktop     : unknown  session unknown
+Firmware    : bios  Secure Boot unknown
+Virtual     : docker
+CPU         : unknown
+              4 threads, unknown cores, max unknown MHz, arch aarch64, level unknown
+Memory      : 7.67 GB total, 6.87 GB available, swap 1.0 GB
+GPU         : unknown
+Storage     : root 46.5 GB free of 58.4 GB
+              nbd0 0B SSD/flash unknown unknown
+              nbd1 0B SSD/flash unknown unknown
+              nbd2 0B SSD/flash unknown unknown
+              nbd3 0B SSD/flash unknown unknown
+              nbd4 0B SSD/flash unknown unknown
+              nbd5 0B SSD/flash unknown unknown
+              nbd6 0B SSD/flash unknown unknown
+              nbd7 0B SSD/flash unknown unknown
+              vda 59.6G HDD virtio unknown
+              nbd8 0B SSD/flash unknown unknown
+              nbd9 0B SSD/flash unknown unknown
+              nbd10 0B SSD/flash unknown unknown
+              nbd11 0B SSD/flash unknown unknown
+              nbd12 0B SSD/flash unknown unknown
+              nbd13 0B SSD/flash unknown unknown
+              nbd14 0B SSD/flash unknown unknown
+              nbd15 0B SSD/flash unknown unknown
+Audio       : unknown
+Battery     : none detected
+
+Suggested profile: desktop
+  - 7.67 GB RAM: meets the 8 GB starting point for full-desktop validation.
+  - Architecture aarch64: the first Jewbuntu image targets amd64 only; this run tests architecture-independent parts.
+  - CPU max clock not exposed (common in VMs); check the CPU model string instead.
+  - A rotational (spinning) disk is present; an SSD makes the largest difference on older PCs.
+  - Running in a VM: GPU, audio, Wi-Fi, suspend and thermal results here do not certify physical hardware.
+Jewbuntu upgrade readiness report (inspection only - nothing was changed)
+
+Ubuntu       : Ubuntu 26.04.1 LTS (resolute)
+GNOME Shell  : not detected
+Jewbuntu     : jewbuntu-branding 0.1.0~m1.1+26.04, jewbuntu-core 0.1.0~m1.1+26.04, jewbuntu-hebrew 0.1.0~m1.1+26.04, jewbuntu-upgrade-tools 0.1.0~m1.1+26.04
+Overall      : ready-to-plan
+
+[INFO] Ubuntu 26.04 (resolute) is listed with status 'in-development'.
+[INFO] Ubuntu's upgrader disables third-party sources during a release upgrade. After upgrading, run 'jewbuntu repo status' to re-enable the matching Jewbuntu suite; other sources need individual checks.
+[INFO] No personal Jewbuntu settings saved yet.
+
+Before a release upgrade: back up your files, run 'jewbuntu export', then use
+Ubuntu's own upgrader (Software & Updates / 'sudo do-release-upgrade').
+Afterwards: 'jewbuntu repo status' and 'jewbuntu upgrade-check' again.
+overall: ready-to-plan
+PASS: readiness report recognises resolute
+
+=== repository enrollment uses support matrix and pins namespace
+{
+  "written": [
+    "/etc/apt/sources.list.d/jewbuntu.sources",
+    "/etc/apt/preferences.d/jewbuntu.pref"
+  ],
+  "next": "sudo apt update && sudo apt install --only-upgrade 'jewbuntu-*'"
+}
+PASS: enroll wrote suite for running codename
+PASS: refused channel not offered in matrix: Channel 'stable' is not offered for resolute (offered: testing).
+PASS: pin blocked decoy base-files (14ubuntu6.3 kept)
+
+=== user settings with the old version
+location.timezone = "America/Toronto"
+location.latitude = 43.65
+location.longitude = -79.38
+calendar.region = "israel"
+sound.startup = false
+{"calendar": {"region": "israel"}, "location": {"latitude": 43.65, "longitude": -79.38, "timezone": "America/Toronto"}, "schema_version": 1, "sound": {"startup": false}, "unknown_future_key": {"keep": true}}PASS: settings owned by the user
+skipped: no audio output available
+Exported settings (schema 1) to /home/tester/before-upgrade.tar.gz
+
+=== upgrade to new version from the signed repo
+PASS: upgraded 0.1.0~m1.1+26.04 -> 0.1.0~m1.2+26.04
+PASS: package upgrade did not touch the user's home
+
+=== per-user migration (what jewbuntu-migrate.service runs at the user's next login)
+{
+  "status": "migrated",
+  "applied": [
+    2
+  ],
+  "backup": "/home/tester/.local/state/jewbuntu/backups/settings.20261111T170236.pre-migrate-v1.json",
+  "schema_version": 2
+}
+PASS: migration idempotent
+{
+  "calendar": {
+    "region": "israel"
+  },
+  "location": {
+    "latitude": 43.65,
+    "longitude": -79.38,
+    "timezone": "America/Toronto"
+  },
+  "schema_version": 2,
+  "sound": {
+    "startup": {
+      "enabled": false
+    }
+  },
+  "unknown_future_key": {
+    "keep": true
+  }
+}
+schema_version 2 sound {'startup': {'enabled': False}}
+backup: ['/home/tester/.local/state/jewbuntu/backups/settings.20261111T170236.pre-migrate-v1.json']
+PASS: settings preserved through upgrade + migration, backup kept
+settings valid
+PASS: migrated settings validate
+
+=== remove and purge keep user data
+PASS: remove kept user settings
+PASS: remove kept conffile
+PASS: purge kept user settings
+PASS: purge removed system conffile
+PASS: purge removed generated APT source
+PASS: purge removed fontconfig link
+PASS: vendor override gone after removal (now @a(ss) [])
+PASS: no untracked files left in /usr (no stray bytecode)
+
+=== reinstall picks up existing settings; export/import roundtrip
+PASS: reinstalled package sees preserved settings
+PASS: explicit reset removed user data
+PASS: import restored exported settings
+
+ALL CHECKS PASSED (28)

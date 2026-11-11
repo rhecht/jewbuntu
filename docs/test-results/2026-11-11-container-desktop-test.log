@@ -1,0 +1,42 @@
+installed in 66s; packages now: 1028
+no schema compile warnings in apt log
+--- gnome-shell: GNOME Shell 50.1
+--- effective defaults in the ubuntu session (memory backend, fresh user):
+org.gnome.shell.extensions.dash-to-dock dock-position        'BOTTOM'
+org.gnome.shell.extensions.dash-to-dock extend-height        false
+org.gnome.desktop.wm.preferences button-layout               'close,minimize,maximize:appmenu'
+org.gnome.desktop.interface accent-color                     'blue'
+org.gnome.desktop.background picture-uri-dark                'file:///usr/share/backgrounds/jewbuntu/jewbuntu-dusk.svg'
+org.gnome.desktop.input-sources sources                      [('xkb', 'us'), ('xkb', 'il')]
+org.gnome.mutter center-new-windows                          true
+--- jewbuntu defaults status:
+= org.gnome.desktop.background picture-uri: 'file:///usr/share/backgrounds/jewbuntu/jewbuntu-dawn.svg'  (Jewbuntu: 'file:///usr/share/backgrounds/jewbuntu/jewbuntu-dawn.svg') - Jewbuntu wallpaper (light)
+= org.gnome.desktop.background picture-uri-dark: 'file:///usr/share/backgrounds/jewbuntu/jewbuntu-dusk.svg'  (Jewbuntu: 'file:///usr/share/backgrounds/jewbuntu/jewbuntu-dusk.svg') - Jewbuntu wallpaper (dark)
+= org.gnome.desktop.screensaver picture-uri: 'file:///usr/share/backgrounds/jewbuntu/jewbuntu-dusk.svg'  (Jewbuntu: 'file:///usr/share/backgrounds/jewbuntu/jewbuntu-dusk.svg') - Lock screen background
+= org.gnome.desktop.interface accent-color: 'blue'  (Jewbuntu: 'blue') - Blue accent
+= org.gnome.desktop.wm.preferences button-layout: 'close,minimize,maximize:appmenu'  (Jewbuntu: 'close,minimize,maximize:appmenu') - Mac-style window buttons on the left
+= org.gnome.mutter center-new-windows: true  (Jewbuntu: true) - Open new windows centred
+= org.gnome.desktop.peripherals.touchpad tap-to-click: true  (Jewbuntu: true) - Tap to click
+= org.gnome.shell.extensions.dash-to-dock dock-position: 'BOTTOM'  (Jewbuntu: 'BOTTOM') - Dock at the bottom
+= org.gnome.shell.extensions.dash-to-dock extend-height: false  (Jewbuntu: false) - Compact centred dock
+= org.gnome.shell.extensions.dash-to-dock dock-fixed: false  (Jewbuntu: false) - Dock hides when windows overlap
+= org.gnome.shell.extensions.dash-to-dock intellihide: true  (Jewbuntu: true) - Dock hides when windows overlap
+= org.gnome.shell.extensions.dash-to-dock dash-max-icon-size: 48  (Jewbuntu: 48) - Dock icon size
+= org.gnome.shell.extensions.dash-to-dock show-apps-at-top: false  (Jewbuntu: false) - App grid button at the end of the dock
+= org.gnome.shell.extensions.dash-to-dock click-action: 'minimize-or-previews'  (Jewbuntu: 'minimize-or-previews') - Click a running app to minimise or preview
+= org.gnome.desktop.input-sources sources: [('xkb', 'us'), ('xkb', 'il')]  (Jewbuntu: [('xkb', 'us'), ('xkb', 'il')]) - English and Hebrew keyboards (jewbuntu-hebrew)
+
+= Jewbuntu default   * you changed it   ? schema not installed
+--- jewbuntu upgrade-check:
+Jewbuntu upgrade readiness report (inspection only - nothing was changed)
+
+Ubuntu       : Ubuntu 26.04.1 LTS (resolute)
+GNOME Shell  : GNOME Shell 50.1
+Jewbuntu     : jewbuntu-branding 0.1.0~m1.2+26.04, jewbuntu-core 0.1.0~m1.2+26.04, jewbuntu-desktop 0.1.0~m1.2+26.04, jewbuntu-hebrew 0.1.0~m1.2+26.04, jewbuntu-upgrade-tools 0.1.0~m1.2+26.04
+Overall      : needs-attention
+
+[INFO] Ubuntu 26.04 (resolute) is listed with status 'in-development'.
+[WARN] A reboot is pending from earlier updates; reboot before upgrading.
+[INFO] No personal Jewbuntu settings saved yet.
+
+Before a release upgrade: back up your files, run 'jewbuntu export', then use

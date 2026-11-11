@@ -1,13 +1,13 @@
 """Version information.
 
 UPSTREAM_VERSION must match the upstream part of debian/changelog
-(checked by tests/unit/test_version.py).
+(checked by tests/unit/test_doctor_upgrade.py).
 """
 
 import shutil
 import subprocess
 
-__version__ = "0.1.0~m1.1"
+__version__ = "0.1.0~m1.2"
 
 
 def installed_package_versions(prefix="jewbuntu"):

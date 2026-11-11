@@ -1,3 +1,12 @@
+jewbuntu (0.1.0~m1.2+26.04) resolute; urgency=medium
+
+  * Settings schema 2: startup sound becomes {enabled, volume}; quiet
+    schedule records its mode. Migrated per user at login by
+    jewbuntu-migrate.service, with a verified backup of schema 1.
+  * Startup sound honours the per-user volume (stream-relative only).
+
+ -- Jewbuntu Developers <maintainers@jewbuntu.invalid>  Wed, 11 Nov 2026 14:00:00 -0500
+
 jewbuntu (0.1.0~m1.1+26.04) resolute; urgency=medium
 
   * Milestone 1 foundation: jewbuntu-core (settings schema 1, doctor,

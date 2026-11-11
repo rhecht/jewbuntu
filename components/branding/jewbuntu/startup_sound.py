@@ -25,7 +25,7 @@ from pathlib import Path
 from . import config, paths
 
 SOUND_FILE = paths.SHARE_DIR / "sounds" / "jewbuntu-startup.wav"
-STREAM_VOLUME = 0.6  # relative to the user's current system volume; never raises it
+STREAM_VOLUME = 0.6  # default; stream volume relative to the system volume, which is never raised
 SINK_WAIT_S = 6  # PipeWire may start alongside us; give up quietly after this
 
 
@@ -123,7 +123,7 @@ def run(preview=False, sound_file=SOUND_FILE):
     except config.ConfigError as exc:
         return f"skipped: settings unreadable ({exc})"
     if not preview:
-        if not settings.get("sound", {}).get("startup", False):
+        if not settings.get("sound", {}).get("startup", {}).get("enabled", False):
             return "skipped: startup sound is off"
         if in_quiet_window(settings):
             return "skipped: quiet schedule"
@@ -144,7 +144,8 @@ def run(preview=False, sound_file=SOUND_FILE):
         return "skipped: no audio output available"
     if not preview:
         mark_played()  # mark before playing so a crash can never cause a replay loop
-    ok, detail = play(sound_file)
+    volume = settings.get("sound", {}).get("startup", {}).get("volume", STREAM_VOLUME)
+    ok, detail = play(sound_file, volume=min(1.0, max(0.05, float(volume))))
     return ("played" if ok else "failed") + f" ({detail})"
 
 

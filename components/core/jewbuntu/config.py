@@ -26,7 +26,7 @@ from pathlib import Path
 
 from . import paths
 
-SCHEMA_VERSION = 1
+SCHEMA_VERSION = 2
 
 DEFAULTS = {
     "schema_version": SCHEMA_VERSION,
@@ -48,8 +48,9 @@ DEFAULTS = {
     },
     "zmanim": {"preset": "standard"},
     "shulgo": {"enabled": False, "share_location": False, "favorites": []},
-    "sound": {"startup": True},
-    "quiet_schedule": {"enabled": False},
+    "sound": {"startup": {"enabled": True, "volume": 0.6}},
+    # mode "weekly-fallback" until the calendar service exists; "calendar" afterwards.
+    "quiet_schedule": {"enabled": False, "mode": "weekly-fallback"},
     "onboarding": {"completed": False, "completed_steps": []},
 }
 
@@ -66,7 +67,20 @@ class NewerSchemaError(ConfigError):
 # Each migration takes a document at version N and returns version N+1.
 # They must preserve unknown keys and never raise on optional data.
 
-MIGRATIONS = {}
+
+
+def _v1_to_v2(doc):
+    """Schema 2: sound.startup becomes {enabled, volume}; quiet_schedule gains a mode."""
+    sound = doc.get("sound")
+    if isinstance(sound, dict) and "startup" in sound and not isinstance(sound["startup"], dict):
+        sound["startup"] = {"enabled": bool(sound["startup"])}
+    quiet = doc.get("quiet_schedule")
+    if isinstance(quiet, dict) and "mode" not in quiet:
+        quiet["mode"] = "weekly-fallback"
+    return doc
+
+
+MIGRATIONS = {1: _v1_to_v2}
 
 
 def deep_merge_defaults(doc, defaults):
@@ -286,6 +300,11 @@ def validate(doc):
     minutes = doc.get("calendar", {}).get("candle_lighting_minutes")
     if not (isinstance(minutes, int) and 0 <= minutes <= 60):
         problems.append("calendar.candle_lighting_minutes must be an integer from 0 to 60")
-    if not isinstance(doc.get("sound", {}).get("startup"), bool):
-        problems.append("sound.startup must be true or false")
+    startup = doc.get("sound", {}).get("startup", {})
+    if not isinstance(startup, dict) or not isinstance(startup.get("enabled"), bool):
+        problems.append("sound.startup.enabled must be true or false")
+    elif not (isinstance(startup.get("volume"), (int, float)) and 0.05 <= startup["volume"] <= 1.0):
+        problems.append("sound.startup.volume must be between 0.05 and 1.0 (relative to system volume)")
+    if doc.get("quiet_schedule", {}).get("mode") not in ("weekly-fallback", "calendar"):
+        problems.append("quiet_schedule.mode must be 'weekly-fallback' or 'calendar'")
     return problems

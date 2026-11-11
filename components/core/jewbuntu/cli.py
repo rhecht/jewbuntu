@@ -135,7 +135,7 @@ def cmd_startup_sound(args):
         print("Install jewbuntu-branding for the startup sound.", file=sys.stderr)
         return 1
     if args.action in ("on", "off"):
-        config.set_key("sound.startup", args.action == "on")
+        config.set_key("sound.startup.enabled", args.action == "on")
         print(f"Startup sound {args.action}.")
         return 0
     print(startup_sound.run(preview=True))
