@@ -262,11 +262,53 @@ const HubWindow = class {
     }
 
     _buildMinyanim() {
+        // Nearby minyanim, events and mikvaos come from ShulGo (jewbuntu-shulgo). The Hub hands
+        // off to it rather than duplicating it; nothing here contacts the network.
+        const shulgo = Gio.DesktopAppInfo.new('org.jewbuntu.ShulGo.desktop');
         const page = new Adw.StatusPage({
-            icon_name: 'find-location-symbolic',
+            icon_name: shulgo ? 'org.jewbuntu.ShulGo' : 'find-location-symbolic',
             title: 'Nearby Minyanim',
-            description: 'Shulgo integration is not connected yet. Jewbuntu will show nearby shuls and scheduled Shacharis, Mincha and Maariv from Shulgo once its Linux widget or API is available. No listings are shown until then: invented times would be worse than none.',
+            description: shulgo
+                ? 'Minyanim, events, mikvaos and zmanim near you come from ShulGo. It needs a ShulGo API key the first time: open its settings, paste the key and press "Save and test".'
+                : 'Install ShulGo (the jewbuntu-shulgo package) to see nearby minyanim, events and mikvaos here.',
         });
+        if (shulgo) {
+            const box = new Gtk.Box({spacing: 12, halign: Gtk.Align.CENTER});
+            const open = new Gtk.Button({label: 'Open ShulGo', css_classes: ['suggested-action', 'pill']});
+            open.connect('clicked', () => {
+                try {
+                    shulgo.launch([], null);
+                } catch (e) {
+                    this.toasts.add_toast(new Adw.Toast({title: `Could not open ShulGo: ${e.message}`, timeout: 5}));
+                }
+            });
+            const settings = new Gtk.Button({label: 'ShulGo settings and API key', css_classes: ['pill']});
+            settings.connect('clicked', async () => {
+                const r = await new Promise(resolve => {
+                    try {
+                        const proc = Gio.Subprocess.new(['gnome-extensions', 'prefs', 'shulgo@jewbuntu.org'], Gio.SubprocessFlags.STDERR_PIPE);
+                        proc.wait_check_async(null, (pr, res) => {
+                            try {
+                                resolve(pr.wait_check_finish(res));
+                            } catch (e) {
+                                resolve(false);
+                            }
+                        });
+                    } catch (e) {
+                        resolve(false);
+                    }
+                });
+                if (!r) {
+                    // Settings live with the panel widget; if it is not available, the window has them too.
+                    try {
+                        shulgo.launch([], null);
+                    } catch (e) {}
+                }
+            });
+            box.append(open);
+            box.append(settings);
+            page.set_child(box);
+        }
         this.stack.add_titled_with_icon(page, 'minyanim', 'Minyanim', 'find-location-symbolic');
     }
 

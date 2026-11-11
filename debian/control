@@ -104,6 +104,7 @@ Depends: gjs (>= 1.80), gir1.2-gtk-4.0, gir1.2-adw-1,
          jewbuntu-jewish-service (= ${binary:Version}),
          jewbuntu-core (= ${binary:Version}),
          ${misc:Depends}
+Recommends: jewbuntu-shulgo (= ${binary:Version})
 Description: Jewbuntu Hub - Hebrew date, zmanim and settings
  Standalone GTK4/libadwaita app: today's Hebrew date (with sunset rollover),
  the next zman with countdown, candle lighting and havdalah, labelled zmanim,

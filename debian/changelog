@@ -1,3 +1,10 @@
+jewbuntu (0.1.0~m1.16+26.04) resolute; urgency=medium
+
+  * Hub: Minyanim tab hands off to ShulGo (Open ShulGo; ShulGo settings and
+    API key) instead of a placeholder.
+
+ -- Jewbuntu Developers <maintainers@jewbuntu.invalid>  Wed, 11 Nov 2026 16:17:00 -0500
+
 jewbuntu (0.1.0~m1.15+26.04) resolute; urgency=medium
 
   * Default icon theme: Jewbuntu Icons (rhecht/jewbuntu-icons, MacTahoe fork
