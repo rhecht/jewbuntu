@@ -1,3 +1,10 @@
+jewbuntu (0.1.0~m1.11+26.04) resolute; urgency=medium
+
+  * jewbuntu-shulgo: re-vendor rhecht/shulgo@be2cafb (settings sliders no
+    longer bound through a double/int GSettings binding).
+
+ -- Jewbuntu Developers <maintainers@jewbuntu.invalid>  Wed, 11 Nov 2026 14:50:00 -0500
+
 jewbuntu (0.1.0~m1.10+26.04) resolute; urgency=medium
 
   * jewbuntu-shulgo: re-vendor rhecht/shulgo@5430b5c (settings window failed
