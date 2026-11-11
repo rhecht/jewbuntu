@@ -146,6 +146,8 @@ class PackagingConsistencyTests(unittest.TestCase):
     def test_install_files_reference_existing_sources(self):
         for f in (REPO / "debian").glob("*.install"):
             for line in f.read_text().splitlines():
+                if not line.strip() or line.lstrip().startswith("#"):
+                    continue
                 src = line.split()[0]
                 if src.startswith("build/"):
                     continue

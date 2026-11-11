@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Jewbuntu settings update
+Comment=Brings your Jewbuntu settings up to the installed version (keeps a backup)
+Exec=/usr/bin/jewbuntu config migrate --quiet
+NoDisplay=true
+X-GNOME-Autostart-enabled=true
+X-GNOME-AutoRestart=false
+X-GNOME-Autostart-Phase=Initialization

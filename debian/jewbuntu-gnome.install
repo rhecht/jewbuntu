@@ -1,6 +1,22 @@
 components/gnome-extension/jewbuntu-look@jewbuntu/metadata.json usr/share/gnome-shell/extensions/jewbuntu-look@jewbuntu/
 components/gnome-extension/jewbuntu-look@jewbuntu/extension.js usr/share/gnome-shell/extensions/jewbuntu-look@jewbuntu/
 components/gnome-extension/jewbuntu-look@jewbuntu/stylesheet.css usr/share/gnome-shell/extensions/jewbuntu-look@jewbuntu/
-components/gnome-extension/vendor/blur-my-shell@aunetx/* usr/share/gnome-shell/extensions/blur-my-shell@aunetx/
+# Everything except schemas/: with a schemas/ folder present, GNOME Shell expects a
+# compiled gschemas.compiled there. The schema is installed system-wide instead.
+components/gnome-extension/vendor/blur-my-shell@aunetx/LICENSE usr/share/gnome-shell/extensions/blur-my-shell@aunetx/
+components/gnome-extension/vendor/blur-my-shell@aunetx/components usr/share/gnome-shell/extensions/blur-my-shell@aunetx/
+components/gnome-extension/vendor/blur-my-shell@aunetx/conveniences usr/share/gnome-shell/extensions/blur-my-shell@aunetx/
+components/gnome-extension/vendor/blur-my-shell@aunetx/dbus usr/share/gnome-shell/extensions/blur-my-shell@aunetx/
+components/gnome-extension/vendor/blur-my-shell@aunetx/effects usr/share/gnome-shell/extensions/blur-my-shell@aunetx/
+components/gnome-extension/vendor/blur-my-shell@aunetx/extension.js usr/share/gnome-shell/extensions/blur-my-shell@aunetx/
+components/gnome-extension/vendor/blur-my-shell@aunetx/locale usr/share/gnome-shell/extensions/blur-my-shell@aunetx/
+components/gnome-extension/vendor/blur-my-shell@aunetx/metadata.json usr/share/gnome-shell/extensions/blur-my-shell@aunetx/
+components/gnome-extension/vendor/blur-my-shell@aunetx/pipelines usr/share/gnome-shell/extensions/blur-my-shell@aunetx/
+components/gnome-extension/vendor/blur-my-shell@aunetx/preferences usr/share/gnome-shell/extensions/blur-my-shell@aunetx/
+components/gnome-extension/vendor/blur-my-shell@aunetx/prefs.js usr/share/gnome-shell/extensions/blur-my-shell@aunetx/
+components/gnome-extension/vendor/blur-my-shell@aunetx/render usr/share/gnome-shell/extensions/blur-my-shell@aunetx/
+components/gnome-extension/vendor/blur-my-shell@aunetx/resources.gresource usr/share/gnome-shell/extensions/blur-my-shell@aunetx/
+components/gnome-extension/vendor/blur-my-shell@aunetx/settings usr/share/gnome-shell/extensions/blur-my-shell@aunetx/
+components/gnome-extension/vendor/blur-my-shell@aunetx/stylesheet.css usr/share/gnome-shell/extensions/blur-my-shell@aunetx/
 components/gnome-extension/vendor/blur-my-shell@aunetx/schemas/org.gnome.shell.extensions.blur-my-shell.gschema.xml usr/share/glib-2.0/schemas/
 components/gnome-extension/vendor/README.md usr/share/doc/jewbuntu-gnome/

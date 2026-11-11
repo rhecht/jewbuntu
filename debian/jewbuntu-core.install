@@ -4,3 +4,4 @@ bin/jewbuntu usr/bin/
 support-matrix.json usr/share/jewbuntu/
 packaging/core/repository.conf etc/jewbuntu/
 packaging/core/jewbuntu-migrate.service usr/lib/systemd/user/
+packaging/core/jewbuntu-migrate.desktop etc/xdg/autostart/

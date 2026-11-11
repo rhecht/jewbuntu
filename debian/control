@@ -53,7 +53,7 @@ Architecture: all
 Depends: jewbuntu-core (= ${binary:Version}),
          jewbuntu-branding (= ${binary:Version}),
          jewbuntu-hebrew (= ${binary:Version}),
-         jewbuntu-skin,
+         jewbuntu-skin (>= 0.1.0~git20261111.1),
          ubuntu-desktop-minimal,
          fonts-inter,
          gnome-shell-extension-user-theme,

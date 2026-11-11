@@ -27,3 +27,10 @@ echo "after undo: $U_SRC dock=$U_DOCK"
 [ ! -e "$HOME/.config/gtk-4.0/gtk.css" ] && echo "PASS: undo removed libadwaita theming" || { echo "FAIL: libadwaita undo"; exit 1; }
 for d in /usr/share/themes/Jewbuntu-Light /usr/share/gnome-shell/extensions/blur-my-shell@aunetx /usr/share/backgrounds/Jewbuntu/Jewbuntu-night.jpeg; do [ -e "$d" ] && echo "PASS: present $d" || { echo "FAIL: missing $d"; exit 1; }; done
 gsettings list-keys org.gnome.shell.extensions.blur-my-shell >/dev/null && echo "PASS: Blur my Shell schema compiled" || { echo "FAIL: blur schema"; exit 1; }
+
+# Login screen theme registered through alternatives (Yaru untouched)
+V=$(update-alternatives --query gdm-theme.gresource | awk '/^Value:/{print $2}')
+[ "$V" = /usr/share/gnome-shell/theme/Jewbuntu/gnome-shell-theme.gresource ] && echo "PASS: login screen uses the Jewbuntu theme bundle" || { echo "FAIL: gdm alternative is $V"; exit 1; }
+gresource list "$V" | grep -q "/org/gnome/shell/theme/gdm.css" && gresource list "$V" | grep -q "assets/background.png" && echo "PASS: bundle has gdm.css and the login background" || { echo "FAIL: bundle contents"; exit 1; }
+[ -f /usr/share/gnome-shell/theme/Yaru/gnome-shell-theme.gresource ] && echo "PASS: Yaru bundle left in place" || { echo "FAIL: Yaru missing"; exit 1; }
+[ ! -e /usr/share/gnome-shell/extensions/blur-my-shell@aunetx/schemas ] && echo "PASS: Blur my Shell shipped without a local schemas folder" || { echo "FAIL: blur schemas folder present"; exit 1; }

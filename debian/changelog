@@ -1,3 +1,14 @@
+jewbuntu (0.1.0~m1.8+26.04) resolute; urgency=medium
+
+  * Blur my Shell failed to start on GNOME 50 (seen in the VM): its schemas/
+    folder was shipped without gschemas.compiled. Ship it without that folder;
+    the schema is installed system-wide.
+  * Settings migration also runs from an XDG autostart entry at every login;
+    package upgrades do not add the new systemd user target from m1.4.
+  * Depend on the jewbuntu-skin build that themes the login screen.
+
+ -- Jewbuntu Developers <maintainers@jewbuntu.invalid>  Wed, 11 Nov 2026 14:30:00 -0500
+
 jewbuntu (0.1.0~m1.7+26.04) resolute; urgency=medium
 
   * New jewbuntu-hub package: Today, Calendar, Minyanim (Shulgo pending),
