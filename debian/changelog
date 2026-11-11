@@ -1,3 +1,12 @@
+jewbuntu (0.1.0~m1.17+26.04) resolute; urgency=medium
+
+  * jewbuntu-shulgo: re-vendor rhecht/shulgo@b189ca6: navy menu surface set
+    on its own actors (readable on the Jewbuntu Skin), legible header, chips
+    and footer, rounded corners, readable top-bar countdown, privacy-safe
+    offline cache keys, and GNOME Shell 50 declared after VM verification.
+
+ -- Jewbuntu Developers <maintainers@jewbuntu.invalid>  Wed, 11 Nov 2026 17:21:00 -0500
+
 jewbuntu (0.1.0~m1.16+26.04) resolute; urgency=medium
 
   * Hub: Minyanim tab hands off to ShulGo (Open ShulGo; ShulGo settings and
