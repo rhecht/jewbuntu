@@ -38,7 +38,25 @@ and the checklist in `docs/vm-setup.md` is recorded.
 | True blur ("frosted glass") | Not available: no blur extension packaged in Ubuntu 26.04 | n/a |
 | Install Shulgo's Linux widget | Waiting for Shulgo build | n/a |
 
-## Milestone 2: useful Jewish desktop (planned)
+## Status at 0.1.0~m1.7 (2026-11-11 afternoon)
+
+| Item | State | Test status |
+| --- | --- | --- |
+| Jewbuntu Skin = public fork github.com/rhecht/jewbuntu-skin (MacTahoe, MIT), packaged as `jewbuntu-skin` from that repo's `debian/` | Implemented | Package builds (12 theme variants); container: theme active after skin apply; **visual Not tested** |
+| Apple logo/wallpapers/screenshots removed from the fork; original Jewbuntu wallpapers + 2 Star of David wallpapers (owner-supplied, licence TBC, 1586×992) | Implemented | n/a |
+| Blur my Shell v78 vendored unmodified in `jewbuntu-gnome` | Implemented | Schema compiles; runtime Not tested |
+| `skin apply` = theme + User Themes + Blur my Shell + Hebrew + libadwaita (~/.config/gtk-4.0) with undo | Implemented | Auto-verified (unit + container) |
+| Calendar core (Hebcal 6.16 in GJS), `jewbuntu-jewish-service` D-Bus | Implemented | 12 fixture tests vs hebcal.com; GJS = Node output; service exercised on a session bus |
+| `jewbuntu-hub` (Today/Calendar/Minyanim/Resources/Settings) | Implemented | Screenshots under Xvfb in Ubuntu 26.04; not yet run in the VM |
+| Shulgo widget (github.com/rhecht/shulgo @ 42487bf, integrations/{shulgo-core,jewbuntu}) | Tested per-user in VM | App runs on GNOME 50 (markup bug found and fixed upstream). Extension declares 45-49: GNOME 50 test staged with version validation off **in the dev VM only**; revert after. Not yet packaged as `jewbuntu-shulgo` |
+| Ulauncher + Liquid Glass theme | Not started | Ulauncher is not in Ubuntu's archive |
+| MacTahoe icons (Apple-lookalike) | Planned as opt-in per-user download, not in the image | n/a |
+| Siri-like voice prompter | Planned for the very end | n/a |
+
+VM (`jewbuntu-dev-arm64`) state: m1.4 installed; m1.7 served at http://192.168.64.1:8000/m1.7/ (needs the owner's sudo);
+`disable-extension-version-validation` = true for user `user` (TEST ONLY: set back to false after the Shulgo GNOME 50 test).
+
+## Milestone 2: useful Jewish desktop (in progress)
 
 Hebcal-in-GJS spike → `jewbuntu-jewish-service` (D-Bus) → Hub (GTK4/libadwaita:
 Today, Calendar, Nearby Minyanim, Resources, Settings) → onboarding → Shulgo adapter

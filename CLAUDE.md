@@ -48,6 +48,12 @@ ci/container-desktop-test.sh dist/worktree             # jewbuntu-desktop over u
 - Ubuntu's archive returned transient 503s on 2026-11-11; retry apt on failure.
 - macOS `tar` adds `._*` AppleDouble files unless `COPYFILE_DISABLE=1` (already handled in `ci/container-build.sh`).
 
+## Related repositories
+
+- Skin: `../jewbuntu-skin` = github.com/rhecht/jewbuntu-skin (fork of vinceliuice/MacTahoe-gtk-theme, MIT). `main` carries the Jewbuntu changes; merge `upstream/main` to update. Build: non-root `dpkg-buildpackage -us -uc -b` (needs TERM set, which the rules handle).
+- Shulgo widget: github.com/rhecht/shulgo, `integrations/shulgo-core` + `integrations/jewbuntu` (both needed). Owned by the Shulgo session; report bugs there, do not edit.
+- VM access: `ssh -i ~/.ssh/jewbuntu_vm_ed25519 user@192.168.64.2` (key authorised by the owner; no sudo). Set XDG_CURRENT_DESKTOP=ubuntu:GNOME and the session bus address when using gsettings over SSH.
+
 ## Next steps
 
 See STATUS.md "Milestone 2". Start with the Hebcal-in-GJS spike (ADR 0003).
