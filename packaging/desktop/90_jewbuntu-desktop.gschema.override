@@ -13,6 +13,7 @@ picture-uri='file:///usr/share/backgrounds/Jewbuntu/Jewbuntu-star-blue.png'
 [org.gnome.desktop.interface:ubuntu]
 accent-color='blue'
 gtk-theme='Jewbuntu-Light'
+icon-theme='Jewbuntu'
 font-name='Inter 11'
 document-font-name='Inter 11'
 clock-show-weekday=true

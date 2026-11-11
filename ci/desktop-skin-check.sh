@@ -51,3 +51,6 @@ gresource list "$V" | grep -q "/org/gnome/shell/theme/gdm-dark.css" && echo "PAS
 L=$(XDG_CURRENT_DESKTOP=GNOME-Greeter:GNOME GSETTINGS_BACKEND=memory gsettings get org.gnome.login-screen logo)
 [ "$L" = "'/usr/share/jewbuntu/branding/jewbuntu-logo-text-dark.svg'" ] && [ -f /usr/share/jewbuntu/branding/jewbuntu-logo-text-dark.svg ] && echo "PASS: login screen logo is Jewbuntu's" || { echo "FAIL: logo $L"; exit 1; }
 grep -q "X-GNOME-Autostart-Phase" /etc/xdg/autostart/jewbuntu-migrate.desktop && { echo "FAIL: migrate autostart still sets a Phase"; exit 1; } || echo "PASS: migrate autostart runs under GNOME 50"
+
+[ "$(XDG_CURRENT_DESKTOP=ubuntu:GNOME GSETTINGS_BACKEND=memory gsettings get org.gnome.desktop.interface icon-theme)" = "'Jewbuntu'" ] && [ -f /usr/share/icons/Jewbuntu/index.theme ] && echo "PASS: Jewbuntu icon theme is the default" || { echo "FAIL: icon theme"; exit 1; }
+R=$(readlink -f /usr/share/icons/Jewbuntu/apps/scalable/org.gnome.Nautilus.svg); grep -q "Jewbuntu original" "$R" && echo "PASS: Files uses the original (non-Apple) icon" || { echo "FAIL: Files icon $R"; exit 1; }

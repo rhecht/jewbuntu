@@ -1,3 +1,12 @@
+jewbuntu (0.1.0~m1.15+26.04) resolute; urgency=medium
+
+  * Default icon theme: Jewbuntu Icons (rhecht/jewbuntu-icons, MacTahoe fork
+    with Apple-copied app icons replaced by original squircles).
+  * jewbuntu-shulgo: re-vendor rhecht/shulgo@d19761e (readable navy menu,
+    zmanim in one card, public key-request link).
+
+ -- Jewbuntu Developers <maintainers@jewbuntu.invalid>  Wed, 11 Nov 2026 15:30:00 -0500
+
 jewbuntu (0.1.0~m1.14+26.04) resolute; urgency=medium
 
   * Dark mode uses the purple Star of David wallpaper (light: blue).

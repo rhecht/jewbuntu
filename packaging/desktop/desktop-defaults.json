@@ -180,6 +180,12 @@
       "key": "blur",
       "value": "false",
       "why": "No rectangular blur box around the rounded dock"
+    },
+    {
+      "schema": "org.gnome.desktop.interface",
+      "key": "icon-theme",
+      "value": "'Jewbuntu'",
+      "why": "Jewbuntu Icons (Mac-style, original replacements for Apple-copied icons)"
     }
   ]
 }
