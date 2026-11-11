@@ -1,4 +1,5 @@
 [Unit]
+Before=graphical-session-pre.target
 Description=Migrate Jewbuntu user settings to the installed schema
 Documentation=file:///usr/share/doc/jewbuntu-core/README.md
 # Runs as the logged-in user, never as root. Safe to run repeatedly.
@@ -11,4 +12,7 @@ Nice=10
 TimeoutStartSec=30
 
 [Install]
-WantedBy=default.target
+# default.target: when the user manager starts (also headless/node).
+# graphical-session-pre.target: every graphical login, even if the user manager
+# stayed up (e.g. an SSH session was open) - so an upgrade is never missed.
+WantedBy=default.target graphical-session-pre.target

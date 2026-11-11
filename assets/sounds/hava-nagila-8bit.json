@@ -4,7 +4,7 @@
   "transcription_note": "Melody transcribed from memory of the traditional tune in D freygish (D Eb F# G A Bb C). Verify by ear and correct here if any note is off.",
   "tempo_bpm": 176,
   "sample_rate": 22050,
-  "peak_dbfs": -12,
+  "peak_dbfs": -6,
   "lead": {
     "wave": "pulse",
     "duty": 0.25,

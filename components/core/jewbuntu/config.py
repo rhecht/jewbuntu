@@ -48,7 +48,7 @@ DEFAULTS = {
     },
     "zmanim": {"preset": "standard"},
     "shulgo": {"enabled": False, "share_location": False, "favorites": []},
-    "sound": {"startup": {"enabled": True, "volume": 0.6}},
+    "sound": {"startup": {"enabled": True, "volume": 0.8}},
     # mode "weekly-fallback" until the calendar service exists; "calendar" afterwards.
     "quiet_schedule": {"enabled": False, "mode": "weekly-fallback"},
     "onboarding": {"completed": False, "completed_steps": []},

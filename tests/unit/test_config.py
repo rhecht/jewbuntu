@@ -101,7 +101,7 @@ class ConfigTests(IsolatedHome):
         self.assertEqual(raw["sound"]["startup"], {"enabled": False})
         self.assertEqual(raw["quiet_schedule"], {"enabled": True, "mode": "weekly-fallback"})
         self.assertEqual(raw["extra"], [1, 2])
-        self.assertEqual(config.load()["sound"]["startup"]["volume"], 0.6, "new key defaulted, not stored")
+        self.assertEqual(config.load()["sound"]["startup"]["volume"], 0.8, "new key defaulted, not stored")
         self.assertEqual(config.validate(config.load()), [])
 
     def test_interrupted_migration_leaves_original_intact(self):

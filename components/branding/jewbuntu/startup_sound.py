@@ -25,8 +25,8 @@ from pathlib import Path
 from . import config, paths
 
 SOUND_FILE = paths.SHARE_DIR / "sounds" / "jewbuntu-startup.wav"
-STREAM_VOLUME = 0.6  # default; stream volume relative to the system volume, which is never raised
-SINK_WAIT_S = 6  # PipeWire may start alongside us; give up quietly after this
+STREAM_VOLUME = 0.8  # default; stream volume relative to the system volume, which is never raised
+SINK_WAIT_S = 10  # audio may still be settling at login; give up quietly after this
 
 
 def boot_id():
@@ -131,9 +131,14 @@ def run(preview=False, sound_file=SOUND_FILE):
             return "skipped: already played this boot"
     if not Path(sound_file).exists():
         return f"skipped: {sound_file} missing"
+    # Audio comes up alongside the session (PipeWire, WirePlumber restoring the
+    # saved volume, and in VMs the SPICE agent syncing the host's mute state).
+    # Keep checking while there is no sink *or* it reads muted, so a transient
+    # state at login is not mistaken for the user's choice. A mute that persists
+    # past the deadline is respected.
     deadline = time.monotonic() + (0 if preview else SINK_WAIT_S)
     state = output_state()
-    while state == "none" and time.monotonic() < deadline:
+    while state in ("none", "muted") and time.monotonic() < deadline:
         time.sleep(0.5)
         state = output_state()
     if state == "muted":
@@ -149,10 +154,23 @@ def run(preview=False, sound_file=SOUND_FILE):
     return ("played" if ok else "failed") + f" ({detail})"
 
 
+def record(result):
+    """Keep the last decision so 'did it play, and why not?' is answerable (also logged to the journal)."""
+    try:
+        path = paths.state_dir() / "startup-sound.last"
+        path.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
+        path.write_text(f"{datetime.datetime.now().isoformat(timespec='seconds')} {result}\n")
+    except OSError:
+        pass
+
+
 def main(argv=None):
     argv = sys.argv[1:] if argv is None else argv
     preview = "--preview" in argv
     result = run(preview=preview)
+    if not preview:
+        record(result)
+        print(f"jewbuntu-startup-sound: {result}", file=sys.stderr)
     if "--verbose" in argv or preview:
         print(result)
     return 0

@@ -1,3 +1,16 @@
+jewbuntu (0.1.0~m1.4+26.04) resolute; urgency=medium
+
+  * Startup sound: keep waiting while audio is still settling at login
+    (no sink yet, or a transient mute) instead of skipping; log every
+    decision to the journal and ~/.local/state/jewbuntu/startup-sound.last;
+    louder default (peak -6 dBFS, stream 0.8 of system volume, which is
+    still never raised).
+  * Settings migration also runs at every graphical login, not only when
+    the user manager starts.
+  * Skin/defaults tools read Ubuntu-session defaults even over SSH.
+
+ -- Jewbuntu Developers <maintainers@jewbuntu.invalid>  Wed, 11 Nov 2026 18:00:00 -0500
+
 jewbuntu (0.1.0~m1.3+26.04) resolute; urgency=medium
 
   * Mac-style desktop defaults: floating, translucent, rounded dock with

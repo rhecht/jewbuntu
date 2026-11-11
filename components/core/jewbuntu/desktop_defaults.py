@@ -37,7 +37,12 @@ def load_manifest():
 def _gsettings(*args):
     if not shutil.which("gsettings"):
         return None
-    res = subprocess.run(["gsettings", *args], capture_output=True, text=True, timeout=5)
+    # Desktop-specific defaults (the :ubuntu sections Ubuntu and Jewbuntu use) only
+    # apply when XDG_CURRENT_DESKTOP names the session. It is unset over SSH or in
+    # cron, which would show upstream GNOME defaults instead of the real ones.
+    env = dict(os.environ)
+    env.setdefault("XDG_CURRENT_DESKTOP", "ubuntu:GNOME")
+    res = subprocess.run(["gsettings", *args], capture_output=True, text=True, timeout=5, env=env)
     return res.stdout.strip() if res.returncode == 0 else None
 
 

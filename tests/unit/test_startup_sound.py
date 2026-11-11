@@ -53,6 +53,15 @@ class StartupSoundTests(IsolatedHome):
             self.assertEqual(startup_sound.run(sound_file=self.wav), "skipped: startup sound is off")
             self.assertEqual(env.played, [])
 
+    def test_transient_mute_at_login_is_not_mistaken_for_user_choice(self):
+        states = iter(["none", "muted", "muted", "ok"])
+        with FakeEnv() as env:
+            startup_sound.SINK_WAIT_S = 5
+            startup_sound.time.sleep = lambda s: None
+            startup_sound.output_state = lambda: next(states, "ok")
+            self.assertTrue(startup_sound.run(sound_file=self.wav).startswith("played"))
+            self.assertEqual(len(env.played), 1)
+
     def test_muted_output_skips_for_whole_boot(self):
         with FakeEnv(state="muted") as env:
             self.assertEqual(startup_sound.run(sound_file=self.wav), "skipped: output muted")
