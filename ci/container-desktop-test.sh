@@ -12,7 +12,7 @@ docker run --rm -v "$DIST:/dist:ro" -v "$ROOT/ci/desktop-skin-check.sh:/skin-che
   apt-get update -qq
   START=$(date +%s)
   apt-get install -y -qq --no-install-recommends /dist/jewbuntu-core_*.deb /dist/jewbuntu-branding_*.deb \
-      /dist/jewbuntu-hebrew_*.deb /dist/jewbuntu-upgrade-tools_*.deb /dist/jewbuntu-desktop_*.deb $(ls /dist/jewbuntu-gnome_*.deb 2>/dev/null) > /tmp/apt.log 2>&1 \
+      /dist/jewbuntu-hebrew_*.deb /dist/jewbuntu-upgrade-tools_*.deb /dist/jewbuntu-desktop_*.deb $(ls /dist/jewbuntu-gnome_*.deb /dist/jewbuntu-skin_*.deb /dist/jewbuntu-jewish-service_*.deb 2>/dev/null) > /tmp/apt.log 2>&1 \
       || { tail -30 /tmp/apt.log; exit 1; }
   echo "installed in $(( $(date +%s) - START ))s; packages now: $(dpkg -l | grep -c ^ii)"
   grep -i "schema" /tmp/apt.log | grep -i -E "warn|error|ignor" || echo "no schema compile warnings in apt log"

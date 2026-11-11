@@ -24,7 +24,10 @@ import time
 
 from . import paths
 
-LOOK_EXTENSION = "jewbuntu-look@jewbuntu"
+# Extensions the skin needs, enabled per user by apply_skin() (appended, never replacing others).
+SKIN_EXTENSIONS = ["user-theme@gnome-shell-extensions.gcampax.github.com", "blur-my-shell@aunetx"]
+SKIN_THEME_DIR = paths.Path("/usr/share/themes/Jewbuntu-Light/gtk-4.0")
+LIBADWAITA_FILES = ["gtk.css", "gtk-dark.css", "assets", "windows-assets"]
 INPUT_SOURCES = ("org.gnome.desktop.input-sources", "sources")
 HEBREW = ("xkb", "il")
 
@@ -102,20 +105,31 @@ def restore(dry_run=False):
     return changed
 
 
-# --- extension -----------------------------------------------------------------
+# --- extensions -----------------------------------------------------------------
 
-def extension_state():
-    """'enabled', 'disabled' or 'missing' for the Jewbuntu look extension.
+def _extension_dirs(uuid):
+    return [paths.Path("/usr/share/gnome-shell/extensions") / uuid,
+            paths.Path.home() / ".local/share/gnome-shell/extensions" / uuid]
 
-    Uses the installed files and the enabled-extensions key rather than asking the
-    running shell, so it also works over SSH and before the shell has rescanned.
+
+def extension_state(uuid=None):
+    """'enabled', 'disabled' or 'missing' (all skin extensions when uuid is None: worst state wins).
+
+    Uses installed files and the enabled-extensions key rather than asking the running
+    shell, so it also works over SSH and before the shell has rescanned.
     """
-    dirs = [paths.Path("/usr/share/gnome-shell/extensions") / LOOK_EXTENSION,
-            paths.Path.home() / ".local/share/gnome-shell/extensions" / LOOK_EXTENSION]
-    if not any(d.is_dir() for d in dirs):
-        return "missing"
+    uuids = [uuid] if uuid else SKIN_EXTENSIONS
     enabled = _parse_list(_gsettings("get", "org.gnome.shell", "enabled-extensions"))
-    return "enabled" if LOOK_EXTENSION in enabled else "disabled"
+    states = []
+    for u in uuids:
+        if not any(d.is_dir() for d in _extension_dirs(u)):
+            states.append("missing")
+        else:
+            states.append("enabled" if u in enabled else "disabled")
+    for worst in ("missing", "disabled"):
+        if worst in states:
+            return worst
+    return "enabled"
 
 
 def _parse_list(text):
@@ -127,16 +141,72 @@ def _parse_list(text):
         return []
 
 
-def _set_extension(enable):
-    """Enable/disable via the enabled-extensions key (works before the shell has rescanned)."""
+def _set_extensions(uuids, enable):
     enabled = _parse_list(_gsettings("get", "org.gnome.shell", "enabled-extensions"))
-    if enable and LOOK_EXTENSION not in enabled:
-        enabled.append(LOOK_EXTENSION)
-    elif not enable and LOOK_EXTENSION in enabled:
-        enabled.remove(LOOK_EXTENSION)
-    else:
-        return
-    _gsettings("set", "org.gnome.shell", "enabled-extensions", "[" + ", ".join(f"'{e}'" for e in enabled) + "]")
+    before = list(enabled)
+    for u in uuids:
+        if enable and u not in enabled:
+            enabled.append(u)
+        elif not enable and u in enabled:
+            enabled.remove(u)
+    if enabled != before:
+        _gsettings("set", "org.gnome.shell", "enabled-extensions", "[" + ", ".join(f"'{e}'" for e in enabled) + "]")
+
+
+# --- libadwaita (GTK4) apps ----------------------------------------------------------
+
+def _gtk4_dir():
+    return paths.Path(os.environ.get("XDG_CONFIG_HOME") or paths.Path.home() / ".config") / "gtk-4.0"
+
+
+def libadwaita_applied():
+    css = _gtk4_dir() / "gtk.css"
+    try:
+        return SKIN_THEME_DIR.is_dir() and css.read_bytes() == (SKIN_THEME_DIR / "gtk.css").read_bytes()
+    except OSError:
+        return False
+
+
+def _libadwaita_apply(state):
+    """Copy the skin's GTK4 files into ~/.config/gtk-4.0, backing up whatever was there."""
+    if not SKIN_THEME_DIR.is_dir() or libadwaita_applied():
+        return None
+    target = _gtk4_dir()
+    backup = paths.state_dir() / "gtk-4.0-backup"
+    if "gtk4_backup" not in state:
+        backup.mkdir(parents=True, exist_ok=True, mode=0o700)
+        saved = []
+        for name in LIBADWAITA_FILES:
+            src = target / name
+            if src.exists() or src.is_symlink():
+                shutil.move(str(src), str(backup / name))
+                saved.append(name)
+        state["gtk4_backup"] = {"dir": str(backup), "files": saved}
+    target.mkdir(parents=True, exist_ok=True)
+    for name in LIBADWAITA_FILES:
+        src = SKIN_THEME_DIR / name
+        dst = target / name
+        if src.is_dir():
+            shutil.copytree(src, dst, dirs_exist_ok=True)
+        elif src.exists():
+            shutil.copy2(src, dst)
+    return "libadwaita apps themed (~/.config/gtk-4.0; previous files saved)"
+
+
+def _libadwaita_undo(state):
+    info = state.pop("gtk4_backup", None)
+    if not info:
+        return None
+    target = _gtk4_dir()
+    for name in LIBADWAITA_FILES:
+        dst = target / name
+        if dst.is_dir() and not dst.is_symlink():
+            shutil.rmtree(dst)
+        elif dst.exists() or dst.is_symlink():
+            dst.unlink()
+    for name in info["files"]:
+        shutil.move(str(paths.Path(info["dir"]) / name), str(target / name))
+    return "libadwaita apps: previous ~/.config/gtk-4.0 files restored"
 
 
 # --- skin apply / undo -------------------------------------------------------------
@@ -164,7 +234,9 @@ def pending_changes():
     """What apply_skin() would change for this user (empty list = already Jewbuntu)."""
     changes = [f"{r['why']}" for r in status() if r["schema_installed"] and not r["matches_jewbuntu"]]
     if extension_state() == "disabled":
-        changes.append("Mac-style top bar (clock on the right, translucent)")
+        changes.append("Glass dock and top bar (Blur my Shell) and the Jewbuntu shell theme (User Themes)")
+    if SKIN_THEME_DIR.is_dir() and not libadwaita_applied():
+        changes.append("Jewbuntu Skin for GTK4/libadwaita apps")
     return changes
 
 
@@ -174,12 +246,16 @@ def apply_skin():
         state["backup"] = {
             "taken": time.strftime("%Y-%m-%dT%H:%M:%S%z"),
             "keys": [{"schema": r["schema"], "key": r["key"], "value": r["current"]} for r in status() if r["schema_installed"]],
-            "extension_was": extension_state(),
+            "extensions_enabled_before": [u for u in SKIN_EXTENSIONS if extension_state(u) == "enabled"],
         }
     changed = restore()
-    if extension_state() == "disabled":
-        _set_extension(True)
-        changed.append(f"enabled {LOOK_EXTENSION} (takes effect at next login)")
+    to_enable = [u for u in SKIN_EXTENSIONS if extension_state(u) == "disabled"]
+    if to_enable:
+        _set_extensions(to_enable, True)
+        changed.append(f"enabled {', '.join(to_enable)} (log out and in if not visible yet)")
+    note = _libadwaita_apply(state)
+    if note:
+        changed.append(note)
     state.update({"applied": True, "prompted": True, "applied_at": time.strftime("%Y-%m-%dT%H:%M:%S%z")})
     _write_state(state)
     return changed
@@ -195,9 +271,14 @@ def undo_skin():
         if item["value"] is not None:
             _gsettings("set", item["schema"], item["key"], item["value"])
             changed.append(f"{item['schema']} {item['key']} -> {item['value']}")
-    if backup.get("extension_was") in ("disabled", "missing"):
-        _set_extension(False)
-        changed.append(f"disabled {LOOK_EXTENSION}")
+    was = set(backup.get("extensions_enabled_before", []))
+    off = [u for u in SKIN_EXTENSIONS if u not in was]
+    if off:
+        _set_extensions(off, False)
+        changed.append(f"disabled {', '.join(off)}")
+    note = _libadwaita_undo(state)
+    if note:
+        changed.append(note)
     state.update({"applied": False, "undone_at": time.strftime("%Y-%m-%dT%H:%M:%S%z")})
     state.pop("backup")
     state["previous_backup"] = backup

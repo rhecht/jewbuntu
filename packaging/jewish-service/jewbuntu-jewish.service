@@ -1,0 +1,18 @@
+[Unit]
+Description=Jewbuntu Jewish calendar service (Hebrew date, zmanim, holidays)
+Documentation=file:///usr/share/doc/jewbuntu-jewish-service/
+# Per-user, no root, no network. Started on demand over D-Bus by the Hub or panel.
+
+[Service]
+Type=dbus
+BusName=org.jewbuntu.Jewish1
+ExecStart=/usr/libexec/jewbuntu/jewbuntu-jewish-service
+Restart=on-failure
+RestartSec=5
+Nice=5
+MemoryHigh=150M
+MemoryMax=250M
+# Hardening that does not affect reading ~/.config/jewbuntu.
+NoNewPrivileges=yes
+RestrictAddressFamilies=AF_UNIX
+LockPersonality=yes

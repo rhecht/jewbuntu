@@ -1,8 +1,12 @@
 {
   "uuid": "jewbuntu-look@jewbuntu",
   "name": "Jewbuntu Look",
-  "description": "Mac-style top bar for Jewbuntu: clock and date on the right, translucent bar. Disabling it returns the stock Ubuntu top bar.",
-  "shell-version": ["50"],
-  "session-modes": ["user"],
-  "version": 1
+  "description": "Reserved for Jewbuntu panel integration (Jewish calendar indicator, later). Currently changes nothing.",
+  "shell-version": [
+    "50"
+  ],
+  "session-modes": [
+    "user"
+  ],
+  "version": 2
 }

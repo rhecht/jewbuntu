@@ -1,0 +1,9 @@
+components/jewish-service/src/day.js usr/share/jewbuntu/jewish-service/src/
+components/jewish-service/src/settings.js usr/share/jewbuntu/jewish-service/src/
+components/jewish-service/src/service.js usr/share/jewbuntu/jewish-service/src/
+components/jewish-service/vendor/hebcal.bundle.js usr/share/jewbuntu/jewish-service/vendor/
+components/jewish-service/vendor/README.md usr/share/doc/jewbuntu-jewish-service/
+components/jewish-service/tests/fixtures/README.md usr/share/doc/jewbuntu-jewish-service/fixtures/
+packaging/jewish-service/org.jewbuntu.Jewish1.service usr/share/dbus-1/services/
+packaging/jewish-service/jewbuntu-jewish.service usr/lib/systemd/user/
+packaging/jewish-service/jewbuntu-jewish-service usr/libexec/jewbuntu/

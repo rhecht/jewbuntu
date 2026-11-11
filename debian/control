@@ -53,11 +53,14 @@ Architecture: all
 Depends: jewbuntu-core (= ${binary:Version}),
          jewbuntu-branding (= ${binary:Version}),
          jewbuntu-hebrew (= ${binary:Version}),
+         jewbuntu-skin,
          ubuntu-desktop-minimal,
          fonts-inter,
+         gnome-shell-extension-user-theme,
          ${misc:Depends}
 Recommends: jewbuntu-upgrade-tools (= ${binary:Version}),
             jewbuntu-gnome (= ${binary:Version}),
+            jewbuntu-jewish-service (= ${binary:Version}),
             zenity
 Description: Jewbuntu desktop (metapackage and Mac-inspired defaults)
  Selects the tested Jewbuntu desktop components on top of Ubuntu's own
@@ -71,11 +74,23 @@ Package: jewbuntu-gnome
 Architecture: all
 Depends: ${misc:Depends}
 Enhances: gnome-shell
-Description: Jewbuntu GNOME Shell integration (Mac-style top bar)
- A small GNOME Shell extension that moves the clock to the right of the top
- bar and makes the bar translucent. It is declared only for tested GNOME
- Shell versions (currently 50); on any other version GNOME disables it and
- the stock Ubuntu top bar is used. Nothing else depends on it.
+Description: Jewbuntu GNOME Shell integration (Blur my Shell, panel hooks)
+ Ships Blur my Shell (v78, GPL-3.0, unmodified) system-wide for the Jewbuntu
+ Skin's frosted-glass dock and top bar, and the Jewbuntu Look extension
+ reserved for the Jewish calendar indicator. Extensions only run on GNOME
+ Shell versions they declare; on others the desktop falls back to stock.
  .
  Later milestones add the Jewish calendar indicator here; calendar data and
  logic stay in a separate service so the desktop never depends on this.
+
+Package: jewbuntu-jewish-service
+Architecture: all
+Depends: gjs (>= 1.80), tzdata, ${misc:Depends}
+Description: Jewbuntu Jewish calendar service
+ Per-user D-Bus service (org.jewbuntu.Jewish1) providing the Hebrew date with
+ sunset rollover, labelled zmanim presets, candle lighting and havdalah,
+ parsha, holidays, Rosh Chodesh and Omer for the user's chosen location, fully
+ offline. Calculations use the Hebcal library (bundled, GPL-2.0-or-later).
+ .
+ Started on demand; recomputes only at real boundaries (zmanim, midnight,
+ settings changes, resume). It does not use the network.

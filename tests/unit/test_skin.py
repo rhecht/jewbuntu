@@ -34,7 +34,11 @@ class SkinTests(IsolatedHome):
 
     def _install(self, fake, ext="disabled"):
         dd._gsettings = fake
-        dd.extension_state = lambda: ("enabled" if "jewbuntu-look@jewbuntu" in fake("get", "org.gnome.shell", "enabled-extensions") else ext)
+        def state(uuid=None):
+            on = fake("get", "org.gnome.shell", "enabled-extensions")
+            uuids = [uuid] if uuid else dd.SKIN_EXTENSIONS
+            return "enabled" if all(u in on for u in uuids) else ext
+        dd.extension_state = state
 
     def test_float_and_spacing_tolerant_compare(self):
         self.assertTrue(dd._same("0.34999999999999998", "0.35"))
@@ -60,13 +64,38 @@ class SkinTests(IsolatedHome):
         dd.apply_skin()
         self.assertNotIn(dock, fake.user, "reset to the Jewbuntu default")
         self.assertIn("('xkb', 'il')", fake.user[dd.INPUT_SOURCES])
-        self.assertIn("jewbuntu-look@jewbuntu", fake.user[("org.gnome.shell", "enabled-extensions")])
+        for u in dd.SKIN_EXTENSIONS:
+            self.assertIn(u, fake.user[("org.gnome.shell", "enabled-extensions")])
         self.assertEqual(dd.pending_changes(), [])
         dd.apply_skin()  # re-apply must keep the ORIGINAL backup
         dd.undo_skin()
         self.assertEqual(fake.user[dock], "'LEFT'")
         self.assertEqual(fake.user[dd.INPUT_SOURCES], "[('xkb', 'us')]")
-        self.assertNotIn("jewbuntu-look@jewbuntu", fake.user[("org.gnome.shell", "enabled-extensions")])
+        for u in dd.SKIN_EXTENSIONS:
+            self.assertNotIn(u, fake.user[("org.gnome.shell", "enabled-extensions")])
+
+    def test_libadwaita_files_backed_up_and_restored(self):
+        import os
+        theme = self.tmp / "theme-gtk4"
+        (theme / "assets").mkdir(parents=True)
+        (theme / "gtk.css").write_text("/* jewbuntu */")
+        (theme / "assets" / "a.svg").write_text("<svg/>")
+        gtk4 = self.tmp / ".config" / "gtk-4.0"
+        gtk4.mkdir(parents=True)
+        (gtk4 / "gtk.css").write_text("/* mine */")
+        saved = dd.SKIN_THEME_DIR
+        dd.SKIN_THEME_DIR = theme
+        try:
+            self._install(FakeGSettings())
+            dd.apply_skin()
+            self.assertEqual((gtk4 / "gtk.css").read_text(), "/* jewbuntu */")
+            self.assertTrue((gtk4 / "assets" / "a.svg").exists())
+            self.assertTrue(dd.libadwaita_applied())
+            dd.undo_skin()
+            self.assertEqual((gtk4 / "gtk.css").read_text(), "/* mine */")
+            self.assertFalse((gtk4 / "assets").exists())
+        finally:
+            dd.SKIN_THEME_DIR = saved
 
     def test_prompt_asks_once_and_skips_when_nothing_to_do(self):
         fake = FakeGSettings()

@@ -4,14 +4,15 @@
 # Ubuntu session. The plain "GNOME" session ignores :ubuntu sections and stays stock.
 
 [org.gnome.desktop.background:ubuntu]
-picture-uri='file:///usr/share/backgrounds/jewbuntu/jewbuntu-dawn.svg'
-picture-uri-dark='file:///usr/share/backgrounds/jewbuntu/jewbuntu-dusk.svg'
+picture-uri='file:///usr/share/backgrounds/Jewbuntu/Jewbuntu-day.jpeg'
+picture-uri-dark='file:///usr/share/backgrounds/Jewbuntu/Jewbuntu-night.jpeg'
 
 [org.gnome.desktop.screensaver:ubuntu]
-picture-uri='file:///usr/share/backgrounds/jewbuntu/jewbuntu-dusk.svg'
+picture-uri='file:///usr/share/backgrounds/Jewbuntu/Jewbuntu-night.jpeg'
 
 [org.gnome.desktop.interface:ubuntu]
 accent-color='blue'
+gtk-theme='Jewbuntu-Light'
 font-name='Inter 11'
 document-font-name='Inter 11'
 clock-show-weekday=true
@@ -41,8 +42,12 @@ background-opacity=0.35
 custom-background-color=true
 background-color='#e8ecf4'
 running-indicator-style='DOTS'
-dash-max-icon-size=52
+dash-max-icon-size=56
 show-apps-at-top=false
 show-trash=true
 show-mounts=false
 click-action='minimize-or-previews'
+
+# Shell theme from the Jewbuntu Skin (needs the User Themes extension, enabled by 'jewbuntu skin apply').
+[org.gnome.shell.extensions.user-theme:ubuntu]
+name='Jewbuntu-Light'

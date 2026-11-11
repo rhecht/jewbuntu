@@ -1,0 +1,4 @@
+[D-BUS Service]
+Name=org.jewbuntu.Jewish1
+Exec=/usr/libexec/jewbuntu/jewbuntu-jewish-service
+SystemdService=jewbuntu-jewish.service

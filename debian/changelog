@@ -1,3 +1,15 @@
+jewbuntu (0.1.0~m1.6+26.04) resolute; urgency=medium
+
+  * Desktop look follows the Jewbuntu Skin (fork of MacTahoe, packaged as
+    jewbuntu-skin): Jewbuntu GTK and shell theme, glass dock and top bar via
+    Blur my Shell v78 (vendored, unmodified, in jewbuntu-gnome), clock kept
+    centred, skin wallpapers as defaults, dock icons 56 px.
+  * 'jewbuntu skin apply' enables User Themes and Blur my Shell and themes
+    libadwaita apps (~/.config/gtk-4.0) with backup; 'undo' reverses all.
+  * New jewbuntu-jewish-service: offline Hebcal calendar D-Bus service.
+
+ -- Jewbuntu Developers <maintainers@jewbuntu.invalid>  Wed, 11 Nov 2026 14:10:00 -0500
+
 jewbuntu (0.1.0~m1.5+26.04) resolute; urgency=medium
 
   * Fix future-dated changelog entries: packaged file mtimes come from the

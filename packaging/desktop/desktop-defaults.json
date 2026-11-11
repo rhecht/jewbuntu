@@ -4,19 +4,19 @@
     {
       "schema": "org.gnome.desktop.background",
       "key": "picture-uri",
-      "value": "'file:///usr/share/backgrounds/jewbuntu/jewbuntu-dawn.svg'",
+      "value": "'file:///usr/share/backgrounds/Jewbuntu/Jewbuntu-day.jpeg'",
       "why": "Jewbuntu wallpaper (light)"
     },
     {
       "schema": "org.gnome.desktop.background",
       "key": "picture-uri-dark",
-      "value": "'file:///usr/share/backgrounds/jewbuntu/jewbuntu-dusk.svg'",
+      "value": "'file:///usr/share/backgrounds/Jewbuntu/Jewbuntu-night.jpeg'",
       "why": "Jewbuntu wallpaper (dark)"
     },
     {
       "schema": "org.gnome.desktop.screensaver",
       "key": "picture-uri",
-      "value": "'file:///usr/share/backgrounds/jewbuntu/jewbuntu-dusk.svg'",
+      "value": "'file:///usr/share/backgrounds/Jewbuntu/Jewbuntu-night.jpeg'",
       "why": "Lock screen background"
     },
     {
@@ -70,7 +70,7 @@
     {
       "schema": "org.gnome.shell.extensions.dash-to-dock",
       "key": "dash-max-icon-size",
-      "value": "52",
+      "value": "56",
       "why": "Dock icon size"
     },
     {
@@ -174,6 +174,18 @@
       "key": "show-mounts",
       "value": "false",
       "why": "No drive icons in the dock"
+    },
+    {
+      "schema": "org.gnome.desktop.interface",
+      "key": "gtk-theme",
+      "value": "'Jewbuntu-Light'",
+      "why": "Jewbuntu Skin window theme (traffic-light buttons, glass)"
+    },
+    {
+      "schema": "org.gnome.shell.extensions.user-theme",
+      "key": "name",
+      "value": "'Jewbuntu-Light'",
+      "why": "Jewbuntu Skin top bar and shell theme"
     }
   ]
 }

@@ -1,0 +1,3 @@
+#!/bin/sh
+# Launch the Jewbuntu Jewish calendar D-Bus service.
+exec /usr/bin/gjs -m /usr/share/jewbuntu/jewish-service/src/service.js
