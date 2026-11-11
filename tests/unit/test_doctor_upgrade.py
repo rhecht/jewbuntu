@@ -117,6 +117,15 @@ class PackagingConsistencyTests(unittest.TestCase):
         deb_version = first.split("(")[1].split(")")[0]
         self.assertTrue(deb_version.startswith(__version__ + "+"), f"{deb_version} vs {__version__}")
 
+    def test_changelog_dates_not_in_future(self):
+        """Packaged mtimes come from the changelog date; a future date breaks fontconfig caches."""
+        import email.utils
+        import time
+        for line in (REPO / "debian/changelog").read_text().splitlines():
+            if line.startswith(" -- "):
+                stamp = email.utils.parsedate_to_datetime(line.split(">  ", 1)[1]).timestamp()
+                self.assertLessEqual(stamp, time.time() + 60, f"future changelog date: {line}")
+
     def test_defaults_manifest_matches_overrides(self):
         manifest = json.loads((REPO / "packaging/desktop/desktop-defaults.json").read_text())["keys"]
         overrides = {}

@@ -1,3 +1,12 @@
+jewbuntu (0.1.0~m1.5+26.04) resolute; urgency=medium
+
+  * Fix future-dated changelog entries: packaged file mtimes come from the
+    changelog date (reproducible builds), so future dates made fontconfig
+    warn "mtime in the future" and could hide new fonts. A unit test now
+    rejects changelog dates later than the build time.
+
+ -- Jewbuntu Developers <maintainers@jewbuntu.invalid>  Wed, 11 Nov 2026 13:22:00 -0500
+
 jewbuntu (0.1.0~m1.4+26.04) resolute; urgency=medium
 
   * Startup sound: keep waiting while audio is still settling at login
@@ -9,7 +18,7 @@ jewbuntu (0.1.0~m1.4+26.04) resolute; urgency=medium
     the user manager starts.
   * Skin/defaults tools read Ubuntu-session defaults even over SSH.
 
- -- Jewbuntu Developers <maintainers@jewbuntu.invalid>  Wed, 11 Nov 2026 18:00:00 -0500
+ -- Jewbuntu Developers <maintainers@jewbuntu.invalid>  Wed, 11 Nov 2026 13:15:00 -0500
 
 jewbuntu (0.1.0~m1.3+26.04) resolute; urgency=medium
 
@@ -23,7 +32,7 @@ jewbuntu (0.1.0~m1.3+26.04) resolute; urgency=medium
     so existing Ubuntu accounts can adopt the Jewbuntu look (including the
     Hebrew keyboard, appended to existing layouts) with a saved backup.
 
- -- Jewbuntu Developers <maintainers@jewbuntu.invalid>  Wed, 11 Nov 2026 16:00:00 -0500
+ -- Jewbuntu Developers <maintainers@jewbuntu.invalid>  Wed, 11 Nov 2026 13:00:00 -0500
 
 jewbuntu (0.1.0~m1.2+26.04) resolute; urgency=medium
 
@@ -32,7 +41,7 @@ jewbuntu (0.1.0~m1.2+26.04) resolute; urgency=medium
     jewbuntu-migrate.service, with a verified backup of schema 1.
   * Startup sound honours the per-user volume (stream-relative only).
 
- -- Jewbuntu Developers <maintainers@jewbuntu.invalid>  Wed, 11 Nov 2026 14:00:00 -0500
+ -- Jewbuntu Developers <maintainers@jewbuntu.invalid>  Wed, 11 Nov 2026 11:50:00 -0500
 
 jewbuntu (0.1.0~m1.1+26.04) resolute; urgency=medium
 
@@ -40,4 +49,4 @@ jewbuntu (0.1.0~m1.1+26.04) resolute; urgency=medium
     export/import/reset), jewbuntu-branding (wallpapers, startup jingle),
     jewbuntu-hebrew, jewbuntu-upgrade-tools, jewbuntu-desktop.
 
- -- Jewbuntu Developers <maintainers@jewbuntu.invalid>  Wed, 11 Nov 2026 12:00:00 -0500
+ -- Jewbuntu Developers <maintainers@jewbuntu.invalid>  Wed, 11 Nov 2026 11:40:00 -0500
