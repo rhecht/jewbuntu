@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 3840 2160" width="3840" height="2160">
+  <!-- Jewbuntu "Dawn" wallpaper (light). Original artwork, no text or symbols. -->
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0.35" y2="1">
+      <stop offset="0" stop-color="#eef3fb"/>
+      <stop offset="0.6" stop-color="#dfe7f7"/>
+      <stop offset="1" stop-color="#e7e0f4"/>
+    </linearGradient>
+    <linearGradient id="waveA" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#4f8de0" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#7aaaf0" stop-opacity="0.4"/>
+    </linearGradient>
+    <linearGradient id="waveB" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#9a8ad8" stop-opacity="0.45"/>
+      <stop offset="1" stop-color="#b9a8ea" stop-opacity="0.25"/>
+    </linearGradient>
+    <linearGradient id="waveC" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#2f6cc4" stop-opacity="0.7"/>
+      <stop offset="1" stop-color="#3f7ad0" stop-opacity="0.65"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#c79a3e" stop-opacity="0"/>
+      <stop offset="0.5" stop-color="#c79a3e" stop-opacity="0.85"/>
+      <stop offset="1" stop-color="#c79a3e" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <rect width="3840" height="2160" fill="url(#sky)"/>
+  <path d="M0 1380 C 700 1180, 1300 1320, 1950 1240 S 3200 1020, 3840 1120 L3840 2160 L0 2160 Z" fill="url(#waveB)"/>
+  <path d="M0 1560 C 820 1400, 1500 1600, 2200 1480 S 3300 1330, 3840 1420 L3840 2160 L0 2160 Z" fill="url(#waveA)"/>
+  <path d="M0 1780 C 900 1660, 1700 1840, 2500 1720 S 3450 1640, 3840 1700 L3840 2160 L0 2160 Z" fill="url(#waveC)"/>
+  <path d="M260 1500 C 1000 1330, 1650 1470, 2280 1390 S 3250 1220, 3600 1270" fill="none" stroke="url(#gold)" stroke-width="5" stroke-linecap="round"/>
+</svg>

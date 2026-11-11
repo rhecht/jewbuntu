@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Jewbuntu startup sound
+Comment=Plays the Jewbuntu jingle once per boot at login (turn off with: jewbuntu startup-sound off)
+Exec=/usr/bin/jewbuntu-startup-sound
+NoDisplay=true
+X-GNOME-Autostart-enabled=true
+X-GNOME-AutoRestart=false
+X-GNOME-Autostart-Delay=2

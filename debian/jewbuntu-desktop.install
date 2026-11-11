@@ -1,0 +1,2 @@
+packaging/desktop/90_jewbuntu-desktop.gschema.override usr/share/glib-2.0/schemas/
+packaging/desktop/desktop-defaults.json usr/share/jewbuntu/

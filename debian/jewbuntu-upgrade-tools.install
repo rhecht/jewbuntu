@@ -1,0 +1,2 @@
+components/upgrade-tools/jewbuntu/upgrade.py usr/lib/jewbuntu/python/jewbuntu/
+components/upgrade-tools/jewbuntu/repo.py usr/lib/jewbuntu/python/jewbuntu/

@@ -1,0 +1,12 @@
+#!/usr/bin/python3
+"""Launcher for the jewbuntu CLI (private Python package, no bytecode writes into /usr)."""
+import os
+import sys
+
+sys.dont_write_bytecode = True
+_src = os.path.join(os.path.dirname(os.path.realpath(__file__)), "..", "components", "core")
+sys.path.insert(0, _src if os.path.isdir(_src) else "/usr/lib/jewbuntu/python")
+
+from jewbuntu.cli import main  # noqa: E402
+
+sys.exit(main())

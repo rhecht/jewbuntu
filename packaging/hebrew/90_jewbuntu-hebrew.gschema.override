@@ -1,0 +1,6 @@
+# Jewbuntu Hebrew defaults: English (US) plus Hebrew keyboard layouts.
+# Users who already chose input sources keep their own choice.
+# Switch with Super+Space (GNOME default).
+
+[org.gnome.desktop.input-sources:ubuntu]
+sources=[('xkb', 'us'), ('xkb', 'il')]

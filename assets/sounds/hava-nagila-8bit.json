@@ -1,0 +1,33 @@
+{
+  "title": "Jewbuntu startup jingle - 8-bit Hava Nagila",
+  "about": "Original chiptune arrangement of the opening phrase of the traditional melody. Edit the notes here, then run 'make sounds' (or python3 assets/sounds/synth.py ...) to re-render.",
+  "transcription_note": "Melody transcribed from memory of the traditional tune in D freygish (D Eb F# G A Bb C). Verify by ear and correct here if any note is off.",
+  "tempo_bpm": 176,
+  "sample_rate": 22050,
+  "peak_dbfs": -12,
+  "lead": {
+    "wave": "pulse",
+    "duty": 0.25,
+    "max_harmonics": 14,
+    "attack_ms": 10,
+    "release_ms": 45,
+    "final_release_ms": 320,
+    "notes": [
+      ["A4", 1.5, "Ha-"], ["A4", 0.5, "va"], ["C5", 0.5, "na-"], ["Bb4", 0.5, "gi-"], ["A4", 1.0, "la"],
+      ["A4", 1.5, "ha-"], ["A4", 0.5, "va"], ["C5", 0.5, "na-"], ["Bb4", 0.5, "gi-"], ["A4", 1.0, "la"],
+      ["G4", 0.5, "ve-"], ["F#4", 0.5, "nis-"], ["Eb4", 0.5, "me-"], ["D4", 1.5, "cha"]
+    ]
+  },
+  "bass": {
+    "wave": "triangle",
+    "gain": 0.55,
+    "attack_ms": 6,
+    "release_ms": 60,
+    "final_release_ms": 320,
+    "notes": [
+      ["D3", 1.0], ["A2", 1.0], ["D3", 1.0], ["A2", 1.0],
+      ["D3", 1.0], ["A2", 1.0], ["D3", 1.0], ["A2", 1.0],
+      ["G2", 1.5], ["D2", 1.5]
+    ]
+  }
+}

@@ -1,0 +1,9 @@
+components/branding/jewbuntu/startup_sound.py usr/lib/jewbuntu/python/jewbuntu/
+bin/jewbuntu-startup-sound usr/bin/
+build/jewbuntu-startup.wav usr/share/jewbuntu/sounds/
+assets/sounds/hava-nagila-8bit.json usr/share/jewbuntu/sounds/
+assets/sounds/PROVENANCE.md usr/share/jewbuntu/sounds/
+assets/wallpapers/jewbuntu-dawn.svg usr/share/backgrounds/jewbuntu/
+assets/wallpapers/jewbuntu-dusk.svg usr/share/backgrounds/jewbuntu/
+packaging/branding/jewbuntu-wallpapers.xml usr/share/gnome-background-properties/
+packaging/branding/jewbuntu-startup-sound.desktop etc/xdg/autostart/

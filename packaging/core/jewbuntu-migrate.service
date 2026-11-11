@@ -1,0 +1,14 @@
+[Unit]
+Description=Migrate Jewbuntu user settings to the installed schema
+Documentation=file:///usr/share/doc/jewbuntu-core/README.md
+# Runs as the logged-in user, never as root. Safe to run repeatedly.
+# Exits immediately when no settings file exists yet.
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/jewbuntu config migrate --quiet
+Nice=10
+TimeoutStartSec=30
+
+[Install]
+WantedBy=default.target

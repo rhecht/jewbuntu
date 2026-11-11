@@ -1,0 +1,20 @@
+{
+  "about": "Desktop keys Jewbuntu sets as vendor defaults (90_jewbuntu-*.gschema.override). 'jewbuntu defaults restore' resets only these keys. Values use gsettings 'get' formatting.",
+  "keys": [
+    {"schema": "org.gnome.desktop.background", "key": "picture-uri", "value": "'file:///usr/share/backgrounds/jewbuntu/jewbuntu-dawn.svg'", "why": "Jewbuntu wallpaper (light)"},
+    {"schema": "org.gnome.desktop.background", "key": "picture-uri-dark", "value": "'file:///usr/share/backgrounds/jewbuntu/jewbuntu-dusk.svg'", "why": "Jewbuntu wallpaper (dark)"},
+    {"schema": "org.gnome.desktop.screensaver", "key": "picture-uri", "value": "'file:///usr/share/backgrounds/jewbuntu/jewbuntu-dusk.svg'", "why": "Lock screen background"},
+    {"schema": "org.gnome.desktop.interface", "key": "accent-color", "value": "'blue'", "why": "Blue accent"},
+    {"schema": "org.gnome.desktop.wm.preferences", "key": "button-layout", "value": "'close,minimize,maximize:appmenu'", "why": "Mac-style window buttons on the left"},
+    {"schema": "org.gnome.mutter", "key": "center-new-windows", "value": "true", "why": "Open new windows centred"},
+    {"schema": "org.gnome.desktop.peripherals.touchpad", "key": "tap-to-click", "value": "true", "why": "Tap to click"},
+    {"schema": "org.gnome.shell.extensions.dash-to-dock", "key": "dock-position", "value": "'BOTTOM'", "why": "Dock at the bottom"},
+    {"schema": "org.gnome.shell.extensions.dash-to-dock", "key": "extend-height", "value": "false", "why": "Compact centred dock"},
+    {"schema": "org.gnome.shell.extensions.dash-to-dock", "key": "dock-fixed", "value": "false", "why": "Dock hides when windows overlap"},
+    {"schema": "org.gnome.shell.extensions.dash-to-dock", "key": "intellihide", "value": "true", "why": "Dock hides when windows overlap"},
+    {"schema": "org.gnome.shell.extensions.dash-to-dock", "key": "dash-max-icon-size", "value": "48", "why": "Dock icon size"},
+    {"schema": "org.gnome.shell.extensions.dash-to-dock", "key": "show-apps-at-top", "value": "false", "why": "App grid button at the end of the dock"},
+    {"schema": "org.gnome.shell.extensions.dash-to-dock", "key": "click-action", "value": "'minimize-or-previews'", "why": "Click a running app to minimise or preview"},
+    {"schema": "org.gnome.desktop.input-sources", "key": "sources", "value": "[('xkb', 'us'), ('xkb', 'il')]", "why": "English and Hebrew keyboards (jewbuntu-hebrew)"}
+  ]
+}

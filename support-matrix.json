@@ -1,0 +1,49 @@
+{
+  "matrix_format": 1,
+  "updated": "2026-11-11",
+  "policy": "Only claims backed by recorded tests appear as 'pass'. See docs/support-policy.md.",
+  "releases": [
+    {
+      "ubuntu": "26.04",
+      "codename": "resolute",
+      "point_release_tested": "26.04.1",
+      "architectures": {
+        "amd64": "target",
+        "arm64": "development-checks-only"
+      },
+      "gnome_shell_majors": ["50"],
+      "jewbuntu_series": "0.1",
+      "status": "in-development",
+      "channels": ["testing"],
+      "ubuntu_standard_support_end": "2031-04",
+      "ubuntu_standard_support_end_note": "Per Canonical's 5-year LTS standard support policy; re-verify against ubuntu.com/about/release-cycle.",
+      "runtime_dependencies": {
+        "python3": "3.14",
+        "gjs": "1.88",
+        "gnome-shell": "50.1"
+      },
+      "tests": {
+        "package_build": "see docs/test-results/",
+        "container_install_upgrade_remove": "see docs/test-results/",
+        "vm_install": "not-tested",
+        "graphical_session": "not-tested",
+        "physical_hp_2012": "not-tested",
+        "physical_macbookpro_2017": "not-tested",
+        "release_upgrade_from_previous_lts": "not-applicable (first supported base)"
+      },
+      "known_limitations": [
+        "Milestone 1: Jewish service, Hub and GNOME extension are not built yet.",
+        "No hosted APT repository or signing key yet; packages are local artifacts.",
+        "Startup sound quiet-schedule uses a weekly fallback window until the calendar service exists."
+      ]
+    }
+  ],
+  "candidates": [
+    {
+      "ubuntu": "24.04",
+      "codename": "noble",
+      "status": "not-built",
+      "note": "Hardware guidance assessed only. Not a Jewbuntu target unless explicitly selected; would need its own builds, GNOME 46 extension testing, and a real 24.04->26.04 upgrade test."
+    }
+  ]
+}

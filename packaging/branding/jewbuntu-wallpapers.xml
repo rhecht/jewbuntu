@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE wallpapers SYSTEM "gnome-wp-list.dtd">
+<!-- Lists Jewbuntu wallpapers in GNOME Settings > Appearance. -->
+<wallpapers>
+  <wallpaper deleted="false">
+    <name>Jewbuntu</name>
+    <filename>/usr/share/backgrounds/jewbuntu/jewbuntu-dawn.svg</filename>
+    <filename-dark>/usr/share/backgrounds/jewbuntu/jewbuntu-dusk.svg</filename-dark>
+    <options>zoom</options>
+    <shade_type>solid</shade_type>
+    <pcolor>#14245a</pcolor>
+    <scolor>#14245a</scolor>
+  </wallpaper>
+</wallpapers>

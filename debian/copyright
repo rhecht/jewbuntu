@@ -1,0 +1,23 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: jewbuntu
+Comment: Licences below are the PROPOSED project licences pending the project
+ owner's confirmation (see docs/decisions/0007-licensing.md).
+
+Files: *
+Copyright: 2026 Jewbuntu Developers
+License: GPL-3.0-or-later
+
+Files: assets/*
+Copyright: 2026 Jewbuntu Developers
+License: CC-BY-SA-4.0
+Comment: Original artwork and an original synthesized arrangement. The
+ "Hava Nagila" melody itself is a traditional tune; see
+ assets/sounds/PROVENANCE.md.
+
+License: GPL-3.0-or-later
+ On Debian systems, the full text of the GNU General Public License
+ version 3 can be found in /usr/share/common-licenses/GPL-3.
+
+License: CC-BY-SA-4.0
+ Creative Commons Attribution-ShareAlike 4.0 International.
+ Full text: https://creativecommons.org/licenses/by-sa/4.0/legalcode

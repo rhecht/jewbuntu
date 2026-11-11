@@ -1,0 +1,31 @@
+# Jewbuntu desktop defaults (vendor override: changes defaults only;
+# users' own changes always win). Keep in sync with desktop-defaults.json.
+# Sorted after Ubuntu's 10_ubuntu-settings override so these defaults apply.
+
+[org.gnome.desktop.background:ubuntu]
+picture-uri='file:///usr/share/backgrounds/jewbuntu/jewbuntu-dawn.svg'
+picture-uri-dark='file:///usr/share/backgrounds/jewbuntu/jewbuntu-dusk.svg'
+
+[org.gnome.desktop.screensaver:ubuntu]
+picture-uri='file:///usr/share/backgrounds/jewbuntu/jewbuntu-dusk.svg'
+
+[org.gnome.desktop.interface:ubuntu]
+accent-color='blue'
+
+[org.gnome.desktop.wm.preferences:ubuntu]
+button-layout='close,minimize,maximize:appmenu'
+
+[org.gnome.mutter:ubuntu]
+center-new-windows=true
+
+[org.gnome.desktop.peripherals.touchpad:ubuntu]
+tap-to-click=true
+
+[org.gnome.shell.extensions.dash-to-dock:ubuntu]
+dock-position='BOTTOM'
+extend-height=false
+dock-fixed=false
+intellihide=true
+dash-max-icon-size=48
+show-apps-at-top=false
+click-action='minimize-or-previews'

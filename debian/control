@@ -1,0 +1,64 @@
+Source: jewbuntu
+Section: misc
+Priority: optional
+Maintainer: Jewbuntu Developers <maintainers@jewbuntu.invalid>
+Build-Depends: debhelper-compat (= 13), python3
+Standards-Version: 4.7.0
+Rules-Requires-Root: no
+Homepage: https://jewbuntu.invalid/
+X-Comment: Placeholder maintainer/homepage until the project has public hosting.
+
+Package: jewbuntu-core
+Architecture: all
+Depends: python3 (>= 3.10), ${misc:Depends}
+Recommends: pciutils
+Description: Jewbuntu core configuration, diagnostics and migrations
+ Shared per-user settings (XDG, versioned schema, atomic writes, verified
+ backups), the 'jewbuntu' command, the hardware doctor, the support matrix,
+ and a per-user systemd unit that migrates settings as the user.
+ .
+ Contains no personal data. Removing the package never deletes user settings.
+
+Package: jewbuntu-branding
+Architecture: all
+Depends: jewbuntu-core (= ${binary:Version}), python3 (>= 3.10), ${misc:Depends}
+Recommends: pipewire-bin | pulseaudio-utils
+Description: Jewbuntu wallpapers and 8-bit startup jingle
+ Original Jewbuntu wallpapers (light and dark) and a short chiptune
+ arrangement of the opening phrase of the traditional melody "Hava Nagila",
+ played once per boot at graphical login. Honors mute and the user's on/off
+ setting, never raises system volume, and fails silently without audio.
+
+Package: jewbuntu-hebrew
+Architecture: all
+Depends: fonts-noto-core, fonts-culmus, fonts-sil-ezra, hunspell-he, ${misc:Depends}
+Recommends: language-pack-he, language-pack-gnome-he
+Description: Jewbuntu Hebrew input, fonts and language support
+ Adds English and Hebrew keyboard layouts as the default input sources,
+ nikud-capable Hebrew fonts with a fontconfig preference for Hebrew text,
+ and the Hebrew spell checker.
+
+Package: jewbuntu-upgrade-tools
+Architecture: all
+Depends: jewbuntu-core (= ${binary:Version}), ${misc:Depends}
+Recommends: ubuntu-release-upgrader-core
+Description: Jewbuntu upgrade readiness report and repository enrollment
+ 'jewbuntu upgrade-check' inspects the system before an Ubuntu release
+ upgrade (support matrix, disk space, held or broken packages, third-party
+ sources, settings) without changing anything. 'jewbuntu repo' re-enables the
+ Jewbuntu APT suite matching the running Ubuntu release after an upgrade.
+
+Package: jewbuntu-desktop
+Architecture: all
+Depends: jewbuntu-core (= ${binary:Version}),
+         jewbuntu-branding (= ${binary:Version}),
+         jewbuntu-hebrew (= ${binary:Version}),
+         ubuntu-desktop-minimal,
+         ${misc:Depends}
+Recommends: jewbuntu-upgrade-tools (= ${binary:Version})
+Description: Jewbuntu desktop (metapackage and Mac-inspired defaults)
+ Selects the tested Jewbuntu desktop components on top of Ubuntu's own
+ desktop, and sets Mac-inspired GNOME defaults (bottom dock, left window
+ buttons, blue accent, Jewbuntu wallpaper) through a vendor settings override.
+ Users' own settings always take precedence; 'jewbuntu defaults restore'
+ resets only the keys Jewbuntu manages.

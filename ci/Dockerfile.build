@@ -1,0 +1,9 @@
+# Build/test environment for Jewbuntu packages on Ubuntu 26.04 (resolute).
+# Packages are Architecture: all, so the native container arch is fine for builds.
+FROM ubuntu:26.04
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get update && apt-get install -y --no-install-recommends \
+      build-essential debhelper devscripts lintian python3 dpkg-dev fakeroot \
+      apt-utils gnupg ca-certificates git \
+    && rm -rf /var/lib/apt/lists/*
+WORKDIR /src

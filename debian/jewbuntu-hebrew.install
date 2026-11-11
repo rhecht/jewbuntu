@@ -1,0 +1,2 @@
+packaging/hebrew/90_jewbuntu-hebrew.gschema.override usr/share/glib-2.0/schemas/
+packaging/hebrew/65-jewbuntu-hebrew.conf usr/share/fontconfig/conf.avail/

@@ -1,0 +1,6 @@
+components/core/jewbuntu/*.py usr/lib/jewbuntu/python/jewbuntu/
+components/hardware-doctor/jewbuntu/doctor.py usr/lib/jewbuntu/python/jewbuntu/
+bin/jewbuntu usr/bin/
+support-matrix.json usr/share/jewbuntu/
+packaging/core/repository.conf etc/jewbuntu/
+packaging/core/jewbuntu-migrate.service usr/lib/systemd/user/
