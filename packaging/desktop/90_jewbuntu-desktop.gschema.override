@@ -5,7 +5,7 @@
 
 [org.gnome.desktop.background:ubuntu]
 picture-uri='file:///usr/share/backgrounds/Jewbuntu/Jewbuntu-star-blue.png'
-picture-uri-dark='file:///usr/share/backgrounds/Jewbuntu/Jewbuntu-star-blue.png'
+picture-uri-dark='file:///usr/share/backgrounds/Jewbuntu/Jewbuntu-star-purple.png'
 
 [org.gnome.desktop.screensaver:ubuntu]
 picture-uri='file:///usr/share/backgrounds/Jewbuntu/Jewbuntu-star-blue.png'

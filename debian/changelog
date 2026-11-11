@@ -1,3 +1,9 @@
+jewbuntu (0.1.0~m1.14+26.04) resolute; urgency=medium
+
+  * Dark mode uses the purple Star of David wallpaper (light: blue).
+
+ -- Jewbuntu Developers <maintainers@jewbuntu.invalid>  Wed, 11 Nov 2026 15:12:00 -0500
+
 jewbuntu (0.1.0~m1.13+26.04) resolute; urgency=medium
 
   * Top bar: clear (Blur my Shell panel blur off); Jewbuntu Look picks dark

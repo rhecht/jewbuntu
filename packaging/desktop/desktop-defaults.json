@@ -10,8 +10,8 @@
     {
       "schema": "org.gnome.desktop.background",
       "key": "picture-uri-dark",
-      "value": "'file:///usr/share/backgrounds/Jewbuntu/Jewbuntu-star-blue.png'",
-      "why": "Default wallpaper: Star of David on blue waves"
+      "value": "'file:///usr/share/backgrounds/Jewbuntu/Jewbuntu-star-purple.png'",
+      "why": "Dark-mode wallpaper: Star of David on purple waves"
     },
     {
       "schema": "org.gnome.desktop.screensaver",
