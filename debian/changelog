@@ -1,3 +1,10 @@
+jewbuntu (0.1.0~m1.10+26.04) resolute; urgency=medium
+
+  * jewbuntu-shulgo: re-vendor rhecht/shulgo@5430b5c (settings window failed
+    to open: wrong resource path for prefs.js).
+
+ -- Jewbuntu Developers <maintainers@jewbuntu.invalid>  Wed, 11 Nov 2026 14:45:00 -0500
+
 jewbuntu (0.1.0~m1.9+26.04) resolute; urgency=medium
 
   * New jewbuntu-shulgo: ShulGo minyan finder (panel widget + window),
