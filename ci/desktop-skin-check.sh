@@ -34,3 +34,13 @@ V=$(update-alternatives --query gdm-theme.gresource | awk '/^Value:/{print $2}')
 gresource list "$V" | grep -q "/org/gnome/shell/theme/gdm.css" && gresource list "$V" | grep -q "assets/background.png" && echo "PASS: bundle has gdm.css and the login background" || { echo "FAIL: bundle contents"; exit 1; }
 [ -f /usr/share/gnome-shell/theme/Yaru/gnome-shell-theme.gresource ] && echo "PASS: Yaru bundle left in place" || { echo "FAIL: Yaru missing"; exit 1; }
 [ ! -e /usr/share/gnome-shell/extensions/blur-my-shell@aunetx/schemas ] && echo "PASS: Blur my Shell shipped without a local schemas folder" || { echo "FAIL: blur schemas folder present"; exit 1; }
+
+# ShulGo widget layout (system-wide, mirrors upstream install.sh)
+for f in /usr/bin/shulgo /usr/share/jewbuntu-shulgo/main.js /usr/share/jewbuntu-shulgo/shulgo/core/cache.js /usr/share/jewbuntu-shulgo/shulgo/gnome/offline.js \
+         /usr/share/gnome-shell/extensions/shulgo@jewbuntu.org/extension.js /usr/share/gnome-shell/extensions/shulgo@jewbuntu.org/shulgo/core/api.js \
+         /usr/share/gnome-shell/extensions/shulgo@jewbuntu.org/shulgo/gnome/offline.js /usr/share/applications/org.jewbuntu.ShulGo.desktop; do
+  [ -e "$f" ] && echo "PASS: $f" || { echo "FAIL: missing $f"; exit 1; }
+done
+gsettings list-keys org.jewbuntu.shulgo >/dev/null && echo "PASS: ShulGo settings schema compiled system-wide" || { echo "FAIL: shulgo schema"; exit 1; }
+[ ! -e /usr/share/gnome-shell/extensions/shulgo@jewbuntu.org/schemas ] && echo "PASS: no local schemas folder in the ShulGo extension" || { echo "FAIL: shulgo schemas folder"; exit 1; }
+! grep -rIl "sg_live_[A-Za-z0-9]" /usr/share/jewbuntu-shulgo /usr/share/gnome-shell/extensions/shulgo@jewbuntu.org >/dev/null && echo "PASS: no API key shipped" || { echo "FAIL: API key found in package"; exit 1; }

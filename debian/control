@@ -62,6 +62,7 @@ Recommends: jewbuntu-upgrade-tools (= ${binary:Version}),
             jewbuntu-gnome (= ${binary:Version}),
             jewbuntu-jewish-service (= ${binary:Version}),
             jewbuntu-hub (= ${binary:Version}),
+            jewbuntu-shulgo (= ${binary:Version}),
             zenity
 Description: Jewbuntu desktop (metapackage and Mac-inspired defaults)
  Selects the tested Jewbuntu desktop components on top of Ubuntu's own
@@ -109,3 +110,14 @@ Description: Jewbuntu Hub - Hebrew date, zmanim and settings
  startup sound and the desktop look. Works without the panel extension and,
  if the calendar service is not running, computes the same data itself.
  Nearby minyanim will come from Shulgo once its integration is available.
+
+Package: jewbuntu-shulgo
+Architecture: all
+Depends: gjs (>= 1.80), gir1.2-soup-3.0, gir1.2-gtk-4.0, gir1.2-adw-1, libglib2.0-bin, ${misc:Depends}
+Description: ShulGo minyan finder for Jewbuntu (panel widget and window)
+ Nearby minyanim with a countdown, events, mikvaos and zmanim from ShulGo,
+ as a GNOME top-bar widget and a GTK4/libadwaita window sharing one set of
+ settings. Keeps the last good answer for offline use. Needs a per-user
+ ShulGo API key; none is included. Vendored from github.com/rhecht/shulgo.
+ .
+ The panel half runs only on GNOME Shell versions it declares.
