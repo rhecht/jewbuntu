@@ -5,7 +5,10 @@ fail() { echo "FAIL: $*"; exit 1; }
 pass() { echo "PASS: $*"; }
 G() { XDG_CURRENT_DESKTOP=GNOME GSETTINGS_BACKEND=memory gsettings get "$@"; }
 GREETER() { DCONF_PROFILE=gdm XDG_CURRENT_DESKTOP=GNOME-Greeter:GNOME gsettings get "$@"; }
-PKGS="jewbuntu-skin jewbuntu-icons jewbuntu-core jewbuntu-asahi-desktop"
+PKGS="jewbuntu-skin jewbuntu-icons jewbuntu-core jewbuntu-asahi-desktop jewbuntu-jewish-service jewbuntu-hub jewbuntu-branding"
+# jewbuntu-shulgo is built separately from the private ShulGo repo (ci/build-shulgo-rpm.sh): tested when present.
+SHULGO_RPM=$(ls /rpms/jewbuntu-shulgo-*.rpm 2>/dev/null | head -1 || true)
+[ -n "$SHULGO_RPM" ] && PKGS="$PKGS jewbuntu-shulgo"
 LOGO=/usr/share/jewbuntu/branding/jewbuntu-asahi-logo-text-dark.svg
 head -2 /etc/os-release; gnome-shell --version
 echo "== before: Fedora defaults"
@@ -13,7 +16,9 @@ FEDORA_LOGO=$(GREETER org.gnome.login-screen logo); FEDORA_THEME=$(G org.gnome.d
 echo "logo=$FEDORA_LOGO gtk-theme=$FEDORA_THEME"
 
 echo "== install"
-for i in 1 2 3; do dnf -y -q install /rpms/*.rpm >/tmp/install.log 2>&1 && break; sleep 5; done || { tail -20 /tmp/install.log; fail "dnf install"; }
+# The Web Server RPM has its own check (ci/fedora-webserver-check.sh).
+FILES=""; for p in $PKGS; do FILES="$FILES $(ls /rpms/$p-[0-9]*.rpm | head -1)"; done
+for i in 1 2 3; do dnf -y -q install $FILES >/tmp/install.log 2>&1 && break; sleep 5; done || { tail -20 /tmp/install.log; fail "dnf install"; }
 rpm -q $PKGS || fail "packages not installed"
 pass "installed with dependencies from Fedora's repositories"
 [ -z "$(rpm -q --scripts $PKGS)" ] && pass "no install/remove scriptlets (caches come from Fedora's file triggers)" || fail "scriptlets present"
@@ -45,6 +50,16 @@ PY
 echo "== defaults"
 check_defaults "after install"
 
+echo "== Jewish calendar service, startup jingle"
+mkdir -p /home/t/.config/jewbuntu
+echo '{"schema_version":2,"location":{"name":"Toronto","latitude":43.65333,"longitude":-79.38389,"timezone":"America/Toronto"},"calendar":{"candle_lighting_minutes":18}}' > /home/t/.config/jewbuntu/settings.json
+chown -R t:t /home/t/.config
+J=$(su t -c 'dbus-run-session -- gdbus call --session --dest org.jewbuntu.Jewish1 --object-path /org/jewbuntu/Jewish1 --method org.jewbuntu.Jewish1.GetDay' 2>/dev/null || true)
+echo "$J" | grep -q '"hebrew' && echo "$J" | grep -qi 'sunset\|shkia\|zmanim' && pass "calendar service starts on demand over D-Bus and answers GetDay (Toronto)" || fail "GetDay: $(echo "$J" | cut -c1-200)"
+head -c 4 /usr/share/jewbuntu/sounds/jewbuntu-startup.wav | grep -q RIFF && pass "startup jingle rendered at build" || fail "jingle"
+su t -c 'jewbuntu startup-sound --help' >/dev/null 2>&1 && pass "jewbuntu startup-sound available" || fail "startup-sound command"
+[ -f /usr/share/applications/org.jewbuntu.Hub.desktop ] && pass "Hub in the app grid" || fail "Hub desktop file"
+
 echo "== existing account: apply / undo (keyfile backend)"
 su t -c 'set -eu; export GSETTINGS_BACKEND=keyfile XDG_CURRENT_DESKTOP=GNOME
   gsettings set org.gnome.desktop.input-sources sources "[(\"xkb\", \"us\")]"
@@ -70,9 +85,21 @@ echo "== real GNOME Shell (headless) with the look applied"
 mkdir -p /run/dbus && dbus-daemon --system --fork
 rm -rf /run/systemd/seats   # no logind in a container: let the shell use its no-logind fallback
 # Test account only: mark Fedora's first-login tour as shown so the screenshot shows the desktop.
-su t -c 'dbus-run-session -- sh -c "gsettings set org.gnome.shell welcome-dialog-last-shown-version 999 && jewbuntu skin apply >/dev/null && sh /ci/fedora-shell-check.sh /tmp/fedora-shell.png"' 2>/dev/null | grep -E "^(PASS|FAIL|SKIP|INFO)" | tee /tmp/shell.txt
-grep -q "^FAIL" /tmp/shell.txt && fail "GNOME Shell check"
+EXTRA=""; [ -n "$SHULGO_RPM" ] && EXTRA="shulgo@jewbuntu.org"
+cat > /tmp/session.sh <<SH
+set -e
+gsettings set org.gnome.shell welcome-dialog-last-shown-version 999
+jewbuntu skin apply >/dev/null
+if [ -n "$EXTRA" ]; then  # ShulGo is enabled like any extension the user turns on
+  cur=\$(gsettings get org.gnome.shell enabled-extensions)
+  gsettings set org.gnome.shell enabled-extensions "\${cur%]}, '$EXTRA']"
+fi
+EXTRA_EXTS="$EXTRA" HUB_SHOT=/tmp/fedora-hub.png sh /ci/fedora-shell-check.sh /tmp/fedora-shell.png
+SH
+su t -c 'dbus-run-session -- sh /tmp/session.sh' 2>/dev/null | grep -E "^(PASS|FAIL|SKIP|INFO)" | tee /tmp/shell.txt
 [ -s /tmp/fedora-shell.png ] && cp /tmp/fedora-shell.png /out/fedora-shell.png || true
+[ -s /tmp/fedora-hub.png ] && cp /tmp/fedora-hub.png /out/fedora-hub.png || true
+grep -q "^FAIL" /tmp/shell.txt && fail "GNOME Shell check"
 
 echo "== Fedora update of gnome-shell, gdm and the extensions (reinstall = same file writes and triggers)"
 for i in 1 2 3; do dnf -y -q reinstall gnome-shell gdm gnome-shell-extension-user-theme gnome-shell-extension-dash-to-dock gnome-shell-extension-blur-my-shell glib2 >/tmp/re.log 2>&1 && break; sleep 5; done || { tail -20 /tmp/re.log; fail "reinstall"; }
@@ -87,7 +114,7 @@ dnf -y -q remove jewbuntu-asahi-desktop >/dev/null
 [ "$(G org.gnome.desktop.interface gtk-theme)" = "$FEDORA_THEME" ] && pass "GTK theme default back to Fedora's" || fail "gtk-theme after remove"
 [ -f /home/t/.local/state/jewbuntu/skin.json ] && pass "per-user Jewbuntu data kept" || fail "user data removed"
 echo "== remove everything"
-dnf -y -q remove jewbuntu-core jewbuntu-skin jewbuntu-icons >/dev/null
+dnf -y -q remove $PKGS >/dev/null 2>&1 || true
 left=$(ls -d /usr/share/themes/Jewbuntu* /usr/share/icons/Jewbuntu* /usr/share/jewbuntu /usr/lib/jewbuntu /usr/share/glib-2.0/schemas/zz_jewbuntu* 2>/dev/null || true)
 [ -z "$left" ] && pass "nothing left under /usr" || fail "left behind: $(find $left | head)"
 [ -f /home/t/.local/state/jewbuntu/skin.json ] && pass "per-user data still kept after full removal" || fail "user data removed"

@@ -115,7 +115,9 @@ admission control, signed hosted repository.
 
 ## After Jewbuntu: Asahi Linux port (started 2026-11-12: skin and look)
 
-Owner chose **Fedora Asahi Remix** (GNOME edition) on 2026-11-12. Ubuntu Asahi (community)
+Owner chose **Fedora Asahi Remix** (GNOME edition) on 2026-11-12: "the asahi/fedora version
+that's more maintained", with the same look exactly (glass, Star of David wallpapers light/dark),
+the Web Server and the ShulGo widget. Workflow differences are fine if documented (docs/asahi.md). Ubuntu Asahi (community)
 does offer Ubuntu Desktop 26.04 (image 2026-05-28), but it was not chosen. Research notes
 are in the session notes, not in the repo.
 
@@ -127,7 +129,10 @@ are in the session notes, not in the repo.
 | `jewbuntu skin apply/undo` on Fedora (Dash to Dock added via the manifest's `extensions`) | Implemented | Auto-verified in container |
 | Skin extensions ACTIVE in a real headless GNOME Shell 51.1 | Implemented | Auto-verified (`ci/fedora-test.sh`, docs/test-results/2026-11-12-fedora-asahi-container.log) |
 | Asahi hardware, real login, Hebrew typing | Not tested | needs an Asahi install (owner's decision) |
-| ShulGo widgets, Web Server, Hub on Fedora | Planned (owner wants ShulGo and Web Server) | n/a |
+| Hub, Jewish calendar service, startup jingle RPMs (`jewbuntu.spec` subpackages) | Implemented | Auto-verified in container: service answers GetDay over D-Bus; Hub runs as a window on GNOME Shell 51 (docs/test-results/2026-11-12-fedora-asahi-hub-gnome51.png) |
+| ShulGo RPM (`packaging/shulgo-recipe/jewbuntu-shulgo.spec`, `ci/build-shulgo-rpm.sh`, built from the private repo) | Implemented | **Fail on GNOME 51**: extension ERROR "No property vertical on StBoxLayout" (removed in GNOME 51). Fix requested from the ShulGo session |
+| Web Server on Fedora (httpd, php-fpm, SELinux module, firewalld) | In progress in its own session (`jewbuntu-webserver.spec`) | see that session's results |
+| Window buttons on the left in GTK4 apps | Default set | Not seen: the test container has no settings portal, so GTK showed its own default there |
 | Publishing the RPMs (release assets or a dnf repo) | Not started | n/a |
 
 Install steps: docs/asahi.md.

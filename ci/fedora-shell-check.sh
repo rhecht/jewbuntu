@@ -4,6 +4,7 @@
 # monitor, then asks it which extensions are ACTIVE, which shell theme it loaded and whether
 # Jewbuntu Look styled the top bar, and saves a screenshot. Not a substitute for a real login.
 # usage: fedora-shell-check.sh [SCREENSHOT.png]
+#   EXTRA_EXTS="uuid ..." also checks those extensions; HUB_SHOT=file.png opens the Hub and saves a screenshot.
 set -u
 SHOT="${1:-}"
 export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/tmp/rt-$(id -u)}" XDG_CURRENT_DESKTOP=GNOME XDG_SESSION_TYPE=wayland
@@ -19,7 +20,7 @@ done
 [ "$up" = 1 ] || { echo "FAIL: gnome-shell did not start"; tail -30 "$XDG_RUNTIME_DIR/shell.log"; exit 1; }
 sleep 8
 rc=0
-for e in user-theme@gnome-shell-extensions.gcampax.github.com dash-to-dock@micxgx.gmail.com blur-my-shell@aunetx jewbuntu-look@jewbuntu; do
+for e in user-theme@gnome-shell-extensions.gcampax.github.com dash-to-dock@micxgx.gmail.com blur-my-shell@aunetx jewbuntu-look@jewbuntu ${EXTRA_EXTS:-}; do
   st=$(gnome-extensions info "$e" 2>&1 | sed -n 's/^ *State: *//p')
   if [ "$st" = ACTIVE ]; then echo "PASS: $e ACTIVE on $(gnome-shell --version)"; else echo "FAIL: $e state=${st:-unknown}"; rc=1; fi
 done
@@ -30,7 +31,7 @@ case "$R" in
   "(false"*) echo "SKIP: Shell.Eval not available ($R)";;
   *) echo "FAIL: shell theme / top bar: $R"; rc=1;;
 esac
-if grep -E "JS ERROR|had error|Error loading" "$XDG_RUNTIME_DIR/shell.log" | grep -iE "jewbuntu|user-theme|dash-to-dock|blur-my-shell"; then
+if grep -E "JS ERROR|had error|Error loading" "$XDG_RUNTIME_DIR/shell.log" | grep -iE "jewbuntu|user-theme|dash-to-dock|blur-my-shell|shulgo"; then
   echo "FAIL: extension errors in the shell log"; rc=1
 else
   echo "PASS: no extension errors in the shell log"
@@ -40,6 +41,17 @@ if [ -n "$SHOT" ]; then
   gdbus call --session --dest org.gnome.Shell.Screenshot --object-path /org/gnome/Shell/Screenshot \
     --method org.gnome.Shell.Screenshot.Screenshot false false "$SHOT" >/dev/null 2>&1 && [ -s "$SHOT" ] \
     && echo "INFO: screenshot $SHOT" || echo "INFO: no screenshot"
+fi
+if [ -n "${HUB_SHOT:-}" ]; then
+  # The Hub as a real Wayland client of this shell (Toronto, so zmanim show), with the skin's GTK4 look.
+  WAYLAND_DISPLAY=wayland-0 GDK_BACKEND=wayland JEWBUNTU_HUB_PAGE=today jewbuntu-hub >"$XDG_RUNTIME_DIR/hub.log" 2>&1 &
+  HUB_PID=$!
+  sleep 10
+  if kill -0 "$HUB_PID" 2>/dev/null; then echo "PASS: Hub window runs on GNOME Shell"; else echo "FAIL: Hub exited"; tail -5 "$XDG_RUNTIME_DIR/hub.log"; rc=1; fi
+  gdbus call --session --dest org.gnome.Shell.Screenshot --object-path /org/gnome/Shell/Screenshot \
+    --method org.gnome.Shell.Screenshot.Screenshot false false "$HUB_SHOT" >/dev/null 2>&1 && [ -s "$HUB_SHOT" ] \
+    && echo "INFO: screenshot $HUB_SHOT" || echo "INFO: no Hub screenshot"
+  kill "$HUB_PID" 2>/dev/null
 fi
 kill "$SHELL_PID" 2>/dev/null; wait "$SHELL_PID" 2>/dev/null
 exit $rc

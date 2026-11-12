@@ -52,6 +52,9 @@ Requires:       hunspell-he
 Requires:       zenity
 Recommends:     culmus-fonts-all
 Recommends:     langpacks-he
+Recommends:     jewbuntu-hub = %{version}-%{release}
+Recommends:     jewbuntu-branding = %{version}-%{release}
+Recommends:     jewbuntu-webserver
 
 %description asahi-desktop
 Makes the Jewbuntu Skin, Jewbuntu Icons, Star of David wallpapers, Inter font,
@@ -60,6 +63,44 @@ left-side window buttons and an English+Hebrew keyboard the defaults, shows
 extension (clear top bar whose text follows the wallpaper). Existing accounts
 are asked once at login whether to apply the look (undo: jewbuntu skin undo).
 Removing this package brings Fedora's defaults back.
+
+%package jewish-service
+Summary:        Jewbuntu Jewish calendar service
+License:        GPL-3.0-or-later AND GPL-2.0-or-later
+Requires:       gjs
+Requires:       tzdata
+
+%description jewish-service
+Per-user D-Bus service (org.jewbuntu.Jewish1): Hebrew date with sunset rollover,
+labelled zmanim presets, candle lighting and havdalah, parsha, holidays, Rosh
+Chodesh and Omer for the user's location, fully offline (bundled Hebcal,
+GPL-2.0-or-later). Started on demand; never uses the network.
+
+%package hub
+Summary:        Jewbuntu Hub - Hebrew date, zmanim and settings
+Requires:       gjs
+Requires:       gtk4
+Requires:       libadwaita
+Requires:       jewbuntu-jewish-service = %{version}-%{release}
+Requires:       jewbuntu-core = %{version}-%{release}
+Recommends:     jewbuntu-shulgo
+
+%description hub
+GTK4/libadwaita app: today's Hebrew date, the next zman with countdown, candle
+lighting and havdalah, a calendar view, and settings for location, methods,
+startup sound and the desktop look. Nearby minyanim come from ShulGo when installed.
+
+%package branding
+Summary:        Jewbuntu startup jingle and extra wallpapers
+License:        GPL-3.0-or-later AND CC-BY-SA-4.0
+Requires:       jewbuntu-core = %{version}-%{release}
+Requires:       python3
+Recommends:     pipewire-utils
+
+%description branding
+An 8-bit Hava Nagila jingle played once per boot at login (respects mute and
+the quiet schedule; 'jewbuntu startup-sound off' disables it), plus the
+Jewbuntu dawn and dusk wallpapers.
 
 %prep
 %autosetup -n jewbuntu
@@ -74,6 +115,8 @@ if sys.argv[1] not in m["shell-version"]:
     m["shell-version"].append(sys.argv[1])
 json.dump(m, open(p, "w"), indent=2)
 PY
+mkdir -p build
+python3 -B assets/sounds/synth.py assets/sounds/hava-nagila-8bit.json build/jewbuntu-startup.wav
 
 %check
 python3 -B -m unittest discover -s tests/unit -t .
@@ -96,10 +139,40 @@ install -D -m 644 packaging/hebrew/65-jewbuntu-hebrew.conf %{buildroot}%{_datadi
 install -d %{buildroot}%{_sysconfdir}/fonts/conf.d
 ln -s ../../..%{_datadir}/fontconfig/conf.avail/65-jewbuntu-hebrew.conf %{buildroot}%{_sysconfdir}/fonts/conf.d/65-jewbuntu-hebrew.conf
 
+# jewish-service
+install -d %{buildroot}%{_datadir}/jewbuntu/jewish-service/src %{buildroot}%{_datadir}/jewbuntu/jewish-service/vendor
+install -m 644 components/jewish-service/src/{day,settings,service}.js %{buildroot}%{_datadir}/jewbuntu/jewish-service/src/
+install -m 644 components/jewish-service/vendor/hebcal.bundle.js %{buildroot}%{_datadir}/jewbuntu/jewish-service/vendor/
+install -D -m 644 components/jewish-service/vendor/README.md %{buildroot}%{_docdir}/jewbuntu-jewish-service/README.md
+install -D -m 644 packaging/jewish-service/org.jewbuntu.Jewish1.service %{buildroot}%{_datadir}/dbus-1/services/org.jewbuntu.Jewish1.service
+install -D -m 644 packaging/jewish-service/jewbuntu-jewish.service %{buildroot}%{_userunitdir}/jewbuntu-jewish.service
+install -D -m 755 packaging/jewish-service/jewbuntu-jewish-service %{buildroot}%{_libexecdir}/jewbuntu/jewbuntu-jewish-service
+
+# hub
+install -D -m 644 components/hub/src/main.js %{buildroot}%{_datadir}/jewbuntu/hub/src/main.js
+install -D -m 755 components/hub/data/jewbuntu-hub %{buildroot}%{_bindir}/jewbuntu-hub
+install -D -m 644 components/hub/data/org.jewbuntu.Hub.desktop %{buildroot}%{_datadir}/applications/org.jewbuntu.Hub.desktop
+install -D -m 644 components/hub/data/org.jewbuntu.Hub.svg %{buildroot}%{_datadir}/icons/hicolor/scalable/apps/org.jewbuntu.Hub.svg
+
+# branding
+install -m 644 components/branding/jewbuntu/startup_sound.py %{buildroot}%{pydir}/
+install -D -m 755 bin/jewbuntu-startup-sound %{buildroot}%{_bindir}/jewbuntu-startup-sound
+install -D -m 644 build/jewbuntu-startup.wav %{buildroot}%{_datadir}/jewbuntu/sounds/jewbuntu-startup.wav
+install -m 644 assets/sounds/hava-nagila-8bit.json assets/sounds/PROVENANCE.md %{buildroot}%{_datadir}/jewbuntu/sounds/
+install -D -m 644 packaging/branding/jewbuntu-startup-sound.desktop %{buildroot}%{_sysconfdir}/xdg/autostart/jewbuntu-startup-sound.desktop
+install -d %{buildroot}%{_datadir}/backgrounds/jewbuntu
+install -m 644 assets/wallpapers/jewbuntu-dawn.svg assets/wallpapers/jewbuntu-dusk.svg %{buildroot}%{_datadir}/backgrounds/jewbuntu/
+install -D -m 644 packaging/branding/jewbuntu-wallpapers.xml %{buildroot}%{_datadir}/gnome-background-properties/jewbuntu-wallpapers.xml
+
+
 %files core
 %license debian/copyright
 %{_bindir}/jewbuntu
-/usr/lib/jewbuntu
+%dir /usr/lib/jewbuntu
+%dir /usr/lib/jewbuntu/python
+%dir %{pydir}
+%{pydir}/{__init__,cli,config,desktop_defaults,paths,userdata,version}.py
+%dir %{_datadir}/jewbuntu
 %config(noreplace) %{_sysconfdir}/xdg/autostart/jewbuntu-migrate.desktop
 %{_docdir}/jewbuntu-core
 
@@ -112,6 +185,30 @@ ln -s ../../..%{_datadir}/fontconfig/conf.avail/65-jewbuntu-hebrew.conf %{buildr
 %config(noreplace) %{_sysconfdir}/xdg/autostart/jewbuntu-skin-prompt.desktop
 %{_datadir}/fontconfig/conf.avail/65-jewbuntu-hebrew.conf
 %{_sysconfdir}/fonts/conf.d/65-jewbuntu-hebrew.conf
+
+%files jewish-service
+%dir %{_datadir}/jewbuntu
+%{_datadir}/jewbuntu/jewish-service
+%{_docdir}/jewbuntu-jewish-service
+%{_datadir}/dbus-1/services/org.jewbuntu.Jewish1.service
+%{_userunitdir}/jewbuntu-jewish.service
+%dir %{_libexecdir}/jewbuntu
+%{_libexecdir}/jewbuntu/jewbuntu-jewish-service
+
+%files hub
+%{_bindir}/jewbuntu-hub
+%{_datadir}/jewbuntu/hub
+%{_datadir}/applications/org.jewbuntu.Hub.desktop
+%{_datadir}/icons/hicolor/scalable/apps/org.jewbuntu.Hub.svg
+
+%files branding
+%{_bindir}/jewbuntu-startup-sound
+%{pydir}/startup_sound.py
+%{_datadir}/jewbuntu/sounds
+%config(noreplace) %{_sysconfdir}/xdg/autostart/jewbuntu-startup-sound.desktop
+%{_datadir}/backgrounds/jewbuntu
+%{_datadir}/gnome-background-properties/jewbuntu-wallpapers.xml
+
 
 %changelog
 * Thu Nov 12 2026 Jewbuntu Developers <maintainers@jewbuntu.invalid> - %{jb_version}-1
