@@ -51,8 +51,8 @@ ci/container-desktop-test.sh dist/worktree             # jewbuntu-desktop over u
 ## Related repositories
 
 - Skin: `../jewbuntu-skin` = github.com/rhecht/jewbuntu-skin (fork of vinceliuice/MacTahoe-gtk-theme, MIT). `main` carries the Jewbuntu changes; merge `upstream/main` to update. Build: non-root `dpkg-buildpackage -us -uc -b` (needs TERM set, which the rules handle).
-- Shulgo widget: github.com/rhecht/shulgo, `integrations/shulgo-core` + `integrations/jewbuntu` (both needed). Owned by the Shulgo session; report bugs there, do not edit.
-- VM access: `ssh -i ~/.ssh/jewbuntu_vm_ed25519 user@192.168.64.2` (key authorised by the owner; no sudo). Set XDG_CURRENT_DESKTOP=ubuntu:GNOME and the session bus address when using gsettings over SSH.
+- Shulgo widget: PRIVATE repo github.com/rhecht/shulgo (`integrations/shulgo-core` + `integrations/jewbuntu`). Never copy its code into this public repo; build `jewbuntu-shulgo` with `ci/build-shulgo-deb.sh` (recipe in packaging/shulgo-recipe). Owned by the Shulgo session; report bugs there.
+- VM access: SSH with a dedicated key the owner authorised (no sudo); details kept outside the repo. Set XDG_CURRENT_DESKTOP=ubuntu:GNOME and the session bus address when using gsettings over SSH.
 
 ## Next steps
 

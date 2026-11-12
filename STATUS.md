@@ -53,8 +53,7 @@ and the checklist in `docs/vm-setup.md` is recorded.
 | MacTahoe icons (Apple-lookalike) | Planned as opt-in per-user download, not in the image | n/a |
 | Siri-like voice prompter | Planned for the very end | n/a |
 
-VM (`jewbuntu-dev-arm64`) state: m1.4 installed; m1.7 served at http://192.168.64.1:8000/m1.7/ (needs the owner's sudo);
-`disable-extension-version-validation` = true for user `user` (TEST ONLY: set back to false after the Shulgo GNOME 50 test).
+VM (`jewbuntu-dev-arm64`) state: kept in session notes, not in the repo.
 
 ## Status at 0.1.0~m1.18 (2026-11-11 evening)
 
@@ -64,7 +63,7 @@ Seen working in the arm64 UTM VM (GNOME Shell 50.1), see docs/test-results/2026-
 - Jewbuntu Icons (rhecht/jewbuntu-icons): default icon theme; 23 Apple-copied icons replaced by originals.
 - Default wallpapers: Star of David blue (light) / purple (dark).
 - Settings migration v1->v2 at login (autostart) with verified backup.
-- ShulGo (jewbuntu-shulgo, rhecht/shulgo@83eeaa9): GNOME 50 declared and loaded with version validation ON;
+- ShulGo (jewbuntu-shulgo, built separately from the private rhecht/shulgo, last at cb34bdc): GNOME 50 declared and loaded with version validation ON;
   navy menu, all four tabs with live data, prefs/API key, offline strip with automatic recovery.
 - Hub (jewbuntu-hub): Today/Calendar/Settings; Minyanim tab hands off to ShulGo.
 

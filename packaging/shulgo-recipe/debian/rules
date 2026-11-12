@@ -1,0 +1,7 @@
+#!/usr/bin/make -f
+include /usr/share/dpkg/pkg-info.mk
+%:
+	dh $@
+override_dh_builddeb:
+	find debian/jewbuntu-shulgo -exec touch -h -d @$(SOURCE_DATE_EPOCH) {} +
+	dh_builddeb

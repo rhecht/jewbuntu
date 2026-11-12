@@ -1,3 +1,12 @@
+jewbuntu (0.1.0~m1.22+26.04) resolute; urgency=medium
+
+  * jewbuntu-shulgo is no longer built from this source: ShulGo's widget code
+    lives in its private repository. packaging/shulgo-recipe and
+    ci/build-shulgo-deb.sh build it from a ShulGo checkout.
+  * Docs: machine-specific VM access details removed.
+
+ -- Jewbuntu Developers <maintainers@jewbuntu.invalid>  Wed, 11 Nov 2026 21:02:00 -0500
+
 jewbuntu (0.1.0~m1.21+26.04) resolute; urgency=medium
 
   * jewbuntu-shulgo: re-vendor rhecht/shulgo@cb34bdc: readable place-search

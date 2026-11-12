@@ -1,0 +1,16 @@
+Source: jewbuntu-shulgo
+Section: misc
+Priority: optional
+Maintainer: Jewbuntu Developers <maintainers@jewbuntu.invalid>
+Build-Depends: debhelper-compat (= 13)
+Standards-Version: 4.7.0
+Rules-Requires-Root: no
+
+Package: jewbuntu-shulgo
+Architecture: all
+Depends: gjs (>= 1.80), gir1.2-soup-3.0, gir1.2-gtk-4.0, gir1.2-adw-1, libglib2.0-bin, ${misc:Depends}
+Description: ShulGo minyan finder for Jewbuntu (panel widget and window)
+ Nearby minyanim with a countdown, events, mikvaos and zmanim from ShulGo,
+ as a GNOME top-bar widget and a GTK4/libadwaita window sharing one set of
+ settings. Keeps the last good answer for offline use. Needs a per-user
+ ShulGo API key; none is included.
