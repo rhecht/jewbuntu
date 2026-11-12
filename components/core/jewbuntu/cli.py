@@ -46,6 +46,13 @@ def cmd_config(args):
                 print(note)
         except Exception as e:  # never block login on this
             print(f"note: could not refresh the GTK4 look: {e}", file=sys.stderr)
+        try:  # extensions that changed their UUID (ShulGo), so they stay enabled
+            from . import renames
+            for note in renames.migrate_extensions():
+                if not args.quiet:
+                    print(note)
+        except Exception as e:
+            print(f"note: could not update renamed extensions: {e}", file=sys.stderr)
     elif args.action == "validate":
         problems = config.validate(config.load())
         print("\n".join(problems) if problems else "settings valid")

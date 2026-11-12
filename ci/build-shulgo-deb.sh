@@ -9,7 +9,8 @@ TMP="$(mktemp -d)"
 mkdir -p "$TMP/src" "$ROOT/$OUT"
 git -C "$SHULGO" archive --format=tar "$REF" integrations/shulgo-core integrations/jewbuntu | tar -x -C "$TMP/src" --strip-components=1
 cp -R "$ROOT/packaging/shulgo-recipe/debian" "$TMP/src/debian"
-cp "$TMP/src/jewbuntu/extension/shulgo@jewbuntu.org/icons/shulgo-symbolic.svg" "$TMP/src/debian/org.jewbuntu.ShulGo-symbolic.svg"
+# Needs rhecht/shulgo f0a898c or later (extension jewbuntu@shulgo.com, app/schema com.shulgo.ShulGo).
+cp "$TMP/src/jewbuntu/extension/jewbuntu@shulgo.com/icons/shulgo-symbolic.svg" "$TMP/src/debian/com.shulgo.ShulGo-symbolic.svg"
 DATE="$(git -C "$SHULGO" log -1 --format=%aD "$REF")"
 cat > "$TMP/src/debian/changelog" <<CL
 jewbuntu-shulgo (0.1.0~git$SHORT+26.04) resolute; urgency=medium

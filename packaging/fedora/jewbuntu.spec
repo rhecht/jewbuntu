@@ -123,7 +123,7 @@ python3 -B -m unittest discover -s tests/unit -t .
 
 %install
 install -d %{buildroot}%{pydir}
-install -m 644 components/core/jewbuntu/{__init__,cli,config,desktop_defaults,paths,userdata,version}.py %{buildroot}%{pydir}/
+install -m 644 components/core/jewbuntu/{__init__,cli,config,desktop_defaults,paths,renames,userdata,version}.py %{buildroot}%{pydir}/
 install -D -m 755 bin/jewbuntu %{buildroot}%{_bindir}/jewbuntu
 install -D -m 644 packaging/core/jewbuntu-migrate.desktop %{buildroot}%{_sysconfdir}/xdg/autostart/jewbuntu-migrate.desktop
 install -D -m 644 README.md %{buildroot}%{_docdir}/jewbuntu-core/README.md
@@ -171,7 +171,7 @@ install -D -m 644 packaging/branding/jewbuntu-wallpapers.xml %{buildroot}%{_data
 %dir /usr/lib/jewbuntu
 %dir /usr/lib/jewbuntu/python
 %dir %{pydir}
-%{pydir}/{__init__,cli,config,desktop_defaults,paths,userdata,version}.py
+%{pydir}/{__init__,cli,config,desktop_defaults,paths,renames,userdata,version}.py
 %dir %{_datadir}/jewbuntu
 %config(noreplace) %{_sysconfdir}/xdg/autostart/jewbuntu-migrate.desktop
 %{_docdir}/jewbuntu-core

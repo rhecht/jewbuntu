@@ -264,9 +264,12 @@ const HubWindow = class {
     _buildMinyanim() {
         // Nearby minyanim, events and mikvaos come from ShulGo (jewbuntu-shulgo). The Hub hands
         // off to it rather than duplicating it; nothing here contacts the network.
-        const shulgo = Gio.DesktopAppInfo.new('org.jewbuntu.ShulGo.desktop');
+        // ShulGo's IDs since rhecht/shulgo f0a898c, then the older org.jewbuntu ones.
+        const [shulgoId, shulgoUuid] = [['com.shulgo.ShulGo', 'jewbuntu@shulgo.com'], ['org.jewbuntu.ShulGo', 'shulgo@jewbuntu.org']]
+            .find(([id]) => Gio.DesktopAppInfo.new(`${id}.desktop`)) ?? ['com.shulgo.ShulGo', 'jewbuntu@shulgo.com'];
+        const shulgo = Gio.DesktopAppInfo.new(`${shulgoId}.desktop`);
         const page = new Adw.StatusPage({
-            icon_name: shulgo ? 'org.jewbuntu.ShulGo' : 'find-location-symbolic',
+            icon_name: shulgo ? shulgoId : 'find-location-symbolic',
             title: 'Nearby Minyanim',
             description: shulgo
                 ? 'Minyanim, events, mikvaos and zmanim near you come from ShulGo. It needs a ShulGo API key the first time: open its settings, paste the key and press "Save and test".'
@@ -286,7 +289,7 @@ const HubWindow = class {
             settings.connect('clicked', async () => {
                 const r = await new Promise(resolve => {
                     try {
-                        const proc = Gio.Subprocess.new(['gnome-extensions', 'prefs', 'shulgo@jewbuntu.org'], Gio.SubprocessFlags.STDERR_PIPE);
+                        const proc = Gio.Subprocess.new(['gnome-extensions', 'prefs', shulgoUuid], Gio.SubprocessFlags.STDERR_PIPE);
                         proc.wait_check_async(null, (pr, res) => {
                             try {
                                 resolve(pr.wait_check_finish(res));

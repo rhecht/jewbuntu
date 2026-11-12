@@ -85,14 +85,20 @@ echo "== real GNOME Shell (headless) with the look applied"
 mkdir -p /run/dbus && dbus-daemon --system --fork
 rm -rf /run/systemd/seats   # no logind in a container: let the shell use its no-logind fallback
 # Test account only: mark Fedora's first-login tour as shown so the screenshot shows the desktop.
-EXTRA=""; [ -n "$SHULGO_RPM" ] && EXTRA="shulgo@jewbuntu.org"
+EXTRA=""; [ -n "$SHULGO_RPM" ] && EXTRA="jewbuntu@shulgo.com"
 cat > /tmp/session.sh <<SH
 set -e
 gsettings set org.gnome.shell welcome-dialog-last-shown-version 999
 jewbuntu skin apply >/dev/null
-if [ -n "$EXTRA" ]; then  # ShulGo is enabled like any extension the user turns on
+if [ -n "$EXTRA" ]; then
+  # An account from before ShulGo's rename: the old UUID is enabled. The login-time
+  # migration (jewbuntu config migrate, run as the user) must swap in the new one.
   cur=\$(gsettings get org.gnome.shell enabled-extensions)
-  gsettings set org.gnome.shell enabled-extensions "\${cur%]}, '$EXTRA']"
+  gsettings set org.gnome.shell enabled-extensions "\${cur%]}, 'shulgo@jewbuntu.org']"
+  jewbuntu config migrate --quiet >/dev/null 2>&1 || true
+  now=\$(gsettings get org.gnome.shell enabled-extensions)
+  case "\$now" in *"'$EXTRA'"*) case "\$now" in *shulgo@jewbuntu.org*) echo "FAIL: old ShulGo UUID still enabled: \$now";; *) echo "PASS: login migration replaced shulgo@jewbuntu.org with $EXTRA";; esac;;
+    *) echo "FAIL: ShulGo not enabled after migration: \$now";; esac
 fi
 EXTRA_EXTS="$EXTRA" HUB_SHOT=/tmp/fedora-hub.png sh /ci/fedora-shell-check.sh /tmp/fedora-shell.png
 SH
