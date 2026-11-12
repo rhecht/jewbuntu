@@ -19,6 +19,7 @@ summarised here.
 - `components/core/jewbuntu/`: Python package (stdlib only). Other components add modules to the same package dir: `components/hardware-doctor/jewbuntu/doctor.py`, `components/upgrade-tools/jewbuntu/{upgrade,repo}.py`, `components/branding/jewbuntu/startup_sound.py`. `__init__.py` extends `__path__` so the source tree works uninstalled.
 - `bin/`: launchers (work from source or installed).
 - `packaging/`: files installed by packages (overrides, units, conffiles, manifests).
+- `packaging/fedora/`: RPM specs, defaults override and manifest for Fedora Asahi Remix (keep distro-specific bits here).
 - `debian/`: one native source → binary packages. Version `<upstream>+<ubuntu-version>`; keep `components/core/jewbuntu/version.py` in sync (a test enforces it).
 - `assets/`: wallpapers (SVG) and the jingle source (`hava-nagila-8bit.json` + `synth.py`, rendered at build).
 - `support-matrix.json`: machine-readable support claims.
@@ -33,6 +34,8 @@ WORKTREE=1 ci/container-build.sh HEAD dist/worktree    # build debs incl. uncomm
 ci/container-build.sh v0.1.0-m1.1 dist/v0.1.0-m1.1     # build a tag
 ci/container-test.sh dist/v0.1.0-m1.1 dist/worktree    # install → upgrade → migrate → remove/purge
 ci/container-desktop-test.sh dist/worktree             # jewbuntu-desktop over ubuntu-desktop-minimal
+WORKTREE=1 ci/fedora-build.sh                          # Fedora Asahi Remix RPMs -> dist/fedora (docs/asahi.md)
+ci/fedora-test.sh                                      # install, defaults, headless GNOME Shell, update, removal
 ```
 
 ## Changing the settings schema

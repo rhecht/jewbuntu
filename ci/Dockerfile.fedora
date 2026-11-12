@@ -1,0 +1,12 @@
+# Fedora Asahi Remix build and test environments (noarch RPMs, so native arm64 is fine).
+#   build: rpmbuild + the theme build tools      test: real GNOME Shell + GDM schemas
+ARG FEDORA=45
+FROM fedora:${FEDORA} AS build
+RUN for i in 1 2 3; do dnf -y -q install rpm-build git-core python3 bash findutils sassc glib2-devel \
+      libxml2 ImageMagick gtk-update-icon-cache && break; sleep 5; done && dnf clean all
+RUN useradd -m b
+
+FROM fedora:${FEDORA} AS test
+RUN for i in 1 2 3; do dnf -y -q install gnome-shell gdm dconf glib2 dbus-daemon mesa-dri-drivers \
+      python3 librsvg2-tools && break; sleep 5; done && dnf clean all
+RUN useradd -m t

@@ -129,7 +129,8 @@ class PackagingConsistencyTests(unittest.TestCase):
     def test_defaults_manifest_matches_overrides(self):
         manifest = json.loads((REPO / "packaging/desktop/desktop-defaults.json").read_text())["keys"]
         overrides = {}
-        for f in list((REPO / "packaging").rglob("*.gschema.override")):
+        # Ubuntu overrides only; packaging/fedora has its own manifest (tests/unit/test_fedora.py).
+        for f in [f for f in (REPO / "packaging").rglob("*.gschema.override") if "fedora" not in f.parts]:
             schema = None
             for line in f.read_text().splitlines():
                 line = line.strip()

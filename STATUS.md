@@ -1,6 +1,6 @@
 # Status
 
-Last updated: 2026-11-11. Legend: **Implemented** (code exists) ·
+Last updated: 2026-11-12. Legend: **Implemented** (code exists) ·
 **Auto-verified** (automated test passed) · **Manually verified** (seen by a person) ·
 **Experimental** · **Planned**. Test status: Pass / Fail / Not tested.
 
@@ -113,9 +113,26 @@ Replace the startup sound's weekly quiet-window fallback with calendar times.
 ISO from the same packages (ADR 0009), node profile, dev pack, AI tooling with
 admission control, signed hosted repository.
 
-## After Jewbuntu: Asahi Linux port (planned, not started)
+## After Jewbuntu: Asahi Linux port (started 2026-11-12: skin and look)
 
-**Starts only after Jewbuntu for Ubuntu is verified and launched.**
+Owner chose **Fedora Asahi Remix** (GNOME edition) on 2026-11-12. Ubuntu Asahi (community)
+does offer Ubuntu Desktop 26.04 (image 2026-05-28), but it was not chosen. Research notes
+are in the session notes, not in the repo.
+
+| Item | State | Test status |
+| --- | --- | --- |
+| RPMs `jewbuntu-skin`, `jewbuntu-icons`, `jewbuntu-core`, `jewbuntu-asahi-desktop` (`packaging/fedora/`, `ci/fedora-build.sh`) for Fedora 45 / GNOME 51 | Implemented | Build Auto-verified (unit tests run in `%check`) |
+| Defaults via `zz_jewbuntu-asahi.gschema.override` (sorts after Fedora's and gdm's), `:GNOME` sections | Implemented | Auto-verified in container (all keys, before and after reinstalling Fedora's gnome-shell/gdm) |
+| Login screen: "Jewbuntu for Asahi Linux" logo (`org.gnome.login-screen logo`, no gresource replacement) | Implemented | Setting Auto-verified via the gdm dconf profile; **real greeter Not tested** |
+| `jewbuntu skin apply/undo` on Fedora (Dash to Dock added via the manifest's `extensions`) | Implemented | Auto-verified in container |
+| Skin extensions ACTIVE in a real headless GNOME Shell 51.1 | Implemented | Auto-verified (`ci/fedora-test.sh`, docs/test-results/2026-11-12-fedora-asahi-container.log) |
+| Asahi hardware, real login, Hebrew typing | Not tested | needs an Asahi install (owner's decision) |
+| ShulGo widgets, Web Server, Hub on Fedora | Planned (owner wants ShulGo and Web Server) | n/a |
+| Publishing the RPMs (release assets or a dnf repo) | Not started | n/a |
+
+Install steps: docs/asahi.md.
+
+Original plan (kept for the remaining work):
 
 Bring the Jewbuntu look to Apple Silicon M1/M2 Macs on Asahi Linux, as an option for
 M1s once macOS support fades. Base: **Fedora Asahi Remix** (GNOME edition). Ubuntu is not a

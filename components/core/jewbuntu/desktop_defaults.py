@@ -25,6 +25,8 @@ import time
 from . import paths
 
 # Extensions the skin needs, enabled per user by apply_skin() (appended, never replacing others).
+# This is the Ubuntu list (Ubuntu Dock comes with the session); a distro's desktop-defaults.json
+# can replace it with an "extensions" list (Fedora Asahi Remix adds Dash to Dock).
 SKIN_EXTENSIONS = ["user-theme@gnome-shell-extensions.gcampax.github.com", "blur-my-shell@aunetx", "jewbuntu-look@jewbuntu"]
 SKIN_THEME_DIR = paths.Path("/usr/share/themes/Jewbuntu-Light/gtk-4.0")
 LIBADWAITA_FILES = ["gtk.css", "gtk-dark.css", "assets", "windows-assets"]
@@ -32,9 +34,22 @@ INPUT_SOURCES = ("org.gnome.desktop.input-sources", "sources")
 HEBREW = ("xkb", "il")
 
 
-def load_manifest():
+def _manifest():
     with open(paths.share_path("desktop-defaults.json"), encoding="utf-8") as handle:
-        return json.load(handle)["keys"]
+        return json.load(handle)
+
+
+def load_manifest():
+    return _manifest()["keys"]
+
+
+def skin_extensions():
+    """Extensions the skin enables: the manifest's "extensions" list, else the Ubuntu list."""
+    try:
+        listed = _manifest().get("extensions")
+    except (OSError, ValueError):
+        listed = None
+    return list(listed) if listed else list(SKIN_EXTENSIONS)
 
 
 def _gsettings(*args):
@@ -101,6 +116,10 @@ def restore(dry_run=False):
         else:
             if not dry_run:
                 _gsettings("reset", row["schema"], row["key"])
+                # A distro's own dconf defaults (e.g. /etc/dconf/db/distro.d) outrank our
+                # gschema override, so a reset can land on their value; then set ours.
+                if not _same(_gsettings("get", row["schema"], row["key"]), row["value"]):
+                    _gsettings("set", row["schema"], row["key"], row["value"])
             changed.append(f"{row['schema']} {row['key']}: {row['current']} -> {row['value']}")
     return changed
 
@@ -118,7 +137,7 @@ def extension_state(uuid=None):
     Uses installed files and the enabled-extensions key rather than asking the running
     shell, so it also works over SSH and before the shell has rescanned.
     """
-    uuids = [uuid] if uuid else SKIN_EXTENSIONS
+    uuids = [uuid] if uuid else skin_extensions()
     enabled = _parse_list(_gsettings("get", "org.gnome.shell", "enabled-extensions"))
     states = []
     for u in uuids:
@@ -264,10 +283,10 @@ def apply_skin():
         state["backup"] = {
             "taken": time.strftime("%Y-%m-%dT%H:%M:%S%z"),
             "keys": [{"schema": r["schema"], "key": r["key"], "value": r["current"]} for r in status() if r["schema_installed"]],
-            "extensions_enabled_before": [u for u in SKIN_EXTENSIONS if extension_state(u) == "enabled"],
+            "extensions_enabled_before": [u for u in skin_extensions() if extension_state(u) == "enabled"],
         }
     changed = restore()
-    to_enable = [u for u in SKIN_EXTENSIONS if extension_state(u) == "disabled"]
+    to_enable = [u for u in skin_extensions() if extension_state(u) == "disabled"]
     if to_enable:
         _set_extensions(to_enable, True)
         changed.append(f"enabled {', '.join(to_enable)} (log out and in if not visible yet)")
@@ -290,7 +309,7 @@ def undo_skin():
             _gsettings("set", item["schema"], item["key"], item["value"])
             changed.append(f"{item['schema']} {item['key']} -> {item['value']}")
     was = set(backup.get("extensions_enabled_before", []))
-    off = [u for u in SKIN_EXTENSIONS if u not in was]
+    off = [u for u in skin_extensions() if u not in was]
     if off:
         _set_extensions(off, False)
         changed.append(f"disabled {', '.join(off)}")

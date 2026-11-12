@@ -1,0 +1,197 @@
+{
+  "about": "Fedora Asahi Remix: desktop keys Jewbuntu sets as vendor defaults (zz_jewbuntu-asahi.gschema.override) and the extensions 'jewbuntu skin apply' enables. Values use gsettings 'get' formatting.",
+  "extensions": [
+    "user-theme@gnome-shell-extensions.gcampax.github.com",
+    "dash-to-dock@micxgx.gmail.com",
+    "blur-my-shell@aunetx",
+    "jewbuntu-look@jewbuntu"
+  ],
+  "keys": [
+    {
+      "schema": "org.gnome.desktop.background",
+      "key": "picture-uri",
+      "value": "'file:///usr/share/backgrounds/Jewbuntu/Jewbuntu-star-blue.png'",
+      "why": "Default wallpaper: Star of David on blue waves"
+    },
+    {
+      "schema": "org.gnome.desktop.background",
+      "key": "picture-uri-dark",
+      "value": "'file:///usr/share/backgrounds/Jewbuntu/Jewbuntu-star-purple.png'",
+      "why": "Dark-mode wallpaper: Star of David on purple waves"
+    },
+    {
+      "schema": "org.gnome.desktop.screensaver",
+      "key": "picture-uri",
+      "value": "'file:///usr/share/backgrounds/Jewbuntu/Jewbuntu-star-blue.png'",
+      "why": "Default wallpaper: Star of David on blue waves"
+    },
+    {
+      "schema": "org.gnome.desktop.interface",
+      "key": "accent-color",
+      "value": "'blue'",
+      "why": "Blue accent"
+    },
+    {
+      "schema": "org.gnome.desktop.wm.preferences",
+      "key": "button-layout",
+      "value": "'close,minimize,maximize:appmenu'",
+      "why": "Mac-style window buttons on the left"
+    },
+    {
+      "schema": "org.gnome.mutter",
+      "key": "center-new-windows",
+      "value": "true",
+      "why": "Open new windows centred"
+    },
+    {
+      "schema": "org.gnome.desktop.peripherals.touchpad",
+      "key": "tap-to-click",
+      "value": "true",
+      "why": "Tap to click"
+    },
+    {
+      "schema": "org.gnome.shell.extensions.dash-to-dock",
+      "key": "dock-position",
+      "value": "'BOTTOM'",
+      "why": "Dock at the bottom"
+    },
+    {
+      "schema": "org.gnome.shell.extensions.dash-to-dock",
+      "key": "extend-height",
+      "value": "false",
+      "why": "Compact centred dock"
+    },
+    {
+      "schema": "org.gnome.shell.extensions.dash-to-dock",
+      "key": "dock-fixed",
+      "value": "true",
+      "why": "Dock always visible; maximised windows stop above it"
+    },
+    {
+      "schema": "org.gnome.shell.extensions.dash-to-dock",
+      "key": "intellihide",
+      "value": "true",
+      "why": "Hide only if a window overlaps (applies when dock-fixed is off)"
+    },
+    {
+      "schema": "org.gnome.shell.extensions.dash-to-dock",
+      "key": "dash-max-icon-size",
+      "value": "56",
+      "why": "Dock icon size"
+    },
+    {
+      "schema": "org.gnome.shell.extensions.dash-to-dock",
+      "key": "show-apps-at-top",
+      "value": "false",
+      "why": "App grid button at the end of the dock"
+    },
+    {
+      "schema": "org.gnome.shell.extensions.dash-to-dock",
+      "key": "click-action",
+      "value": "'minimize-or-previews'",
+      "why": "Click a running app to minimise or preview"
+    },
+    {
+      "schema": "org.gnome.desktop.input-sources",
+      "key": "sources",
+      "value": "[('xkb', 'us'), ('xkb', 'il')]",
+      "why": "English and Hebrew keyboards"
+    },
+    {
+      "schema": "org.gnome.desktop.interface",
+      "key": "font-name",
+      "value": "'Inter 11'",
+      "why": "Inter interface font (Hebrew falls back to Noto Sans Hebrew)"
+    },
+    {
+      "schema": "org.gnome.desktop.interface",
+      "key": "document-font-name",
+      "value": "'Inter 11'",
+      "why": "Inter document font"
+    },
+    {
+      "schema": "org.gnome.desktop.interface",
+      "key": "clock-show-weekday",
+      "value": "true",
+      "why": "Weekday in the top-bar clock"
+    },
+    {
+      "schema": "org.gnome.desktop.wm.preferences",
+      "key": "titlebar-font",
+      "value": "'Inter Semi-Bold 11'",
+      "why": "Window title font"
+    },
+    {
+      "schema": "org.gnome.shell.extensions.dash-to-dock",
+      "key": "always-center-icons",
+      "value": "true",
+      "why": "Icons centred"
+    },
+    {
+      "schema": "org.gnome.shell.extensions.dash-to-dock",
+      "key": "custom-theme-shrink",
+      "value": "true",
+      "why": "Compact dock padding"
+    },
+    {
+      "schema": "org.gnome.shell.extensions.dash-to-dock",
+      "key": "force-straight-corner",
+      "value": "false",
+      "why": "Rounded dock corners"
+    },
+    {
+      "schema": "org.gnome.shell.extensions.dash-to-dock",
+      "key": "running-indicator-style",
+      "value": "'DOTS'",
+      "why": "Dot under running apps"
+    },
+    {
+      "schema": "org.gnome.shell.extensions.dash-to-dock",
+      "key": "show-trash",
+      "value": "true",
+      "why": "Trash at the end of the dock"
+    },
+    {
+      "schema": "org.gnome.shell.extensions.dash-to-dock",
+      "key": "show-mounts",
+      "value": "false",
+      "why": "No drive icons in the dock"
+    },
+    {
+      "schema": "org.gnome.desktop.interface",
+      "key": "gtk-theme",
+      "value": "'Jewbuntu-Light'",
+      "why": "Jewbuntu Skin window theme (traffic-light buttons, glass)"
+    },
+    {
+      "schema": "org.gnome.shell.extensions.user-theme",
+      "key": "name",
+      "value": "'Jewbuntu-Light'",
+      "why": "Jewbuntu Skin top bar and shell theme"
+    },
+    {
+      "schema": "org.gnome.login-screen",
+      "key": "logo",
+      "value": "'/usr/share/jewbuntu/branding/jewbuntu-asahi-logo-text-dark.svg'",
+      "why": "\"Jewbuntu for Asahi Linux\" on the login screen"
+    },
+    {
+      "schema": "org.gnome.shell.extensions.blur-my-shell.panel",
+      "key": "blur",
+      "value": "false",
+      "why": "Clear top bar (no grey blur)"
+    },
+    {
+      "schema": "org.gnome.shell.extensions.blur-my-shell.dash-to-dock",
+      "key": "blur",
+      "value": "false",
+      "why": "No rectangular blur box around the rounded dock"
+    },
+    {
+      "schema": "org.gnome.desktop.interface",
+      "key": "icon-theme",
+      "value": "'Jewbuntu'",
+      "why": "Jewbuntu Icons (Mac-style, original replacements for Apple-copied icons)"
+    }
+  ]
+}

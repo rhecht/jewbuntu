@@ -243,3 +243,9 @@ def main(argv=None):
     except (config.ConfigError, KeyError) as exc:
         print(f"jewbuntu: {exc}", file=sys.stderr)
         return 2
+    except ModuleNotFoundError as exc:
+        # Builds for other distros (Fedora Asahi Remix) ship only part of the package.
+        if not (exc.name or "").startswith("jewbuntu."):
+            raise
+        print(f"jewbuntu: '{args.command}' is not available on this system ({exc.name} is not installed)", file=sys.stderr)
+        return 4

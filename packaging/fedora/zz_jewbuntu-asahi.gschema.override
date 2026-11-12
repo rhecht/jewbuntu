@@ -1,0 +1,71 @@
+# Jewbuntu defaults for Fedora Asahi Remix (GNOME edition). Vendor override: changes
+# defaults only, so anything a user set stays theirs. Keep in sync with desktop-defaults.json
+# here (tests/unit/test_fedora.py checks).
+#
+# Named zz_ on purpose: glib-compile-schemas lets later file names win, and Fedora's own
+# overrides (10_org.gnome.desktop.background.fedora..., gdm's org.gnome.login-screen...)
+# sort after any 90_ name. Desktop keys use :GNOME sections, which also outrank plain
+# sections from other files; they apply to the GNOME session (and GDM, GNOME-Greeter:GNOME).
+# Removing jewbuntu-asahi-desktop removes this file and Fedora's defaults come straight back.
+
+[org.gnome.desktop.background:GNOME]
+picture-uri='file:///usr/share/backgrounds/Jewbuntu/Jewbuntu-star-blue.png'
+picture-uri-dark='file:///usr/share/backgrounds/Jewbuntu/Jewbuntu-star-purple.png'
+
+[org.gnome.desktop.screensaver:GNOME]
+picture-uri='file:///usr/share/backgrounds/Jewbuntu/Jewbuntu-star-blue.png'
+
+[org.gnome.desktop.interface:GNOME]
+accent-color='blue'
+gtk-theme='Jewbuntu-Light'
+icon-theme='Jewbuntu'
+font-name='Inter 11'
+document-font-name='Inter 11'
+clock-show-weekday=true
+
+[org.gnome.desktop.wm.preferences:GNOME]
+button-layout='close,minimize,maximize:appmenu'
+titlebar-font='Inter Semi-Bold 11'
+
+[org.gnome.mutter:GNOME]
+center-new-windows=true
+
+[org.gnome.desktop.peripherals.touchpad:GNOME]
+tap-to-click=true
+
+# English and Hebrew keyboards (Super+Space switches). Users who chose layouts keep theirs.
+[org.gnome.desktop.input-sources:GNOME]
+sources=[('xkb', 'us'), ('xkb', 'il')]
+
+# Mac-style dock (Dash to Dock, enabled per account by 'jewbuntu skin apply'): floating,
+# compact, rounded (the skin draws the glass), dot indicators, always visible, trash at the end.
+[org.gnome.shell.extensions.dash-to-dock:GNOME]
+dock-position='BOTTOM'
+extend-height=false
+dock-fixed=true
+intellihide=true
+always-center-icons=true
+custom-theme-shrink=true
+force-straight-corner=false
+running-indicator-style='DOTS'
+dash-max-icon-size=56
+show-apps-at-top=false
+show-trash=true
+show-mounts=false
+click-action='minimize-or-previews'
+
+# Shell theme from the Jewbuntu Skin (needs User Themes, enabled by 'jewbuntu skin apply').
+[org.gnome.shell.extensions.user-theme:GNOME]
+name='Jewbuntu-Light'
+
+# Blur my Shell: no blur behind the top bar (kept clear by Jewbuntu Look) or the dock.
+[org.gnome.shell.extensions.blur-my-shell.panel:GNOME]
+blur=false
+
+[org.gnome.shell.extensions.blur-my-shell.dash-to-dock:GNOME]
+blur=false
+
+# Login screen: "Jewbuntu for Asahi Linux" wordmark in place of gdm's Fedora logo
+# (plain section, like gdm's own override, which this file sorts after).
+[org.gnome.login-screen]
+logo='/usr/share/jewbuntu/branding/jewbuntu-asahi-logo-text-dark.svg'
