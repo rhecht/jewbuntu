@@ -116,9 +116,8 @@ Description: Jewbuntu Hub - Hebrew date, zmanim and settings
 
 Package: jewbuntu-webserver
 Architecture: all
-Depends: gjs (>= 1.80), gir1.2-gtk-4.0, gir1.2-adw-1, gir1.2-soup-3.0,
+Depends: gjs (>= 1.80), gir1.2-gtk-4.0, gir1.2-adw-1, gir1.2-soup-3.0, glib-networking,
          pkexec | policykit-1, acl, ${misc:Depends}
-Recommends: composer
 Description: Jewbuntu Web Server - run websites on this computer
  A friendly app for Apache, MariaDB and PHP from Ubuntu's own archive. One
  click sets it up; every folder in ~/Sites becomes http://NAME.localhost, and

@@ -71,11 +71,22 @@ Not yet seen: ShulGo system location after the 83eeaa9 GeoClue fix (rest of that
 startup jingle at a cold boot with audible volume; Hebrew typing/RTL copy-paste in apps; amd64 image; physical hardware.
 
 Planned: first-run setup (incl. "Num Lock on at login"), Ulauncher + Liquid Glass, ISO (M3), node/AI packs (M4),
-Jewbuntu Web Server (user-friendly local LAMP app, Developer Pack), Siri-like voice prompter (very end).
+Siri-like voice prompter (very end).
 
 Lite (Xfce) note: for ShulGo use its GTK app (integrations/jewbuntu/app, no GNOME Shell imports) plus a
 StatusNotifierItem tray icon (Shulgo session will add it) rather than the Electron shulgo-desktop .deb.
 Measure both on the VM before deciding; the memory comparison is unmeasured (also in shulgo docs/TODO.md).
+
+## Status at 0.1.0~m1.24 (2026-11-11 night)
+
+- **Web Server** (jewbuntu-webserver): GTK4 app plus one polkit helper. Container-tested on Ubuntu 26.04
+  (ci/webserver-check.sh, log in docs/test-results/): setup, sites, PHP, database, sharing on/off including
+  LAN refusal when off, and WordPress (full install), CodeIgniter 4 and empty sites created through the
+  app's own code. Not yet seen in the VM: the GUI password prompt, the browser opening the sites.
+- **One-file installer** (`jewbuntu-installer-VERSION.run`, built by ci/make-installer.sh): all public
+  packages including the skin and icons; ShulGo excluded. Published as a GitHub Release asset.
+  Instructions: docs/install.md.
+- ISO: not built. Ubuntu's desktop ISO (~6 GB) exceeds GitHub's 2 GB per-asset limit; needs other hosting.
 
 ## Milestone 2: useful Jewish desktop (in progress)
 

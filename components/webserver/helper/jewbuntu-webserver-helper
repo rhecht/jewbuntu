@@ -9,15 +9,19 @@
 #
 # Safety defaults: Apache listens on 127.0.0.1/::1 only; every Jewbuntu site has
 # "Require local" unless sharing is switched on; MariaDB binds to 127.0.0.1.
-set -euo pipefail
+set -Eeuo pipefail
 export LC_ALL=C.UTF-8 DEBIAN_FRONTEND=noninteractive
 
-die() { printf '{"ok":false,"error":"%s"}\n' "$1"; exit 1; }
+json_str() { printf '%s' "$1" | sed -e 's/\\/\\\\/g' -e 's/"/\\"/g' | tr '\n\t' '  '; }
+die() { printf '{"ok":false,"error":"%s"}\n' "$(json_str "$1")"; exit 1; }
+trap 'die "unexpected failure (line $LINENO); see /var/log/jewbuntu-webserver.log"' ERR
 [ "$(id -u)" = 0 ] || die "must run as root (via pkexec)"
 
 # The calling desktop user (pkexec sets PKEXEC_UID); JEWBUNTU_TEST_USER only for root-run tests.
 if [ -n "${PKEXEC_UID:-}" ]; then
     USER_NAME="$(getent passwd "$PKEXEC_UID" | cut -d: -f1)"
+elif [ -n "${SUDO_UID:-}" ]; then
+    USER_NAME="$(getent passwd "$SUDO_UID" | cut -d: -f1)"
 elif [ -n "${JEWBUNTU_TEST_USER:-}" ]; then
     USER_NAME="$JEWBUNTU_TEST_USER"
 else
@@ -27,7 +31,8 @@ fi
 USER_HOME="$(getent passwd "$USER_NAME" | cut -d: -f6)"
 SITES="$USER_HOME/Sites"
 
-PACKAGES=(apache2 mariadb-server php libapache2-mod-php php-mysql php-xml php-mbstring php-curl php-zip php-gd php-intl acl unzip)
+PACKAGES=(apache2 mariadb-server php libapache2-mod-php php-mysql php-xml php-mbstring php-curl php-zip php-gd php-intl acl unzip composer)
+LOG=/var/log/jewbuntu-webserver.log
 PORTS=/etc/apache2/ports.conf
 ACCESS=/etc/apache2/jewbuntu-access.conf
 MARIADB_CNF=/etc/mysql/mariadb.conf.d/60-jewbuntu.cnf
@@ -45,7 +50,7 @@ svc() { # svc start|stop|reload|is-active UNIT
     fi
 }
 
-installed() { [ "$(dpkg-query -W -f '${db:Status-Abbrev}\n' apache2 mariadb-server php 2>/dev/null | grep -c '^ii')" = 3 ]; }
+installed() { [ "$(dpkg-query -W -f '${db:Status-Abbrev}\n' apache2 mariadb-server php 2>/dev/null | grep -c '^ii' || true)" = 3 ]; }
 
 has_ipv6_loopback() { grep -qi '^0\{31\}1 ' /proc/net/if_inet6 2>/dev/null; }
 
@@ -63,7 +68,8 @@ configure_local() {
     # MariaDB: localhost only (Ubuntu's default already, made explicit).
     printf '# Managed by Jewbuntu Web Server\n[mysqld]\nbind-address = 127.0.0.1\n' > "$MARIADB_CNF"
     a2enmod -q rewrite >/dev/null
-    a2dissite -q 000-default >/dev/null 2>&1 || true
+    # Ubuntu's default site stays enabled: http://localhost shows its page, and unknown
+    # names never land on someone's site (000-default sorts first).
 }
 
 site_conf() { echo "/etc/apache2/sites-available/jewbuntu-$USER_NAME-$1.conf"; }
@@ -85,8 +91,12 @@ cmd_status() {
 }
 
 cmd_install() {
-    apt-get update -q >/dev/null
-    apt-get install -y -q "${PACKAGES[@]}" >/dev/null
+    # Wait for automatic updates to release the package lock instead of failing.
+    local apt=(apt-get -q -o DPkg::Lock::Timeout=600)
+    echo "== $(date -R) install" >> "$LOG"
+    "${apt[@]}" update >> "$LOG" 2>&1 || die "Could not reach Ubuntu's package servers. Check the internet connection and try again."
+    "${apt[@]}" install -y "${PACKAGES[@]}" >> "$LOG" 2>&1 \
+        || die "Installing the packages failed: $(grep -E '^E:' "$LOG" | tail -1)"
     configure_local
     svc start mariadb || true
     svc reload apache2 || svc start apache2 || true

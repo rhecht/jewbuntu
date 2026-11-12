@@ -9,8 +9,19 @@ top of Ubuntu 26.04 LTS. Ubuntu keeps its own kernel, installer, updates and
 release upgrader. Your settings live in your home folder and come with you when
 Ubuntu moves to a new release.
 
-> Status: **Milestone 1 (foundation) in progress.** See [STATUS.md](STATUS.md) for
-> what is implemented, what has been verified, and what remains untested.
+> Status: **preview releases.** See [STATUS.md](STATUS.md) for what has been verified
+> and what remains untested.
+
+## Install
+
+On Ubuntu 26.04 LTS, download `jewbuntu-installer-VERSION.run` from the
+[latest release](https://github.com/rhecht/jewbuntu/releases/latest) and run:
+
+```bash
+sh ~/Downloads/jewbuntu-installer-*.run
+```
+
+Full instructions: [docs/install.md](docs/install.md).
 
 ## Packages
 
@@ -21,7 +32,8 @@ Ubuntu moves to a new release.
 | `jewbuntu-hebrew` | English and Hebrew keyboards, nikud fonts, spell checker | Built, container-tested |
 | `jewbuntu-upgrade-tools` | Upgrade readiness report, repository enrollment | Built, container-tested |
 | `jewbuntu-desktop` | Metapackage and Mac-inspired GNOME defaults | Built; graphical result not yet seen in a VM |
-| `jewbuntu-jewish-service`, `jewbuntu-hub`, `jewbuntu-gnome` | Calendar/zmanim/Shulgo service, Hub app, panel indicator | Milestone 2 |
+| `jewbuntu-jewish-service`, `jewbuntu-hub`, `jewbuntu-gnome` | Calendar/zmanim service, Hub app, panel look | Built; seen working in the VM |
+| `jewbuntu-webserver` | Web Server app: local Apache/MariaDB/PHP, WordPress, CodeIgniter | Built, container-tested; not yet seen in the VM |
 | `jewbuntu-node`, `jewbuntu-ai`, `jewbuntu-dev` | Headless node, local AI, developer pack | Milestone 4 |
 
 ## Commands

@@ -49,7 +49,7 @@ Removing a site stops serving it but keeps its files and database.
 | `/etc/apache2/conf-available/jewbuntu-servername.conf` | `ServerName localhost`. | `a2disconf jewbuntu-servername` |
 | `/etc/apache2/sites-available/jewbuntu-USER-NAME.conf` | One per site. | Remove the site in the app. |
 | `/etc/mysql/mariadb.conf.d/60-jewbuntu.cnf` | `bind-address = 127.0.0.1` | Delete it. |
-| Apache modules and sites | `rewrite` on, `000-default` off. | `a2dismod` / `a2ensite` |
+| Apache modules | `rewrite` on. | `a2dismod rewrite` |
 
 Logs: `/var/log/apache2/jewbuntu-NAME-error.log` and `-access.log`.
 

@@ -11,7 +11,7 @@ PASS: install: running
 PASS: apache listens on loopback only (ports.conf)
 PASS: original ports.conf kept
 PASS: mariadb bound to 127.0.0.1
-PASS: default site disabled
+PASS: Ubuntu default site still enabled
   add-site: {"ok":true,"site":"demo","url":"http://demo.localhost/","path":"/home/t/Sites/demo"}
 PASS: add-site ok
 PASS: site folder owned by user
@@ -41,4 +41,28 @@ PASS: remove-site kept files
 PASS: remove-site removed vhost
 PASS: stop
 PASS: start
+  … Downloading WordPress from wordpress.org…
+  … Unpacking WordPress…
+  … Creating the database…
+  … Turning on the site…
+CREATED wp http://wp.localhost/wp-admin/install.php db=jb_wp
+  … Creating a CodeIgniter 4 project with Composer…
+  … Turning on the site…
+CREATED ci4 http://ci4.localhost/
+CREATED plain http://plain.localhost/
+REFUSED duplicate: /home/t/Sites/wp already exists; choose another name for a fresh WordPress site.
+STATUS composer=true sites=ci,ci4,plain,wp
+PASS: sites test: no errors
+PASS: duplicate site name refused
+PASS: composer installed by setup
+PASS: wp-config has FS_METHOD direct
+PASS: wp-config not world-readable
+PASS: WordPress installer reaches its database
+PASS: WordPress installs
+PASS: WordPress home page shows the site
+PASS: Apache can write WordPress uploads
+PASS: CodeIgniter welcome page
+PASS: CodeIgniter can write its cache
+PASS: empty site works
+PASS: http://localhost is Ubuntu default page, not a user site
 failures: 0

@@ -1,0 +1,40 @@
+PASS: damaged download refused
+PASS: --list shows 11 packages
+PASS: no ShulGo inside
+PASS: --help
+--- installing (as user t, --yes) ...
+enabled user-theme@gnome-shell-extensions.gcampax.github.com, blur-my-shell@aunetx, jewbuntu-look@jewbuntu (log out and in if not visible yet)
+libadwaita apps themed (~/.config/gtk-4.0; previous files saved)
+Log out and back in to see every change.
+
+  Jewbuntu 0.1.0-m1.24 is installed.
+
+  Next: log out and back in (or restart) to see the new desktop.
+  - Jewbuntu Hub and Web Server are in the app grid.
+  - 'jewbuntu doctor' checks the setup; 'jewbuntu skin undo' restores your old look.
+  - Updates: download a newer installer and run it the same way.
+  - Remove: sudo apt remove 'jewbuntu-*'   (your files and settings are kept)
+
+PASS: final message shows the Jewbuntu version
+PASS: installer exit 0
+PASS: all 11 packages installed
+PASS: Ubuntu desktop pulled in from the archive
+PASS: apt consistent
+Jewbuntu 0.1.0~m1.24 (settings schema 2)
+  jewbuntu-branding 0.1.0~m1.24+26.04
+  jewbuntu-core 0.1.0~m1.24+26.04
+  jewbuntu-desktop 0.1.0~m1.24+26.04
+  jewbuntu-gnome 0.1.0~m1.24+26.04
+  jewbuntu-hebrew 0.1.0~m1.24+26.04
+  jewbuntu-hub 0.1.0~m1.24+26.04
+  jewbuntu-icons 0.1.0~git20261111+26.04
+  jewbuntu-jewish-service 0.1.0~m1.24+26.04
+  jewbuntu-skin 0.1.0~git20261111.4+26.04
+  jewbuntu-upgrade-tools 0.1.0~m1.24+26.04
+  jewbuntu-webserver 0.1.0~m1.24+26.04
+PASS: jewbuntu command works
+PASS: Hub and Web Server installed
+PASS: no web server until asked
+--- running it again (update path) ...
+PASS: second run (update path) exit 0
+failures: 0

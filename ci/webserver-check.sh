@@ -5,7 +5,7 @@
 set -eu
 DIST="${1:?usage: ci/webserver-check.sh DISTDIR}"
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-docker run --rm ${PLATFORM:+--platform $PLATFORM} -v "$ROOT/$DIST:/dist:ro" ubuntu:26.04 bash -c '
+docker run --rm ${PLATFORM:+--platform $PLATFORM} -v "$ROOT/$DIST:/dist:ro" -v "$ROOT/components/webserver/tests:/tests:ro" ubuntu:26.04 bash -c '
 set -u
 fails=0
 pass() { echo "PASS: $*"; }
@@ -13,7 +13,7 @@ fail() { echo "FAIL: $*"; fails=$((fails+1)); }
 check() { local d="$1"; shift; if "$@" >/dev/null 2>&1; then pass "$d"; else fail "$d"; fi; }
 export DEBIAN_FRONTEND=noninteractive
 for i in 1 2 3; do apt-get update -q >/dev/null 2>&1 && break; sleep 5; done
-apt-get install -y -q curl /dist/jewbuntu-webserver_*.deb >/tmp/apt.log 2>&1 || { tail -20 /tmp/apt.log; exit 1; }
+apt-get install -y -q curl sudo /dist/jewbuntu-webserver_*.deb >/tmp/apt.log 2>&1 || { tail -20 /tmp/apt.log; exit 1; }
 H=/usr/libexec/jewbuntu/jewbuntu-webserver-helper
 check "helper installed and executable" test -x $H
 check "polkit policy installed" test -f /usr/share/polkit-1/actions/org.jewbuntu.webserver.policy
@@ -30,7 +30,7 @@ check "install: running" grep -q "\"running\":true" <<<"$out"
 check "apache listens on loopback only (ports.conf)" bash -c "grep -q \"^Listen 127.0.0.1:80\$\" /etc/apache2/ports.conf && ! grep -q \"^Listen 80\$\" /etc/apache2/ports.conf"
 check "original ports.conf kept" test -f /etc/apache2/ports.conf.jewbuntu-orig
 check "mariadb bound to 127.0.0.1" grep -q "bind-address = 127.0.0.1" /etc/mysql/mariadb.conf.d/60-jewbuntu.cnf
-check "default site disabled" bash -c "! test -e /etc/apache2/sites-enabled/000-default.conf"
+check "Ubuntu default site still enabled" bash -c "test -e /etc/apache2/sites-enabled/000-default.conf"
 out=$($H add-site demo); echo "  add-site: $out"
 check "add-site ok" grep -q "\"ok\":true" <<<"$out"
 check "site folder owned by user" bash -c "[ \$(stat -c %U /home/t/Sites/demo) = t ]"
@@ -65,5 +65,27 @@ check "remove-site kept files" test -f /home/t/Sites/demo/index.php
 check "remove-site removed vhost" bash -c "! test -e /etc/apache2/sites-available/jewbuntu-t-demo.conf"
 out=$($H stop); check "stop" grep -q "\"running\":false" <<<"$out"
 out=$($H start); check "start" grep -q "\"running\":true" <<<"$out"
+# --- WordPress, CodeIgniter and empty sites through the same code as the app (sites.js), as user t
+echo "t ALL=(root) NOPASSWD: /usr/libexec/jewbuntu/jewbuntu-webserver-helper" > /etc/sudoers.d/t
+sudo -u t -H env JEWBUNTU_WEBSERVER_ELEVATE=sudo gjs -m /tests/sites-test.js 2>&1 | tee /tmp/sites.log
+check "sites test: no errors" bash -c "! grep -q ^ERROR /tmp/sites.log"
+check "duplicate site name refused" grep -q "^REFUSED duplicate" /tmp/sites.log
+check "composer installed by setup" grep -q "composer=true" /tmp/sites.log
+check "wp-config has FS_METHOD direct" grep -q "FS_METHOD.*direct" /home/t/Sites/wp/wp-config.php
+check "wp-config not world-readable" bash -c "[ \$(stat -c %a /home/t/Sites/wp/wp-config.php | cut -c3) = 0 ]"
+inst=$(curl -s --resolve wp.localhost:80:127.0.0.1 http://wp.localhost/wp-admin/install.php)
+check "WordPress installer reaches its database" bash -c "grep -q \"step=1\" <<<\"\$0\" && ! grep -q \"Error establishing\" <<<\"\$0\"" "$inst"
+pw=$(head -c 12 /dev/urandom | base64 | tr -d /+=)
+curl -s --resolve wp.localhost:80:127.0.0.1 -o /tmp/wp2.html "http://wp.localhost/wp-admin/install.php?step=2" \
+  --data-urlencode "weblog_title=Jewbuntu CI Shul" --data-urlencode user_name=admin \
+  --data-urlencode admin_password=$pw --data-urlencode admin_password2=$pw \
+  --data-urlencode admin_email=ci@example.invalid --data-urlencode blog_public=0 --data-urlencode pw_weak=1
+check "WordPress installs" grep -qi "success" /tmp/wp2.html
+check "WordPress home page shows the site" grep -q "Jewbuntu CI Shul" <<<"$(curl -s -L --resolve wp.localhost:80:127.0.0.1 http://wp.localhost/)"
+check "Apache can write WordPress uploads" sudo -u www-data mkdir -p /home/t/Sites/wp/wp-content/uploads/ci
+check "CodeIgniter welcome page" grep -q "Welcome to CodeIgniter" <<<"$(curl -s --resolve ci4.localhost:80:127.0.0.1 http://ci4.localhost/)"
+check "CodeIgniter can write its cache" sudo -u www-data touch /home/t/Sites/ci4/writable/cache/ci-test
+check "empty site works" grep -q "plain.localhost is working" <<<"$(curl -s --resolve plain.localhost:80:127.0.0.1 http://plain.localhost/)"
+check "http://localhost is Ubuntu default page, not a user site" grep -q "Apache2 Default Page" <<<"$(curl -s http://127.0.0.1/)"
 echo "failures: $fails"; exit $fails
 '
