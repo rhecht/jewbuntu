@@ -49,7 +49,9 @@ case "$MODE" in
 esac
 
 # Checks.
-. /etc/os-release 2>/dev/null || die "cannot read /etc/os-release."
+# (A missing file given to "." ends the shell silently, so test first.)
+[ -r /etc/os-release ] || die "this installer is for Ubuntu 26.04 LTS; this computer is running $(uname -s). Run it on the Ubuntu computer (or VM) instead."
+. /etc/os-release
 if [ "${ID:-}" != ubuntu ] || [ "${VERSION_ID:-}" != 26.04 ]; then
   [ "$FORCE" = 1 ] || die "Jewbuntu $JB_VERSION is for Ubuntu 26.04 LTS; this is ${PRETTY_NAME:-unknown}. (--force to try anyway; unsupported.)"
   say "Continuing on ${PRETTY_NAME:-unknown} because of --force (unsupported)."
