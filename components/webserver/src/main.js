@@ -4,6 +4,7 @@
 // Defaults are local-only: Apache on 127.0.0.1/::1, "Require local", MariaDB on 127.0.0.1.
 import GLib from 'gi://GLib';
 import Gio from 'gi://Gio';
+import Gdk from 'gi://Gdk?version=4.0';
 import Gtk from 'gi://Gtk?version=4.0';
 import Adw from 'gi://Adw?version=1';
 import System from 'system';
@@ -165,7 +166,9 @@ class WebServerWindow {
     }
 
     copy(text, what) {
-        this.win.get_clipboard().set_text(text);
+        // gdk_clipboard_set_text is not callable from GJS; a bytes content provider is.
+        const bytes = new GLib.Bytes(new TextEncoder().encode(text));
+        this.win.get_clipboard().set_content(Gdk.ContentProvider.new_for_bytes('text/plain;charset=utf-8', bytes));
         this.toast(`${what} copied`);
     }
 

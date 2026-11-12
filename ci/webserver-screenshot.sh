@@ -4,7 +4,7 @@
 set -eu
 DIST="${1:?}"; OUT="${2:?}"
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"; mkdir -p "$OUT"
-docker run --rm ${PLATFORM:+--platform $PLATFORM} -v "$ROOT/$DIST:/dist:ro" -v "$(cd "$OUT" && pwd):/out" ubuntu:26.04 bash -c '
+docker run --rm ${PLATFORM:+--platform $PLATFORM} -v "$ROOT/$DIST:/dist:ro" -v "$(cd "$OUT" && pwd):/out" -v "$ROOT/components/webserver/tests:/tests:ro" ubuntu:26.04 bash -c '
 set -u; export DEBIAN_FRONTEND=noninteractive
 for i in 1 2 3; do apt-get update -q >/dev/null 2>&1 && break; sleep 5; done
 apt-get install -y -q xvfb imagemagick sudo fonts-inter /dist/jewbuntu-webserver_*.deb >/tmp/apt.log 2>&1 || { tail /tmp/apt.log; exit 1; }
@@ -17,6 +17,7 @@ shot() {
   grep -iE "error|critical|warning" /out/$1.log | grep -v -e libEGL -e DRI3 | head -5 || true
 }
 shot webserver-setup
+sudo -u t env DISPLAY=:99 GDK_BACKEND=x11 gjs -m /tests/clipboard-test.js 2>&1 | grep -v -e libEGL -e DRI3
 H=/usr/libexec/jewbuntu/jewbuntu-webserver-helper
 for i in 1 2 3; do JEWBUNTU_TEST_USER=t $H install >/dev/null && break; sleep 5; done
 JEWBUNTU_TEST_USER=t $H add-site blog >/dev/null; JEWBUNTU_TEST_USER=t $H add-site shul-site >/dev/null
