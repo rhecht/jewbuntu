@@ -1,0 +1,11 @@
+# Jewbuntu ISO: Ubuntu's own installer, every screen kept interactive (language, keyboard,
+# network, disk, your name / computer name / password ...). The only addition: after Ubuntu
+# is installed, Jewbuntu's packages are installed into the new system from this disc.
+# Nothing personal is preset here.
+autoinstall:
+  version: 1
+  interactive-sections:
+    - "*"
+  late-commands:
+    - cp -r /cdrom/jewbuntu /target/var/cache/jewbuntu-install
+    - curtin in-target -- sh /var/cache/jewbuntu-install/install-in-target.sh
