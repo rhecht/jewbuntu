@@ -15,6 +15,9 @@ PASS: Ubuntu default site still enabled
 PASS: status: setup complete (phpMyAdmin, FTP, Composer)
 PASS: phpMyAdmin login page at http://localhost/phpmyadmin/
 PASS: phpMyAdmin limited to this computer
+PASS: Apache PHP: JIT off, 128M uploads
+PASS: package upgrade re-applies PHP settings (postinst system-refresh)
+PASS: system-refresh needs no user
 PASS: FTP listens on 127.0.0.1 only
 PASS: db-login: user can log in with the password
 PASS: db-login: works without password from the user terminal (unix_socket)

@@ -1,0 +1,8 @@
+#!/bin/sh
+# Re-apply Jewbuntu's system-wide web server settings (PHP limits, phpMyAdmin local-only)
+# after an upgrade, only if the user already set the server up. Touches /etc only.
+set -e
+if [ "$1" = configure ] && [ -f /etc/apache2/jewbuntu-access.conf ]; then
+    /usr/libexec/jewbuntu/jewbuntu-webserver-helper system-refresh >/dev/null 2>&1 || true
+fi
+#DEBHELPER#

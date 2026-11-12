@@ -7,6 +7,7 @@
 #   add-site NAME [public]  | remove-site NAME
 #   create-db NAME          (prints JSON with a generated password, once)
 #   db-login                (creates/resets the user's own MySQL login; prints the password once)
+#   system-refresh          (package upgrades: re-apply system-wide settings; no user involved)
 #
 # install also sets up phpMyAdmin (http://localhost/phpmyadmin, always local-only) and an
 # FTP server (vsftpd: the user's own Ubuntu login, chrooted to ~/Sites, local-only unless
@@ -23,7 +24,10 @@ trap 'die "unexpected failure (line $LINENO); see /var/log/jewbuntu-webserver.lo
 [ "$(id -u)" = 0 ] || die "must run as root (via pkexec)"
 
 # The calling desktop user (pkexec sets PKEXEC_UID); JEWBUNTU_TEST_USER only for root-run tests.
-if [ -n "${PKEXEC_UID:-}" ]; then
+# system-refresh (run by the package's postinst) touches only /etc and needs no user.
+if [ "${1:-}" = system-refresh ]; then
+    USER_NAME=""
+elif [ -n "${PKEXEC_UID:-}" ]; then
     USER_NAME="$(getent passwd "$PKEXEC_UID" | cut -d: -f1)"
 elif [ -n "${SUDO_UID:-}" ]; then
     USER_NAME="$(getent passwd "$SUDO_UID" | cut -d: -f1)"
@@ -32,10 +36,12 @@ elif [ -n "${JEWBUNTU_TEST_USER:-}" ]; then
 else
     die "unknown calling user"
 fi
-[ -n "$USER_NAME" ] && [ "$USER_NAME" != root ] || die "refusing to manage sites for root"
-[[ "$USER_NAME" =~ ^[a-z_][a-z0-9_-]{0,31}$ ]] || die "unsupported user name for the web server: $USER_NAME"
-USER_HOME="$(getent passwd "$USER_NAME" | cut -d: -f6)"
-SITES="$USER_HOME/Sites"
+if [ "${1:-}" != system-refresh ]; then
+    [ -n "$USER_NAME" ] && [ "$USER_NAME" != root ] || die "refusing to manage sites for root"
+    [[ "$USER_NAME" =~ ^[a-z_][a-z0-9_-]{0,31}$ ]] || die "unsupported user name for the web server: $USER_NAME"
+    USER_HOME="$(getent passwd "$USER_NAME" | cut -d: -f6)"
+    SITES="$USER_HOME/Sites"
+fi
 
 PACKAGES=(apache2 mariadb-server php libapache2-mod-php php-mysql php-xml php-mbstring php-curl php-zip php-gd php-intl acl unzip composer phpmyadmin vsftpd ssl-cert)
 LOG=/var/log/jewbuntu-webserver.log
@@ -79,10 +85,31 @@ configure_local() {
     # MariaDB: localhost only (Ubuntu's default already, made explicit).
     printf '# Managed by Jewbuntu Web Server\n[mysqld]\nbind-address = 127.0.0.1\n' > "$MARIADB_CNF"
     a2enmod -q rewrite >/dev/null
+    configure_php
     configure_phpmyadmin
     configure_ftp local
     # Ubuntu's default site stays enabled: http://localhost shows its page, and unknown
     # names never land on someone's site (000-default sorts first).
+}
+
+configure_php() {
+    # PHP under Apache, for local development:
+    # - pcre.jit=0: Ubuntu runs apache2 with MemoryDenyWriteExecute=yes, which makes PCRE's JIT
+    #   fail and log a warning on every request. Keep the hardening; skip the JIT.
+    # - Upload/memory limits that let WordPress take ordinary photos, themes and plugins
+    #   (PHP's stock 2 MB upload limit rejects most of them).
+    local d
+    for d in /etc/php/*/apache2/conf.d; do
+        [ -d "$d" ] || continue
+        cat > "$d/99-jewbuntu.ini" <<'INI'
+; Managed by Jewbuntu Web Server (local development defaults)
+pcre.jit = 0
+upload_max_filesize = 128M
+post_max_size = 128M
+memory_limit = 256M
+max_execution_time = 120
+INI
+    done
 }
 
 configure_phpmyadmin() {
@@ -278,5 +305,13 @@ case "${1:-}" in
     remove-site) cmd_remove_site "${2:-}" ;;
     create-db) cmd_create_db "${2:-}" ;;
     db-login) cmd_db_login ;;
+    system-refresh)
+        # Only for servers the Web Server already set up; never installs or starts anything.
+        if installed && [ -f "$ACCESS" ]; then
+            configure_php
+            configure_phpmyadmin
+            svc is-active apache2 && { svc reload apache2 || true; }
+        fi
+        printf '{"ok":true,"refreshed":true}\n' ;;
     *) die "unknown command" ;;
 esac

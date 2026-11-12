@@ -34,6 +34,13 @@ check "Ubuntu default site still enabled" bash -c "test -e /etc/apache2/sites-en
 check "status: setup complete (phpMyAdmin, FTP, Composer)" grep -q "\"complete\":true" <<<"$out"
 check "phpMyAdmin login page at http://localhost/phpmyadmin/" grep -qi "phpMyAdmin" <<<"$(curl -s http://127.0.0.1/phpmyadmin/)"
 check "phpMyAdmin limited to this computer" grep -q "Require local" /etc/apache2/conf-enabled/phpmyadmin-jewbuntu-local.conf
+mkdir -p /home/t/Sites/phpcheck && echo "<?php echo ini_get(\"pcre.jit\"), \"|\", ini_get(\"upload_max_filesize\");" > /home/t/Sites/phpcheck/index.php && chown -R t:t /home/t/Sites/phpcheck && $H add-site phpcheck >/dev/null
+check "Apache PHP: JIT off, 128M uploads" grep -qx "0|128M" <<<"$(curl -s --resolve phpcheck.localhost:80:127.0.0.1 http://phpcheck.localhost/)"
+$H remove-site phpcheck >/dev/null
+rm -f /etc/php/*/apache2/conf.d/99-jewbuntu.ini
+dpkg-reconfigure -f noninteractive jewbuntu-webserver >/dev/null 2>&1
+check "package upgrade re-applies PHP settings (postinst system-refresh)" bash -c "ls /etc/php/*/apache2/conf.d/99-jewbuntu.ini"
+out=$(/usr/libexec/jewbuntu/jewbuntu-webserver-helper system-refresh); check "system-refresh needs no user" grep -q "\"ok\":true" <<<"$out"
 check "FTP listens on 127.0.0.1 only" bash -c "ss -ltn | grep -q \"127.0.0.1:21 \" && ! ss -ltn | grep -q \"0.0.0.0:21 \""
 out=$($H db-login); dbpw=$(sed -E "s/.*\"password\":\"([^\"]+)\".*/\1/" <<<"$out")
 check "db-login: user can log in with the password" mariadb -ut -p"$dbpw" -h 127.0.0.1 -e "select 1"

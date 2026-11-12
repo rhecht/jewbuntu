@@ -1,3 +1,14 @@
+jewbuntu (0.1.0~m1.26+26.04) resolute; urgency=medium
+
+  * Web Server: Copy buttons work (gdk_clipboard_set_text is not callable from
+    GJS; found in the VM).
+  * Web Server: PHP defaults for local development: 128 MB uploads, 256 MB
+    memory, and PCRE JIT off (Ubuntu's apache2 unit sets
+    MemoryDenyWriteExecute, so the JIT failed and logged a warning on every
+    request). Existing servers get these on upgrade via a system-only refresh.
+
+ -- Jewbuntu Developers <maintainers@jewbuntu.invalid>  Thu, 12 Nov 2026 01:04:30 -0500
+
 jewbuntu (0.1.0~m1.25+26.04) resolute; urgency=medium
 
   * Web Server: phpMyAdmin (http://localhost/phpmyadmin, always local-only),
