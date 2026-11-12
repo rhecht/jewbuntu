@@ -1,3 +1,11 @@
+jewbuntu (0.1.0~m1.18+26.04) resolute; urgency=medium
+
+  * jewbuntu-shulgo: re-vendor rhecht/shulgo@83eeaa9: system location
+    (GeoClue) call fixed (it always fell back to the typed place before);
+    one-line offline banner in the window.
+
+ -- Jewbuntu Developers <maintainers@jewbuntu.invalid>  Wed, 11 Nov 2026 19:36:00 -0500
+
 jewbuntu (0.1.0~m1.17+26.04) resolute; urgency=medium
 
   * jewbuntu-shulgo: re-vendor rhecht/shulgo@b189ca6: navy menu surface set
