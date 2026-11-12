@@ -7,7 +7,7 @@ UPSTREAM_VERSION must match the upstream part of debian/changelog
 import shutil
 import subprocess
 
-__version__ = "0.1.0~m1.20"
+__version__ = "0.1.0~m1.21"
 
 
 def installed_package_versions(prefix="jewbuntu"):

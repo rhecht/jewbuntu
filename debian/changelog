@@ -1,3 +1,10 @@
+jewbuntu (0.1.0~m1.21+26.04) resolute; urgency=medium
+
+  * jewbuntu-shulgo: re-vendor rhecht/shulgo@cb34bdc: readable place-search
+    box on the Jewbuntu Skin (styled on its own actor).
+
+ -- Jewbuntu Developers <maintainers@jewbuntu.invalid>  Wed, 11 Nov 2026 20:05:00 -0500
+
 jewbuntu (0.1.0~m1.20+26.04) resolute; urgency=medium
 
   * jewbuntu-shulgo: re-vendor rhecht/shulgo@67454d9: the settings window
