@@ -105,7 +105,7 @@ echo "== Fedora update of gnome-shell, gdm and the extensions (reinstall = same 
 for i in 1 2 3; do dnf -y -q reinstall gnome-shell gdm gnome-shell-extension-user-theme gnome-shell-extension-dash-to-dock gnome-shell-extension-blur-my-shell glib2 >/tmp/re.log 2>&1 && break; sleep 5; done || { tail -20 /tmp/re.log; fail "reinstall"; }
 rpm -V $PKGS && pass "Jewbuntu files unchanged (rpm -V clean)" || fail "rpm -V reports changes"
 check_defaults "after the update"
-su t -c 'dbus-run-session -- sh /ci/fedora-shell-check.sh' 2>/dev/null | grep -E "^(PASS|FAIL)" | sed 's/$/ (after the update)/' | tee /tmp/shell2.txt
+su t -c "EXTRA_EXTS='$EXTRA' dbus-run-session -- sh /ci/fedora-shell-check.sh" 2>/dev/null | grep -E "^(PASS|FAIL)" | sed 's/$/ (after the update)/' | tee /tmp/shell2.txt
 grep -q "^FAIL" /tmp/shell2.txt && fail "GNOME Shell check after update"
 
 echo "== remove jewbuntu-asahi-desktop: Fedora's defaults come back"

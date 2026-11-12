@@ -18,12 +18,24 @@ for i in $(seq 1 90); do
   sleep 1
 done
 [ "$up" = 1 ] || { echo "FAIL: gnome-shell did not start"; tail -30 "$XDG_RUNTIME_DIR/shell.log"; exit 1; }
-sleep 8
 rc=0
-for e in user-theme@gnome-shell-extensions.gcampax.github.com dash-to-dock@micxgx.gmail.com blur-my-shell@aunetx jewbuntu-look@jewbuntu ${EXTRA_EXTS:-}; do
-  st=$(gnome-extensions info "$e" 2>&1 | sed -n 's/^ *State: *//p')
-  if [ "$st" = ACTIVE ]; then echo "PASS: $e ACTIVE on $(gnome-shell --version)"; else echo "FAIL: $e state=${st:-unknown}"; rc=1; fi
+EXTS="user-theme@gnome-shell-extensions.gcampax.github.com dash-to-dock@micxgx.gmail.com blur-my-shell@aunetx jewbuntu-look@jewbuntu ${EXTRA_EXTS:-}"
+state() { gnome-extensions info "$1" 2>&1 | sed -n 's/^ *State: *//p'; }
+# GNOME loads extensions asynchronously after the shell is on the bus: wait (up to 60 s) until
+# every one has a final state instead of assuming a fixed delay is enough.
+for i in $(seq 1 60); do
+  pending=0
+  for e in $EXTS; do case "$(state "$e")" in ACTIVE|ERROR|OUT\ OF\ DATE) ;; *) pending=1;; esac; done
+  [ "$pending" = 0 ] && break
+  sleep 1
 done
+echo "INFO: extension states settled after ${i}s"
+for e in $EXTS; do
+  st=$(state "$e")
+  if [ "$st" = ACTIVE ]; then echo "PASS: $e ACTIVE on $(gnome-shell --version)"
+  else echo "FAIL: $e state=${st:-unknown}: $(gnome-extensions info "$e" 2>&1 | tr '\n' ' ' | cut -c1-200)"; rc=1; fi
+done
+sleep 3
 ev() { gdbus call --session --dest org.gnome.Shell --object-path /org/gnome/Shell --method org.gnome.Shell.Eval "$1" 2>&1; }
 R=$(ev 'Main.overview.hide(); [Main.getThemeStylesheet()?.get_path(), Main.panel.has_style_class_name("jewbuntu-panel")].join(" ")')
 case "$R" in

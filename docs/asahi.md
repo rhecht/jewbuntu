@@ -10,7 +10,7 @@ clear top bar, floating glass dock), Jewbuntu Icons, the Star of David wallpaper
 mode, purple in dark mode), the Inter font and Mac-style window buttons on the left. You also
 get an English and Hebrew keyboard with Hebrew fonts, the Hub (Hebrew date, zmanim, Shabbat
 times), the startup jingle, the Web Server app, and **"Jewbuntu for Asahi Linux"** on the
-login screen. The ShulGo widget is packaged too, but waits for a GNOME 51 fix (see below).
+login screen. The ShulGo widget is packaged too; its GNOME 51 fix is waiting to be released (see below).
 
 | Package | What it contains |
 | --- | --- |
@@ -42,9 +42,10 @@ The look is the same. Some workflows differ because Fedora and GNOME differ:
   Jewbuntu policy module labels `~/Sites` for Apache and FTP. Sharing on the network also opens
   Fedora's firewall (firewalld), and only while sharing is on. FTP logins use your Fedora
   username. Details and undo steps: [web-server.md](web-server.md#on-fedora-asahi-remix).
-- **ShulGo:** the top-bar widget doesn't load on GNOME 51 yet: it uses a GNOME Shell property
-  that GNOME 51 removed. The ShulGo team has been asked for the fix. Until then, install
-  `jewbuntu-shulgo` only for testing.
+- **ShulGo:** the released widget doesn't load on GNOME 51: it uses a GNOME Shell property
+  that GNOME 51 removed. ShulGo has a fix that loads on GNOME 51 in testing (and still supports
+  older GNOME), but it isn't released yet. Until then, install `jewbuntu-shulgo` only for
+  testing.
 
 ## 1. Install Fedora Asahi Remix (GNOME edition)
 

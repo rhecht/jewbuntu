@@ -1,0 +1,119 @@
+NAME="Fedora Linux"
+VERSION="45 (Container Image)"
+GNOME Shell 51.1
+== before: Fedora defaults
+logo='/usr/share/pixmaps/fedora-gdm-logo.png' gtk-theme='Adwaita'
+== install
+jewbuntu-skin-0.1.0~git20261112.1-1.fc45.noarch
+jewbuntu-icons-0.1.0~git20261111-1.fc45.noarch
+jewbuntu-core-0.1.0~m1.26-1.fc45.noarch
+jewbuntu-asahi-desktop-0.1.0~m1.26-1.fc45.noarch
+jewbuntu-jewish-service-0.1.0~m1.26-1.fc45.noarch
+jewbuntu-hub-0.1.0~m1.26-1.fc45.noarch
+jewbuntu-branding-0.1.0~m1.26-1.fc45.noarch
+jewbuntu-shulgo-0.1.0~gitbf334af-1.fc45.noarch
+PASS: installed with dependencies from Fedora's repositories
+PASS: no install/remove scriptlets (caches come from Fedora's file triggers)
+jewbuntu-core = 0.1.0~m1.26-1.fc45
+jewbuntu-icons
+jewbuntu-jewish-service = 0.1.0~m1.26-1.fc45
+jewbuntu-skin
+PASS: no Conflicts/Obsoletes
+PASS: every file is owned only by a Jewbuntu package
+PASS: skin, icons and login logo present
+PASS: Jewbuntu Look declares GNOME Shell 51
+Jewbuntu 0.1.0~m1.26 (settings schema 2)
+  jewbuntu-core 0.1.0~m1.26-1.fc45
+  jewbuntu-jewish-service 0.1.0~m1.26-1.fc45
+  jewbuntu-icons 0.1.0~git20261111-1.fc45
+  jewbuntu-skin 0.1.0~git20261112.1-1.fc45
+  jewbuntu-asahi-desktop 0.1.0~m1.26-1.fc45
+  jewbuntu-hub 0.1.0~m1.26-1.fc45
+  jewbuntu-branding 0.1.0~m1.26-1.fc45
+  jewbuntu-shulgo 0.1.0~gitbf334af-1.fc45
+== defaults
+
+PASS: all 31 Jewbuntu defaults active for a new account (after install)
+PASS: GDM shows "Jewbuntu for Asahi Linux" (after install)
+== Jewish calendar service, startup jingle
+PASS: calendar service starts on demand over D-Bus and answers GetDay (Toronto)
+PASS: startup jingle rendered at build
+PASS: jewbuntu startup-sound available
+PASS: Hub in the app grid
+== existing account: apply / undo (keyfile backend)
+org.gnome.shell.extensions.dash-to-dock dock-position: 'LEFT' -> 'BOTTOM'
+org.gnome.desktop.input-sources sources: [('xkb', 'us')] -> [('xkb', 'us'), ('xkb', 'il')]
+enabled user-theme@gnome-shell-extensions.gcampax.github.com, dash-to-dock@micxgx.gmail.com, blur-my-shell@aunetx, jewbuntu-look@jewbuntu (log out and in if not visible yet)
+libadwaita apps themed (~/.config/gtk-4.0 linked to the skin; previous files saved)
+Log out and back in to see every change.
+extensions: ['background-logo@fedorahosted.org', 'user-theme@gnome-shell-extensions.gcampax.github.com', 'dash-to-dock@micxgx.gmail.com', 'blur-my-shell@aunetx', 'jewbuntu-look@jewbuntu']
+PASS: apply appended Hebrew, set the dock, enabled the 4 skin extensions (kept the user's own), linked GTK4 to the skin
+PASS: undo restored dock, extensions and the user's own GTK4 file
+== real GNOME Shell (headless) with the look applied
+INFO: extension states settled after 1s
+PASS: user-theme@gnome-shell-extensions.gcampax.github.com ACTIVE on GNOME Shell 51.1
+PASS: dash-to-dock@micxgx.gmail.com ACTIVE on GNOME Shell 51.1
+PASS: blur-my-shell@aunetx ACTIVE on GNOME Shell 51.1
+PASS: jewbuntu-look@jewbuntu ACTIVE on GNOME Shell 51.1
+PASS: shulgo@jewbuntu.org ACTIVE on GNOME Shell 51.1
+PASS: shell theme Jewbuntu-Light loaded and Jewbuntu Look styles the top bar
+PASS: no extension errors in the shell log
+INFO: screenshot /tmp/fedora-shell.png
+PASS: Hub window runs on GNOME Shell
+INFO: screenshot /tmp/fedora-hub.png
+== Fedora update of gnome-shell, gdm and the extensions (reinstall = same file writes and triggers)
+PASS: Jewbuntu files unchanged (rpm -V clean)
+
+PASS: all 31 Jewbuntu defaults active for a new account (after the update)
+PASS: GDM shows "Jewbuntu for Asahi Linux" (after the update)
+PASS: user-theme@gnome-shell-extensions.gcampax.github.com ACTIVE on GNOME Shell 51.1 (after the update)
+PASS: dash-to-dock@micxgx.gmail.com ACTIVE on GNOME Shell 51.1 (after the update)
+PASS: blur-my-shell@aunetx ACTIVE on GNOME Shell 51.1 (after the update)
+PASS: jewbuntu-look@jewbuntu ACTIVE on GNOME Shell 51.1 (after the update)
+PASS: shulgo@jewbuntu.org ACTIVE on GNOME Shell 51.1 (after the update)
+PASS: shell theme Jewbuntu-Light loaded and Jewbuntu Look styles the top bar (after the update)
+PASS: no extension errors in the shell log (after the update)
+== remove jewbuntu-asahi-desktop: Fedora's defaults come back
+[ 1/36] Prepare transaction             100% | 312.0   B/s |  35.0   B |  00m00s
+[ 2/36] Removing jewbuntu-asahi-desktop 100% |   1.0 KiB/s |  12.0   B |  00m00s
+[ 3/36] Removing langpacks-he-0:4.3-3.f 100% | 125.0   B/s |   1.0   B |  00m00s
+[ 4/36] Removing langpacks-fonts-he-0:4 100% | 200.0   B/s |   1.0   B |  00m00s
+[ 5/36] Removing langpacks-core-he-0:4. 100% | 250.0   B/s |   1.0   B |  00m00s
+[ 6/36] Removing default-fonts-he-0:4.3 100% |  50.0   B/s |   1.0   B |  00m00s
+[ 7/36] Removing gnome-shell-extension- 100% | 962.0   B/s |  76.0   B |  00m00s
+[ 8/36] Removing google-noto-sans-hebre 100% | 625.0   B/s |   5.0   B |  00m00s
+[ 9/36] Removing google-noto-serif-hebr 100% | 833.0   B/s |   5.0   B |  00m00s
+[10/36] Removing gnome-shell-extension- 100% |   6.3 KiB/s | 174.0   B |  00m00s
+[11/36] Removing google-noto-sans-hebre 100% |   3.0 KiB/s |  40.0   B |  00m00s
+[12/36] Removing google-noto-serif-hebr 100% |   2.2 KiB/s |  40.0   B |  00m00s
+[13/36] Removing hunspell-he-0:1.4-27.f 100% |  54.0   B/s |   4.0   B |  00m00s
+[14/36] Removing rsms-inter-fonts-0:4.1 100% | 264.0   B/s |  42.0   B |  00m00s
+[15/36] Removing sil-ezra-fonts-0:2.51- 100% |   1.5 KiB/s |  12.0   B |  00m00s
+[16/36] Removing culmus-fonts-all-0:0.1 100% |  32.6 KiB/s | 100.0   B |  00m00s
+[17/36] Removing clm-yehuda-fonts-0:0.1 100% |   1.0 KiB/s |  12.0   B |  00m00s
+[18/36] Removing clm-stam-sefarad-fonts 100% |   1.8 KiB/s |  11.0   B |  00m00s
+[19/36] Removing clm-stam-ashkenaz-font 100% |   1.8 KiB/s |  11.0   B |  00m00s
+[20/36] Removing clm-simple-fonts-0:0.1 100% |   1.0 KiB/s |  14.0   B |  00m00s
+[21/36] Removing clm-shofar-fonts-0:0.1 100% |   1.1 KiB/s |  14.0   B |  00m00s
+[22/36] Removing clm-nachlieli-fonts-0: 100% |   1.7 KiB/s |  14.0   B |  00m00s
+[23/36] Removing clm-miriam-mono-fonts- 100% | 777.0   B/s |  14.0   B |  00m00s
+[24/36] Removing clm-miriam-fonts-0:0.1 100% |   1.0 KiB/s |  12.0   B |  00m00s
+[25/36] Removing clm-keter-yg-fonts-0:0 100% |   2.3 KiB/s |  14.0   B |  00m00s
+[26/36] Removing clm-hadasim-fonts-0:0. 100% |   1.4 KiB/s |  14.0   B |  00m00s
+[27/36] Removing clm-frank-ruehl-fonts- 100% |   2.3 KiB/s |  14.0   B |  00m00s
+[28/36] Removing clm-ellinia-fonts-0:0. 100% |   1.4 KiB/s |  14.0   B |  00m00s
+[29/36] Removing clm-drugulin-fonts-0:0 100% |   1.3 KiB/s |  12.0   B |  00m00s
+[30/36] Removing clm-david-fonts-0:0.13 100% |   2.0 KiB/s |  14.0   B |  00m00s
+[31/36] Removing clm-caladings-fonts-0: 100% | 687.0   B/s |  11.0   B |  00m00s
+[32/36] Removing clm-aharoni-fonts-0:0. 100% |   2.3 KiB/s |  14.0   B |  00m00s
+[33/36] Removing libdbusmenu-gtk3-0:16. 100% | 545.0   B/s |   6.0   B |  00m00s
+[34/36] Removing libdbusmenu-0:16.04.0- 100% | 583.0   B/s |  14.0   B |  00m00s
+[35/36] Removing zenity-0:4.2.2-5.fc45. 100% |  12.4 KiB/s | 979.0   B |  00m00s
+[36/36] Removing gnome-extensions-app-0 100% | 154.0   B/s | 114.0   B |  00m01s
+PASS: GDM logo back to Fedora's
+PASS: GTK theme default back to Fedora's
+PASS: per-user Jewbuntu data kept
+== remove everything
+PASS: nothing left under /usr
+PASS: per-user data still kept after full removal
+ALL PASS
