@@ -77,6 +77,19 @@ Lite (Xfce) note: for ShulGo use its GTK app (integrations/jewbuntu/app, no GNOM
 StatusNotifierItem tray icon (Shulgo session will add it) rather than the Electron shulgo-desktop .deb.
 Measure both on the VM before deciding; the memory comparison is unmeasured (also in shulgo docs/TODO.md).
 
+## Status at 0.1.0~m1.25 (2026-11-12)
+
+- Release installer m1.24 upgraded the VM from m1.21 cleanly (ShulGo kept, dpkg clean).
+- Found in the VM and fixed: Apache stopped after Web Server setup (reload with changed Listen
+  lines; now restart); app windows see-through (skin built with MacTahoe --blur but no
+  application blur; skin 0.1.0~git20261112.1 builds without it; shell CSS and login bundle
+  byte-identical).
+- Web Server adds phpMyAdmin (local-only via <Location>), vsftpd (user login, chroot ~/Sites,
+  local-only unless sharing; TLS required while sharing) and a per-user MySQL login.
+  69/69 container checks; "from the network" checks use a second source address because
+  Apache's "Require local" admits clients whose address equals the server's.
+- GTK4 look is now symlinked to the skin; m1.24-era copies are converted at login.
+
 ## Status at 0.1.0~m1.24 (2026-11-11 night)
 
 - **Web Server** (jewbuntu-webserver): GTK4 app plus one polkit helper. Container-tested on Ubuntu 26.04

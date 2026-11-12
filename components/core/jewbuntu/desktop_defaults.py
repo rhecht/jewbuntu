@@ -160,15 +160,20 @@ def _gtk4_dir():
 
 
 def libadwaita_applied():
+    """True when ~/.config/gtk-4.0 links to the installed skin (so skin updates reach apps)."""
     css = _gtk4_dir() / "gtk.css"
     try:
-        return SKIN_THEME_DIR.is_dir() and css.read_bytes() == (SKIN_THEME_DIR / "gtk.css").read_bytes()
+        return SKIN_THEME_DIR.is_dir() and css.is_symlink() and css.resolve() == (SKIN_THEME_DIR / "gtk.css").resolve()
     except OSError:
         return False
 
 
 def _libadwaita_apply(state):
-    """Copy the skin's GTK4 files into ~/.config/gtk-4.0, backing up whatever was there."""
+    """Link ~/.config/gtk-4.0 to the skin's GTK4 files, backing up whatever was there.
+
+    Symlinks, not copies: a copy would freeze the look at the version applied and never
+    receive skin fixes. Versions up to 0.1.0~m1.24 copied; refresh_libadwaita() converts.
+    """
     if not SKIN_THEME_DIR.is_dir() or libadwaita_applied():
         return None
     target = _gtk4_dir()
@@ -186,11 +191,24 @@ def _libadwaita_apply(state):
     for name in LIBADWAITA_FILES:
         src = SKIN_THEME_DIR / name
         dst = target / name
-        if src.is_dir():
-            shutil.copytree(src, dst, dirs_exist_ok=True)
-        elif src.exists():
-            shutil.copy2(src, dst)
-    return "libadwaita apps themed (~/.config/gtk-4.0; previous files saved)"
+        # Anything here now is Jewbuntu's (the user's originals were moved to the backup above).
+        if dst.is_dir() and not dst.is_symlink():
+            shutil.rmtree(dst)
+        elif dst.exists() or dst.is_symlink():
+            dst.unlink()
+        if src.exists():
+            dst.symlink_to(src)
+    return "libadwaita apps themed (~/.config/gtk-4.0 linked to the skin; previous files saved)"
+
+
+def refresh_libadwaita():
+    """At login: if the look was applied as copies (older versions), relink to the skin."""
+    state = read_state()
+    if "gtk4_backup" not in state or not SKIN_THEME_DIR.is_dir() or libadwaita_applied():
+        return None
+    note = _libadwaita_apply(state)
+    _write_state(state)
+    return note
 
 
 def _libadwaita_undo(state):

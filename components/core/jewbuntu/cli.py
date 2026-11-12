@@ -39,6 +39,13 @@ def cmd_config(args):
         result = config.migrate()
         if not args.quiet or result["status"] == "migrated":
             _print(result, True)
+        try:  # keep GTK4 apps on the installed skin (older versions copied the files)
+            from . import desktop_defaults
+            note = desktop_defaults.refresh_libadwaita()
+            if note and not args.quiet:
+                print(note)
+        except Exception as e:  # never block login on this
+            print(f"note: could not refresh the GTK4 look: {e}", file=sys.stderr)
     elif args.action == "validate":
         problems = config.validate(config.load())
         print("\n".join(problems) if problems else "settings valid")

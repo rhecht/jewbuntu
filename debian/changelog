@@ -1,3 +1,18 @@
+jewbuntu (0.1.0~m1.25+26.04) resolute; urgency=medium
+
+  * Web Server: phpMyAdmin (http://localhost/phpmyadmin, always local-only),
+    an FTP server (your Ubuntu login, locked to ~/Sites, local-only unless
+    sharing is on, TLS required while sharing), and your own MySQL login with
+    show/copy/reset in the app. Servers set up earlier get a "Finish setup" row.
+  * Web Server: fix Apache stopping right after setup on systemd machines
+    (a reload with changed Listen lines killed it); setup now restarts.
+  * GTK4 apps link to the installed skin instead of copying it, so skin
+    updates reach them; copies from earlier versions are converted at login.
+  * Requires jewbuntu-skin 0.1.0~git20261112.1 (app windows no longer
+    see-through).
+
+ -- Jewbuntu Developers <maintainers@jewbuntu.invalid>  Thu, 12 Nov 2026 00:18:50 -0500
+
 jewbuntu (0.1.0~m1.24+26.04) resolute; urgency=medium
 
   * Web Server: easier setup. Waits for automatic updates to release the

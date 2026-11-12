@@ -91,11 +91,50 @@ class SkinTests(IsolatedHome):
             self.assertEqual((gtk4 / "gtk.css").read_text(), "/* jewbuntu */")
             self.assertTrue((gtk4 / "assets" / "a.svg").exists())
             self.assertTrue(dd.libadwaita_applied())
+            self.assertTrue((gtk4 / "gtk.css").is_symlink(), "linked, so skin updates reach apps")
+            (theme / "gtk.css").write_text("/* jewbuntu v2 */")  # skin package upgraded
+            self.assertEqual((gtk4 / "gtk.css").read_text(), "/* jewbuntu v2 */")
             dd.undo_skin()
             self.assertEqual((gtk4 / "gtk.css").read_text(), "/* mine */")
             self.assertFalse((gtk4 / "assets").exists())
         finally:
             dd.SKIN_THEME_DIR = saved
+
+    def test_refresh_converts_old_copies_to_links_and_keeps_backup(self):
+        import shutil
+        theme = self.tmp / "theme-gtk4"
+        (theme / "assets").mkdir(parents=True)
+        (theme / "gtk.css").write_text("/* jewbuntu v2 */")
+        (theme / "assets" / "a.svg").write_text("<svg/>")
+        gtk4 = self.tmp / ".config" / "gtk-4.0"
+        gtk4.mkdir(parents=True)
+        (gtk4 / "gtk.css").write_text("/* mine */")
+        saved = dd.SKIN_THEME_DIR
+        dd.SKIN_THEME_DIR = theme
+        try:
+            self._install(FakeGSettings())
+            dd.apply_skin()
+            # Simulate a 0.1.0~m1.24-era install: real copies of an older skin.
+            for n in ("gtk.css", "assets"):
+                (gtk4 / n).unlink()  # the symlinks apply_skin made
+            (gtk4 / "gtk.css").write_text("/* jewbuntu v1 copy */")
+            shutil.copytree(theme / "assets", gtk4 / "assets")
+            self.assertFalse(dd.libadwaita_applied())
+            self.assertIsNotNone(dd.refresh_libadwaita())
+            self.assertTrue(dd.libadwaita_applied())
+            self.assertEqual((gtk4 / "gtk.css").read_text(), "/* jewbuntu v2 */")
+            self.assertIsNone(dd.refresh_libadwaita(), "nothing to do the second time")
+            dd.undo_skin()
+            self.assertEqual((gtk4 / "gtk.css").read_text(), "/* mine */", "original backup survives")
+        finally:
+            dd.SKIN_THEME_DIR = saved
+
+    def test_refresh_does_nothing_if_look_never_applied(self):
+        gtk4 = self.tmp / ".config" / "gtk-4.0"
+        gtk4.mkdir(parents=True)
+        (gtk4 / "gtk.css").write_text("/* mine */")
+        self.assertIsNone(dd.refresh_libadwaita())
+        self.assertEqual((gtk4 / "gtk.css").read_text(), "/* mine */")
 
     def test_prompt_asks_once_and_skips_when_nothing_to_do(self):
         fake = FakeGSettings()

@@ -5,7 +5,7 @@
 set -eu
 DIST="${1:?usage: ci/webserver-check.sh DISTDIR}"
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-docker run --rm ${PLATFORM:+--platform $PLATFORM} -v "$ROOT/$DIST:/dist:ro" -v "$ROOT/components/webserver/tests:/tests:ro" ubuntu:26.04 bash -c '
+docker run --rm --cap-add NET_ADMIN ${PLATFORM:+--platform $PLATFORM} -v "$ROOT/$DIST:/dist:ro" -v "$ROOT/components/webserver/tests:/tests:ro" ubuntu:26.04 bash -c '
 set -u
 fails=0
 pass() { echo "PASS: $*"; }
@@ -13,7 +13,7 @@ fail() { echo "FAIL: $*"; fails=$((fails+1)); }
 check() { local d="$1"; shift; if "$@" >/dev/null 2>&1; then pass "$d"; else fail "$d"; fi; }
 export DEBIAN_FRONTEND=noninteractive
 for i in 1 2 3; do apt-get update -q >/dev/null 2>&1 && break; sleep 5; done
-apt-get install -y -q curl sudo /dist/jewbuntu-webserver_*.deb >/tmp/apt.log 2>&1 || { tail -20 /tmp/apt.log; exit 1; }
+apt-get install -y -q curl sudo iproute2 /dist/jewbuntu-webserver_*.deb >/tmp/apt.log 2>&1 || { tail -20 /tmp/apt.log; exit 1; }
 H=/usr/libexec/jewbuntu/jewbuntu-webserver-helper
 check "helper installed and executable" test -x $H
 check "polkit policy installed" test -f /usr/share/polkit-1/actions/org.jewbuntu.webserver.policy
@@ -31,6 +31,21 @@ check "apache listens on loopback only (ports.conf)" bash -c "grep -q \"^Listen 
 check "original ports.conf kept" test -f /etc/apache2/ports.conf.jewbuntu-orig
 check "mariadb bound to 127.0.0.1" grep -q "bind-address = 127.0.0.1" /etc/mysql/mariadb.conf.d/60-jewbuntu.cnf
 check "Ubuntu default site still enabled" bash -c "test -e /etc/apache2/sites-enabled/000-default.conf"
+check "status: setup complete (phpMyAdmin, FTP, Composer)" grep -q "\"complete\":true" <<<"$out"
+check "phpMyAdmin login page at http://localhost/phpmyadmin/" grep -qi "phpMyAdmin" <<<"$(curl -s http://127.0.0.1/phpmyadmin/)"
+check "phpMyAdmin limited to this computer" grep -q "Require local" /etc/apache2/conf-enabled/phpmyadmin-jewbuntu-local.conf
+check "FTP listens on 127.0.0.1 only" bash -c "ss -ltn | grep -q \"127.0.0.1:21 \" && ! ss -ltn | grep -q \"0.0.0.0:21 \""
+out=$($H db-login); dbpw=$(sed -E "s/.*\"password\":\"([^\"]+)\".*/\1/" <<<"$out")
+check "db-login: user can log in with the password" mariadb -ut -p"$dbpw" -h 127.0.0.1 -e "select 1"
+check "db-login: works without password from the user terminal (unix_socket)" sudo -u t mariadb -e "select 1"
+out=$($H db-login); dbpw2=$(sed -E "s/.*\"password\":\"([^\"]+)\".*/\1/" <<<"$out")
+check "db-login again: new password works, old one does not" bash -c "mariadb -ut -p\"$dbpw2\" -h 127.0.0.1 -e \"select 1\" && ! mariadb -ut -p\"$dbpw\" -h 127.0.0.1 -e \"select 1\" 2>/dev/null"
+check "phpMyAdmin accepts the login" bash /tests/pma-login.sh t "$dbpw2"
+echo "t:ci-ftp-$RANDOM-pass" > /tmp/ftpcred; chpasswd < /tmp/ftpcred; FTPPW=$(cut -d: -f2 /tmp/ftpcred)
+echo "ftp-ok" > /tmp/up.txt
+check "FTP: user logs in and uploads into ~/Sites" bash -c "curl -s -T /tmp/up.txt ftp://t:$FTPPW@127.0.0.1/up.txt && test -f /home/t/Sites/up.txt"
+check "FTP: uploaded file belongs to the user" bash -c "[ \$(stat -c %U /home/t/Sites/up.txt) = t ]"
+check "FTP: locked into ~/Sites (no /etc)" bash -c "! curl -s ftp://t:$FTPPW@127.0.0.1/etc/passwd -o /dev/null"
 out=$($H add-site demo); echo "  add-site: $out"
 check "add-site ok" grep -q "\"ok\":true" <<<"$out"
 check "site folder owned by user" bash -c "[ \$(stat -c %U /home/t/Sites/demo) = t ]"
@@ -45,15 +60,24 @@ pw=$(sed -E "s/.*\"password\":\"([^\"]+)\".*/\1/" <<<"$out")
 check "db user can log in with generated password" mariadb -ujb_demo -p"$pw" -e "use jb_demo"
 check "generated password is 20 chars" test ${#pw} -eq 20
 LAN=$(hostname -I | cut -d" " -f1)
+# "Require local" also admits a client whose address equals the server address, so checks "from the
+# network" connect from a second address (10.99.0.2), as another device on the LAN would.
+ip addr add 10.99.0.2/32 dev lo; FROMNET="--interface 10.99.0.2"
 check "not sharing: network address refused" bash -c "! curl -s --connect-timeout 3 -o /dev/null http://$LAN/"
 out=$($H share on); check "share on" grep -q "\"sharing\":true" <<<"$out"
-check "sharing: site answers on network address" grep -q "demo.localhost is working" <<<"$(curl -s -H "Host: demo.localhost" http://$LAN/)"
+check "sharing: site answers another device" grep -q "demo.localhost is working" <<<"$(curl -s $FROMNET -H "Host: demo.localhost" http://$LAN/)"
 check "share on: Listen 80" grep -q "^Listen 80\$" /etc/apache2/ports.conf
 check "share on: Require all granted" grep -q "Require all granted" /etc/apache2/jewbuntu-access.conf
+check "share on: phpMyAdmin refused to another device (403)" bash -c "[ \$(curl -s $FROMNET -o /dev/null -w %{http_code} http://$LAN/phpmyadmin/) = 403 ]"
+check "share on: phpMyAdmin still works on this computer" grep -qi phpMyAdmin <<<"$(curl -s http://127.0.0.1/phpmyadmin/)"
+check "share on: FTP reachable on the network" bash -c "ss -ltn | grep -q \"0.0.0.0:21 \""
+check "share on: FTP refuses plain-text logins" bash -c "! curl -s ftp://t:$FTPPW@$LAN/ -o /dev/null"
+check "share on: FTP over TLS works" curl -s --ssl-reqd -k ftp://t:$FTPPW@$LAN/ -o /dev/null
 out=$($H share off); check "share off" grep -q "\"sharing\":false" <<<"$out"
 check "share off: loopback again" grep -q "^Listen 127.0.0.1:80\$" /etc/apache2/ports.conf
 check "share off: Require local" grep -q "^Require local\$" /etc/apache2/jewbuntu-access.conf
 check "share off: network address refused again" bash -c "! curl -s --connect-timeout 3 -o /dev/null http://$LAN/"
+check "share off: FTP back to 127.0.0.1 only" bash -c "ss -ltn | grep -q \"127.0.0.1:21 \" && ! ss -ltn | grep -q \"0.0.0.0:21 \""
 check "apache config valid after toggles" apache2ctl -t
 mkdir -p /home/t/Sites/ci/public && echo "<?php echo \"ci-public-ok\";" > /home/t/Sites/ci/public/index.php && chown -R t:t /home/t/Sites/ci
 out=$($H add-site ci public); check "add-site with public docroot" grep -q "\"ok\":true" <<<"$out"
@@ -65,6 +89,8 @@ check "remove-site kept files" test -f /home/t/Sites/demo/index.php
 check "remove-site removed vhost" bash -c "! test -e /etc/apache2/sites-available/jewbuntu-t-demo.conf"
 out=$($H stop); check "stop" grep -q "\"running\":false" <<<"$out"
 out=$($H start); check "start" grep -q "\"running\":true" <<<"$out"
+out=$($H install); check "install again (Finish setup path) is safe" grep -q "\"complete\":true" <<<"$out"
+check "install again keeps sites" grep -q "\"ci\"" <<<"$out"
 # --- WordPress, CodeIgniter and empty sites through the same code as the app (sites.js), as user t
 echo "t ALL=(root) NOPASSWD: /usr/libexec/jewbuntu/jewbuntu-webserver-helper" > /etc/sudoers.d/t
 sudo -u t -H env JEWBUNTU_WEBSERVER_ELEVATE=sudo gjs -m /tests/sites-test.js 2>&1 | tee /tmp/sites.log

@@ -7,7 +7,7 @@ import Gio from 'gi://Gio';
 import Gtk from 'gi://Gtk?version=4.0';
 import Adw from 'gi://Adw?version=1';
 import System from 'system';
-import {helper, readStatus, createSite, SITES, NAME_RE, KINDS} from './sites.js';
+import {helper, readStatus, createSite, SITES, NAME_RE, KINDS, loadDbLogin, saveDbLogin, lanAddress} from './sites.js';
 
 // ---------- UI ----------
 
@@ -73,10 +73,10 @@ class WebServerWindow {
         const page = new Adw.StatusPage({
             icon_name: 'org.jewbuntu.WebServer',
             title: 'Run websites on this computer',
-            description: 'Set up Apache, MariaDB and PHP from Ubuntu with one click. Your sites stay private to this computer unless you choose to share them. Each folder in ~/Sites becomes a site at http://name.localhost.',
+            description: 'Set up Apache, MySQL (MariaDB), PHP, phpMyAdmin and FTP from Ubuntu with one click. Your sites stay private to this computer unless you choose to share them. Each folder in ~/Sites becomes a site at http://name.localhost.',
         });
         const btn = new Gtk.Button({label: 'Set up the web server', css_classes: ['suggested-action', 'pill'], halign: Gtk.Align.CENTER});
-        btn.connect('clicked', () => this.guard('Setting up Apache, MariaDB and PHP…\nThis downloads packages from Ubuntu and can take a few minutes.', () => helper('install')));
+        btn.connect('clicked', () => this.guard('Setting up Apache, MySQL, PHP, phpMyAdmin and FTP…\nThis downloads packages from Ubuntu and can take a few minutes.', () => helper('install')));
         const note = new Gtk.Label({label: 'Needs your password once.', css_classes: ['dim-label']});
         const box = new Gtk.Box({orientation: Gtk.Orientation.VERTICAL, spacing: 12});
         box.append(btn);
@@ -87,8 +87,17 @@ class WebServerWindow {
 
     mainPage(s) {
         const page = new Adw.PreferencesPage();
+        if (!s.complete) {
+            const finish = new Adw.PreferencesGroup();
+            const row = new Adw.ActionRow({title: 'Finish setup', subtitle: 'Adds phpMyAdmin, FTP and Composer to your web server.'});
+            const btn = new Gtk.Button({label: 'Add', valign: Gtk.Align.CENTER, css_classes: ['suggested-action']});
+            btn.connect('clicked', () => this.guard('Adding phpMyAdmin, FTP and Composer…\nThis downloads packages from Ubuntu and can take a few minutes.', () => helper('install')));
+            row.add_suffix(btn);
+            finish.add(row);
+            page.add(finish);
+        }
         const server = new Adw.PreferencesGroup({title: 'Server'});
-        const running = new Adw.SwitchRow({title: s.running ? 'Running' : 'Stopped', subtitle: 'Apache, MariaDB and PHP', active: s.running});
+        const running = new Adw.SwitchRow({title: s.running ? 'Running' : 'Stopped', subtitle: 'Apache, MySQL (MariaDB), PHP and FTP', active: s.running});
         running.connect('notify::active', () => {
             if (running.active !== this.status.running)
                 this.guard(running.active ? 'Starting…' : 'Stopping…', () => helper(running.active ? 'start' : 'stop'));
@@ -142,11 +151,90 @@ class WebServerWindow {
         }
         page.add(sites);
 
+        page.add(this.databaseGroup(s));
+        page.add(this.ftpGroup(s));
+
         const help = new Adw.PreferencesGroup({title: 'Good to know'});
-        help.add(new Adw.ActionRow({title: 'Databases', use_markup: false, subtitle: 'MariaDB listens only on this computer. WordPress sites get their own database and password automatically.'}));
         help.add(new Adw.ActionRow({title: 'Logs', subtitle: '/var/log/apache2/jewbuntu-SITE-error.log', use_markup: false}));
         page.add(help);
         return page;
+    }
+
+    open(uri) {
+        new Gtk.UriLauncher({uri}).launch(this.win, null, null);
+    }
+
+    copy(text, what) {
+        this.win.get_clipboard().set_text(text);
+        this.toast(`${what} copied`);
+    }
+
+    databaseGroup(s) {
+        const g = new Adw.PreferencesGroup({title: 'Databases', description: 'MySQL (MariaDB) on localhost, port 3306. Only this computer can connect. WordPress sites get their own database automatically.'});
+        const pma = new Adw.ActionRow({title: 'phpMyAdmin', subtitle: 'Manage your databases in the browser (this computer only)', use_markup: false});
+        if (s.phpmyadmin) {
+            const open = new Gtk.Button({label: 'Open', valign: Gtk.Align.CENTER});
+            open.connect('clicked', () => this.open('http://localhost/phpmyadmin/'));
+            pma.add_suffix(open);
+        } else {
+            pma.set_subtitle('Not installed yet: press Add under Finish setup.');
+        }
+        g.add(pma);
+        const login = loadDbLogin();
+        const row = new Adw.ActionRow({title: 'Your MySQL login', use_markup: false});
+        if (login) {
+            let shown = false;
+            const show = () => row.set_subtitle(`User: ${login.user}    Password: ${shown ? login.password : '••••••••••'}`);
+            show();
+            const eye = new Gtk.Button({icon_name: 'view-reveal-symbolic', tooltip_text: 'Show password', valign: Gtk.Align.CENTER, css_classes: ['flat']});
+            eye.connect('clicked', () => {
+                shown = !shown;
+                show();
+            });
+            const cp = new Gtk.Button({icon_name: 'edit-copy-symbolic', tooltip_text: 'Copy password', valign: Gtk.Align.CENTER, css_classes: ['flat']});
+            cp.connect('clicked', () => this.copy(login.password, 'Password'));
+            const reset = new Gtk.Button({icon_name: 'view-refresh-symbolic', tooltip_text: 'Make a new password', valign: Gtk.Align.CENTER, css_classes: ['flat']});
+            reset.connect('clicked', () => this.makeDbLogin());
+            row.add_suffix(eye);
+            row.add_suffix(cp);
+            row.add_suffix(reset);
+        } else {
+            row.set_subtitle('For phpMyAdmin and database tools. Full access to this local server.');
+            const btn = new Gtk.Button({label: 'Create', valign: Gtk.Align.CENTER});
+            btn.connect('clicked', () => this.makeDbLogin());
+            row.add_suffix(btn);
+        }
+        g.add(row);
+        return g;
+    }
+
+    makeDbLogin() {
+        this.guard('Creating your MySQL login…', async () => {
+            const r = await helper('db-login');
+            saveDbLogin({user: r.user, password: r.password});
+        });
+    }
+
+    ftpGroup(s) {
+        const host = s.sharing ? (lanAddress() || 'this computer\'s network address') : 'localhost';
+        const g = new Adw.PreferencesGroup({
+            title: 'FTP',
+            description: s.sharing
+                ? 'Other devices can upload while sharing is on. Use FTP over TLS (in FileZilla: "Require explicit FTP over TLS") and accept the certificate the first time.'
+                : 'For FTP apps on this computer. Switch sharing on to upload from other devices.',
+        });
+        if (!s.ftp) {
+            g.add(new Adw.ActionRow({title: 'Not installed yet', subtitle: 'Press Add under Finish setup.'}));
+            return g;
+        }
+        const server = new Adw.ActionRow({title: 'Server', subtitle: `${host}, port 21`, use_markup: false});
+        const cp = new Gtk.Button({icon_name: 'edit-copy-symbolic', tooltip_text: 'Copy server address', valign: Gtk.Align.CENTER, css_classes: ['flat']});
+        cp.connect('clicked', () => this.copy(host, 'Server address'));
+        server.add_suffix(cp);
+        g.add(server);
+        g.add(new Adw.ActionRow({title: 'Login', subtitle: `Your Ubuntu username (${GLib.get_user_name()}) and password`, use_markup: false}));
+        g.add(new Adw.ActionRow({title: 'Folder', subtitle: `${SITES} (FTP users see only this folder)`, use_markup: false}));
+        return g;
     }
 
     newSiteDialog() {

@@ -90,8 +90,44 @@ export async function readStatus() {
         } catch (e) {}
         sites.sort();
     }
-    const composer = (await run(['sh', '-c', 'command -v composer'])).ok;
-    return {installed, running, sharing, sites, composer};
+    const extra = await run(['dpkg-query', '-W', '-f', '${Package} ${db:Status-Abbrev}\n', 'phpmyadmin', 'vsftpd', 'composer']);
+    const has = name => new RegExp(`^${name} ii`, 'm').test(extra.out);
+    const composer = has('composer');
+    const phpmyadmin = has('phpmyadmin');
+    const ftp = has('vsftpd');
+    return {installed, running, sharing, sites, composer, phpmyadmin, ftp, complete: composer && phpmyadmin && ftp};
+}
+
+// The user's own MySQL login (from the helper's db-login), kept in their config folder, 0600.
+const DB_LOGIN = GLib.build_filenamev([GLib.get_user_config_dir(), 'jewbuntu', 'webserver-db.json']);
+
+export function loadDbLogin() {
+    try {
+        const j = JSON.parse(readFile(DB_LOGIN) ?? 'null');
+        return j && j.user && j.password ? j : null;
+    } catch (e) {
+        return null;
+    }
+}
+
+export function saveDbLogin(login) {
+    GLib.mkdir_with_parents(GLib.path_get_dirname(DB_LOGIN), 0o700);
+    const tmp = `${DB_LOGIN}.tmp`;
+    GLib.file_set_contents(tmp, JSON.stringify(login));
+    GLib.chmod(tmp, 0o600);
+    GLib.rename(tmp, DB_LOGIN);
+}
+
+/** First non-loopback IPv4 address, for telling other devices where to connect. */
+export function lanAddress() {
+    try {
+        const [ok, out] = GLib.spawn_command_line_sync('hostname -I');
+        if (!ok)
+            return null;
+        return new TextDecoder().decode(out).split(/\s+/).find(a => /^\d+\.\d+\.\d+\.\d+$/.test(a) && !a.startsWith('127.')) ?? null;
+    } catch (e) {
+        return null;
+    }
 }
 
 function randomSalt(len = 64) {

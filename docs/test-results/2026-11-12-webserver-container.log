@@ -1,17 +1,28 @@
 PASS: helper installed and executable
 PASS: polkit policy installed
 PASS: package pulled in no server
-  status: {"ok":true,"installed":false,"running":false,"sharing":false,"user":"t","sites":[]}
+  status: {"ok":true,"installed":false,"complete":false,"running":false,"sharing":false,"user":"t","sites":[]}
 PASS: status before install: not installed
 PASS: rejects bad site name
 PASS: refuses root as site owner
-  install: {"ok":true,"installed":true,"running":true,"sharing":false,"user":"t","sites":[]}
+  install: {"ok":true,"installed":true,"complete":true,"running":true,"sharing":false,"user":"t","sites":[]}
 PASS: install: installed
 PASS: install: running
 PASS: apache listens on loopback only (ports.conf)
 PASS: original ports.conf kept
 PASS: mariadb bound to 127.0.0.1
 PASS: Ubuntu default site still enabled
+PASS: status: setup complete (phpMyAdmin, FTP, Composer)
+PASS: phpMyAdmin login page at http://localhost/phpmyadmin/
+PASS: phpMyAdmin limited to this computer
+PASS: FTP listens on 127.0.0.1 only
+PASS: db-login: user can log in with the password
+PASS: db-login: works without password from the user terminal (unix_socket)
+PASS: db-login again: new password works, old one does not
+PASS: phpMyAdmin accepts the login
+PASS: FTP: user logs in and uploads into ~/Sites
+PASS: FTP: uploaded file belongs to the user
+PASS: FTP: locked into ~/Sites (no /etc)
   add-site: {"ok":true,"site":"demo","url":"http://demo.localhost/","path":"/home/t/Sites/demo"}
 PASS: add-site ok
 PASS: site folder owned by user
@@ -24,23 +35,31 @@ PASS: db user can log in with generated password
 PASS: generated password is 20 chars
 PASS: not sharing: network address refused
 PASS: share on
-PASS: sharing: site answers on network address
+PASS: sharing: site answers another device
 PASS: share on: Listen 80
 PASS: share on: Require all granted
+PASS: share on: phpMyAdmin refused to another device (403)
+PASS: share on: phpMyAdmin still works on this computer
+PASS: share on: FTP reachable on the network
+PASS: share on: FTP refuses plain-text logins
+PASS: share on: FTP over TLS works
 PASS: share off
 PASS: share off: loopback again
 PASS: share off: Require local
 PASS: share off: network address refused again
+PASS: share off: FTP back to 127.0.0.1 only
 PASS: apache config valid after toggles
 PASS: add-site with public docroot
 PASS: public docroot served
-  status: {"ok":true,"installed":true,"running":true,"sharing":false,"user":"t","sites":["ci","demo"]}
+  status: {"ok":true,"installed":true,"complete":true,"running":true,"sharing":false,"user":"t","sites":["ci","demo"]}
 PASS: status lists both sites
 PASS: remove-site ok
 PASS: remove-site kept files
 PASS: remove-site removed vhost
 PASS: stop
 PASS: start
+PASS: install again (Finish setup path) is safe
+PASS: install again keeps sites
   … Downloading WordPress from wordpress.org…
   … Unpacking WordPress…
   … Creating the database…

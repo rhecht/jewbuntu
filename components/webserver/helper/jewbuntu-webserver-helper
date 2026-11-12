@@ -6,6 +6,11 @@
 #   status | install | start | stop | share on|off
 #   add-site NAME [public]  | remove-site NAME
 #   create-db NAME          (prints JSON with a generated password, once)
+#   db-login                (creates/resets the user's own MySQL login; prints the password once)
+#
+# install also sets up phpMyAdmin (http://localhost/phpmyadmin, always local-only) and an
+# FTP server (vsftpd: the user's own Ubuntu login, chrooted to ~/Sites, local-only unless
+# sharing is on, TLS required for logins while sharing).
 #
 # Safety defaults: Apache listens on 127.0.0.1/::1 only; every Jewbuntu site has
 # "Require local" unless sharing is switched on; MariaDB binds to 127.0.0.1.
@@ -28,14 +33,18 @@ else
     die "unknown calling user"
 fi
 [ -n "$USER_NAME" ] && [ "$USER_NAME" != root ] || die "refusing to manage sites for root"
+[[ "$USER_NAME" =~ ^[a-z_][a-z0-9_-]{0,31}$ ]] || die "unsupported user name for the web server: $USER_NAME"
 USER_HOME="$(getent passwd "$USER_NAME" | cut -d: -f6)"
 SITES="$USER_HOME/Sites"
 
-PACKAGES=(apache2 mariadb-server php libapache2-mod-php php-mysql php-xml php-mbstring php-curl php-zip php-gd php-intl acl unzip composer)
+PACKAGES=(apache2 mariadb-server php libapache2-mod-php php-mysql php-xml php-mbstring php-curl php-zip php-gd php-intl acl unzip composer phpmyadmin vsftpd ssl-cert)
 LOG=/var/log/jewbuntu-webserver.log
 PORTS=/etc/apache2/ports.conf
 ACCESS=/etc/apache2/jewbuntu-access.conf
 MARIADB_CNF=/etc/mysql/mariadb.conf.d/60-jewbuntu.cnf
+PMA_LOCAL=/etc/apache2/conf-available/phpmyadmin-jewbuntu-local.conf
+FTP_CONF=/etc/vsftpd.conf
+FTP_USERS=/etc/vsftpd.jewbuntu-users
 
 valid_name() { [[ "$1" =~ ^[a-z0-9][a-z0-9-]{0,30}$ ]] || die "site names: lowercase letters, digits and dashes, up to 31 characters"; }
 
@@ -50,7 +59,9 @@ svc() { # svc start|stop|reload|is-active UNIT
     fi
 }
 
-installed() { [ "$(dpkg-query -W -f '${db:Status-Abbrev}\n' apache2 mariadb-server php 2>/dev/null | grep -c '^ii' || true)" = 3 ]; }
+pkg_ok() { [ "$(dpkg-query -W -f '${db:Status-Abbrev}' "$1" 2>/dev/null || true)" = "ii " ]; }
+installed() { pkg_ok apache2 && pkg_ok mariadb-server && pkg_ok php; }
+complete() { local p; for p in "${PACKAGES[@]}"; do pkg_ok "$p" || return 1; done; }
 
 has_ipv6_loopback() { grep -qi '^0\{31\}1 ' /proc/net/if_inet6 2>/dev/null; }
 
@@ -68,26 +79,87 @@ configure_local() {
     # MariaDB: localhost only (Ubuntu's default already, made explicit).
     printf '# Managed by Jewbuntu Web Server\n[mysqld]\nbind-address = 127.0.0.1\n' > "$MARIADB_CNF"
     a2enmod -q rewrite >/dev/null
+    configure_phpmyadmin
+    configure_ftp local
     # Ubuntu's default site stays enabled: http://localhost shows its page, and unknown
     # names never land on someone's site (000-default sorts first).
+}
+
+configure_phpmyadmin() {
+    pkg_ok phpmyadmin || return 0
+    # Ubuntu's phpmyadmin.conf allows everyone. <Location> is applied after all <Directory>
+    # rules regardless of file order, so this keeps phpMyAdmin local-only even while sites
+    # are shared on the network. (A <Directory> rule here lost to phpmyadmin.conf, which
+    # loads later alphabetically; the test suite checks this from the network side.)
+    cat > "$PMA_LOCAL" <<'CONF'
+# Managed by Jewbuntu Web Server: phpMyAdmin answers only this computer, always.
+<Location /phpmyadmin>
+    Require local
+</Location>
+CONF
+    a2enconf -q phpmyadmin >/dev/null 2>&1 || true
+    a2enconf -q phpmyadmin-jewbuntu-local >/dev/null
+}
+
+configure_ftp() { # local|shared
+    pkg_ok vsftpd || return 0
+    [ -f "$FTP_CONF.jewbuntu-orig" ] || cp -p "$FTP_CONF" "$FTP_CONF.jewbuntu-orig"
+    local listen="listen_address=127.0.0.1" tls=NO
+    [ "$1" = shared ] && { listen="# listening on all addresses (sharing is on)"; tls=YES; }
+    cat > "$FTP_CONF" <<CONF
+# Managed by Jewbuntu Web Server (original: $FTP_CONF.jewbuntu-orig).
+# Ubuntu logins listed in $FTP_USERS, each locked into their own ~/Sites.
+listen=YES
+listen_ipv6=NO
+$listen
+anonymous_enable=NO
+local_enable=YES
+write_enable=YES
+local_umask=022
+chroot_local_user=YES
+allow_writeable_chroot=YES
+user_config_dir=/etc/vsftpd.jewbuntu-user.d
+userlist_enable=YES
+userlist_deny=NO
+userlist_file=$FTP_USERS
+pam_service_name=vsftpd
+secure_chroot_dir=/var/run/vsftpd/empty
+pasv_enable=YES
+pasv_min_port=40000
+pasv_max_port=40100
+ssl_enable=YES
+rsa_cert_file=/etc/ssl/certs/ssl-cert-snakeoil.pem
+rsa_private_key_file=/etc/ssl/private/ssl-cert-snakeoil.key
+allow_anon_ssl=NO
+force_local_logins_ssl=$tls
+force_local_data_ssl=$tls
+xferlog_enable=YES
+CONF
+    install -d -m 755 /etc/vsftpd.jewbuntu-user.d
+    printf 'local_root=%s\n' "$SITES" > "/etc/vsftpd.jewbuntu-user.d/$USER_NAME"
+    install -d -o "$USER_NAME" -g "$USER_NAME" -m 755 "$SITES"
+    touch "$FTP_USERS"
+    grep -qx "$USER_NAME" "$FTP_USERS" || echo "$USER_NAME" >> "$FTP_USERS"
+    svc restart vsftpd || true
 }
 
 site_conf() { echo "/etc/apache2/sites-available/jewbuntu-$USER_NAME-$1.conf"; }
 
 cmd_status() {
-    local inst=false run=false share=false sites=()
+    local inst=false run=false share=false comp=false sites=()
     installed && inst=true
     if $inst; then
         svc is-active apache2 && svc is-active mariadb && run=true
         sharing && share=true
+        complete && comp=true
     fi
     for f in /etc/apache2/sites-enabled/jewbuntu-"$USER_NAME"-*.conf; do
         [ -e "$f" ] || continue
         n="${f##*/jewbuntu-$USER_NAME-}"; sites+=("\"${n%.conf}\"")
     done
     local IFS=,
-    printf '{"ok":true,"installed":%s,"running":%s,"sharing":%s,"user":"%s","sites":[%s]}\n' \
-        "$inst" "$run" "$share" "$USER_NAME" "${sites[*]}"
+    printf '{"ok":true,"installed":%s,"complete":%s,"running":%s,"sharing":%s,"user":"%s","sites":[%s]}\n' \
+        "$inst" "$comp" "$run" "$share" "$USER_NAME" "${sites[*]}"
 }
 
 cmd_install() {
@@ -95,18 +167,30 @@ cmd_install() {
     local apt=(apt-get -q -o DPkg::Lock::Timeout=600)
     echo "== $(date -R) install" >> "$LOG"
     "${apt[@]}" update >> "$LOG" 2>&1 || die "Could not reach Ubuntu's package servers. Check the internet connection and try again."
-    "${apt[@]}" install -y "${PACKAGES[@]}" >> "$LOG" 2>&1 \
+    # phpMyAdmin: no questions; its own small database via dbconfig-common, set up for Apache.
+    debconf-set-selections <<'SEL'
+phpmyadmin phpmyadmin/dbconfig-install boolean true
+phpmyadmin phpmyadmin/reconfigure-webserver multiselect apache2
+SEL
+    # Two passes: phpMyAdmin creates its database while installing, so MariaDB must be up first.
+    local first=() p
+    for p in "${PACKAGES[@]}"; do [ "$p" = phpmyadmin ] || first+=("$p"); done
+    "${apt[@]}" install -y "${first[@]}" >> "$LOG" 2>&1 \
         || die "Installing the packages failed: $(grep -E '^E:' "$LOG" | tail -1)"
-    configure_local
     svc start mariadb || true
-    svc reload apache2 || svc start apache2 || true
+    "${apt[@]}" install -y phpmyadmin >> "$LOG" 2>&1 \
+        || die "Installing phpMyAdmin failed: $(grep -E '^E:' "$LOG" | tail -1)"
+    configure_local
+    # Listen addresses changed: restart (a reload with new Listen lines can kill Apache).
+    svc restart apache2 || true
     cmd_status
 }
 
 cmd_share() {
     case "${1:-}" in
         on)  sed -i -E '/^Listen \[::1\]:80$/d; s/^Listen 127\.0\.0\.1:80$/Listen 80/' "$PORTS"
-             printf '# Managed by Jewbuntu Web Server: sharing ON (anyone on your network)\nRequire all granted\n' > "$ACCESS" ;;
+             printf '# Managed by Jewbuntu Web Server: sharing ON (anyone on your network)\nRequire all granted\n' > "$ACCESS"
+             configure_ftp shared ;;
         off) configure_local ;;
         *) die "share on|off" ;;
     esac
@@ -170,14 +254,29 @@ cmd_create_db() {
     printf '{"ok":true,"database":"%s","user":"%s","password":"%s","host":"localhost"}\n' "$db" "$db" "$pass"
 }
 
+cmd_db_login() {
+    # The user's own MySQL login for phpMyAdmin and tools: their Ubuntu name, a fresh random
+    # password (printed once), all privileges on this local server. From a terminal the
+    # same account also works without a password (unix_socket).
+    local pass
+    pass="$(head -c 18 /dev/urandom | base64 | tr -d '/+=' | head -c 20)"
+    svc is-active mariadb || svc start mariadb || true
+    mariadb -e "CREATE USER IF NOT EXISTS '$USER_NAME'@'localhost' IDENTIFIED VIA unix_socket OR mysql_native_password USING PASSWORD('$pass');
+                ALTER USER '$USER_NAME'@'localhost' IDENTIFIED VIA unix_socket OR mysql_native_password USING PASSWORD('$pass');
+                GRANT ALL PRIVILEGES ON *.* TO '$USER_NAME'@'localhost' WITH GRANT OPTION; FLUSH PRIVILEGES;" \
+        || die "could not create your database login"
+    printf '{"ok":true,"user":"%s","password":"%s","host":"localhost"}\n' "$USER_NAME" "$pass"
+}
+
 case "${1:-}" in
     status) cmd_status ;;
     install) cmd_install ;;
-    start) svc start mariadb; svc start apache2; cmd_status ;;
-    stop) svc stop apache2; svc stop mariadb; cmd_status ;;
+    start) svc start mariadb; svc start apache2; pkg_ok vsftpd && { svc start vsftpd || true; }; cmd_status ;;
+    stop) svc stop apache2; svc stop mariadb; pkg_ok vsftpd && { svc stop vsftpd || true; }; cmd_status ;;
     share) cmd_share "${2:-}" ;;
     add-site) cmd_add_site "${2:-}" "${3:-}" ;;
     remove-site) cmd_remove_site "${2:-}" ;;
     create-db) cmd_create_db "${2:-}" ;;
+    db-login) cmd_db_login ;;
     *) die "unknown command" ;;
 esac
