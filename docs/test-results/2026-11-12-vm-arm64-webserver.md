@@ -26,4 +26,4 @@ checks over SSH with a non-sudo key.
 | WordPress site `shul`: download, database, setup in Firefox | pass: `http://shul.localhost` serves the installed site (title "Shul"), reached over `::1` |
 | PHP warnings per request (PCRE JIT vs apache2 MemoryDenyWriteExecute) | seen in m1.25; m1.26 sets `pcre.jit=0`: 3 page loads, 0 new warnings |
 
-Not checked by eye yet: whether app windows look solid after the m1.25 skin (CSS verified).
+App windows after the m1.25 skin: owner confirmed solid (Files, Web Server), no window showing through.
