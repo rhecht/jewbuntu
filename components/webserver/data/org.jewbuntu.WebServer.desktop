@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=Web Server
+GenericName=Local web server
+Comment=Run websites on this computer: Apache, MariaDB and PHP, WordPress in one click
+Exec=jewbuntu-webserver
+Icon=org.jewbuntu.WebServer
+Terminal=false
+Categories=Development;WebDevelopment;GTK;
+Keywords=lamp;apache;php;mysql;mariadb;wordpress;codeigniter;localhost;website;
+StartupNotify=true

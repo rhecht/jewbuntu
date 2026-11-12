@@ -1,0 +1,6 @@
+components/webserver/src/main.js usr/share/jewbuntu/webserver/src/
+components/webserver/helper/jewbuntu-webserver-helper usr/libexec/jewbuntu/
+components/webserver/data/jewbuntu-webserver usr/bin/
+components/webserver/data/org.jewbuntu.WebServer.desktop usr/share/applications/
+components/webserver/data/org.jewbuntu.WebServer.svg usr/share/icons/hicolor/scalable/apps/
+components/webserver/data/org.jewbuntu.webserver.policy usr/share/polkit-1/actions/

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
+  <!-- Jewbuntu Web Server icon (original): server stack in a squircle -->
+  <defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4fb3ff"/><stop offset="1" stop-color="#3a54d6"/></linearGradient></defs>
+  <path d="M64 8C98 8 120 8 120 30v68c0 22-22 22-56 22S8 120 8 98V30C8 8 30 8 64 8z" fill="url(#g)"/>
+  <g fill="#fff"><rect x="32" y="34" width="64" height="18" rx="5"/><rect x="32" y="56" width="64" height="18" rx="5"/><rect x="32" y="78" width="64" height="18" rx="5"/></g>
+  <g fill="#3a54d6"><circle cx="42" cy="43" r="3"/><circle cx="42" cy="65" r="3"/><circle cx="42" cy="87" r="3"/></g>
+  <g fill="#f5c542"><rect x="74" y="41" width="14" height="4" rx="2"/><rect x="74" y="63" width="14" height="4" rx="2"/><rect x="74" y="85" width="14" height="4" rx="2"/></g>
+</svg>

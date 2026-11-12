@@ -1,3 +1,13 @@
+jewbuntu (0.1.0~m1.23+26.04) resolute; urgency=medium
+
+  * New package jewbuntu-webserver: a GTK4/libadwaita app that sets up Apache,
+    MariaDB and PHP on request (one polkit-guarded helper), serves ~/Sites/NAME
+    at http://NAME.localhost, creates WordPress sites (checksum-verified, own
+    database) and CodeIgniter 4 sites. Local-only by default; network sharing
+    is an explicit switch with a warning.
+
+ -- Jewbuntu Developers <maintainers@jewbuntu.invalid>  Wed, 11 Nov 2026 21:18:35 -0500
+
 jewbuntu (0.1.0~m1.22+26.04) resolute; urgency=medium
 
   * jewbuntu-shulgo is no longer built from this source: ShulGo's widget code

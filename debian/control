@@ -113,3 +113,19 @@ Description: Jewbuntu Hub - Hebrew date, zmanim and settings
  if the calendar service is not running, computes the same data itself.
  Nearby minyanim will come from Shulgo once its integration is available.
 
+
+Package: jewbuntu-webserver
+Architecture: all
+Depends: gjs (>= 1.80), gir1.2-gtk-4.0, gir1.2-adw-1, gir1.2-soup-3.0,
+         pkexec | policykit-1, acl, ${misc:Depends}
+Recommends: composer
+Description: Jewbuntu Web Server - run websites on this computer
+ A friendly app for Apache, MariaDB and PHP from Ubuntu's own archive. One
+ click sets it up; every folder in ~/Sites becomes http://NAME.localhost, and
+ new sites can start empty, as WordPress (downloaded from wordpress.org and
+ checked against its published checksum, with its own database) or as
+ CodeIgniter 4. The server answers only this computer by default; sharing on
+ the network is an explicit switch with a warning.
+ .
+ Installing this package installs no server. Apache, MariaDB and PHP are
+ installed only when the user asks, through a single polkit-guarded helper.

@@ -1,0 +1,173 @@
+#!/bin/bash
+# Jewbuntu Web Server privileged helper. Runs as root via pkexec (polkit action
+# org.jewbuntu.webserver.manage). The GUI runs unprivileged and calls this for the
+# few things that need root. Every argument is validated; nothing is passed to a shell.
+#
+#   status | install | start | stop | share on|off
+#   add-site NAME [public]  | remove-site NAME
+#   create-db NAME          (prints JSON with a generated password, once)
+#
+# Safety defaults: Apache listens on 127.0.0.1/::1 only; every Jewbuntu site has
+# "Require local" unless sharing is switched on; MariaDB binds to 127.0.0.1.
+set -euo pipefail
+export LC_ALL=C.UTF-8 DEBIAN_FRONTEND=noninteractive
+
+die() { printf '{"ok":false,"error":"%s"}\n' "$1"; exit 1; }
+[ "$(id -u)" = 0 ] || die "must run as root (via pkexec)"
+
+# The calling desktop user (pkexec sets PKEXEC_UID); JEWBUNTU_TEST_USER only for root-run tests.
+if [ -n "${PKEXEC_UID:-}" ]; then
+    USER_NAME="$(getent passwd "$PKEXEC_UID" | cut -d: -f1)"
+elif [ -n "${JEWBUNTU_TEST_USER:-}" ]; then
+    USER_NAME="$JEWBUNTU_TEST_USER"
+else
+    die "unknown calling user"
+fi
+[ -n "$USER_NAME" ] && [ "$USER_NAME" != root ] || die "refusing to manage sites for root"
+USER_HOME="$(getent passwd "$USER_NAME" | cut -d: -f6)"
+SITES="$USER_HOME/Sites"
+
+PACKAGES=(apache2 mariadb-server php libapache2-mod-php php-mysql php-xml php-mbstring php-curl php-zip php-gd php-intl acl unzip)
+PORTS=/etc/apache2/ports.conf
+ACCESS=/etc/apache2/jewbuntu-access.conf
+MARIADB_CNF=/etc/mysql/mariadb.conf.d/60-jewbuntu.cnf
+
+valid_name() { [[ "$1" =~ ^[a-z0-9][a-z0-9-]{0,30}$ ]] || die "site names: lowercase letters, digits and dashes, up to 31 characters"; }
+
+svc() { # svc start|stop|reload|is-active UNIT
+    if [ -d /run/systemd/system ]; then
+        systemctl "$1" "$2" >/dev/null 2>&1
+    else  # containers without systemd (tests)
+        case "$1" in
+            is-active) service "$2" status >/dev/null 2>&1 ;;
+            *) service "$2" "$1" >/dev/null 2>&1 ;;
+        esac
+    fi
+}
+
+installed() { [ "$(dpkg-query -W -f '${db:Status-Abbrev}\n' apache2 mariadb-server php 2>/dev/null | grep -c '^ii')" = 3 ]; }
+
+has_ipv6_loopback() { grep -qi '^0\{31\}1 ' /proc/net/if_inet6 2>/dev/null; }
+
+sharing() { grep -q '^Listen 80$' "$PORTS" 2>/dev/null; }
+
+configure_local() {
+    # Apache: localhost only. ports.conf is Ubuntu's conffile; the original is kept as .jewbuntu-orig.
+    [ -f "$PORTS.jewbuntu-orig" ] || cp -p "$PORTS" "$PORTS.jewbuntu-orig"
+    # [::1] only when this machine has IPv6 loopback; Apache refuses to start otherwise.
+    local v6=''; has_ipv6_loopback && v6='\nListen [::1]:80'
+    sed -i -E "s/^Listen (80|0\\.0\\.0\\.0:80)\$/Listen 127.0.0.1:80$v6/" "$PORTS"
+    printf '# Managed by Jewbuntu Web Server\nServerName localhost\n' > /etc/apache2/conf-available/jewbuntu-servername.conf
+    a2enconf -q jewbuntu-servername >/dev/null
+    printf '# Managed by Jewbuntu Web Server: who may open Jewbuntu sites.\nRequire local\n' > "$ACCESS"
+    # MariaDB: localhost only (Ubuntu's default already, made explicit).
+    printf '# Managed by Jewbuntu Web Server\n[mysqld]\nbind-address = 127.0.0.1\n' > "$MARIADB_CNF"
+    a2enmod -q rewrite >/dev/null
+    a2dissite -q 000-default >/dev/null 2>&1 || true
+}
+
+site_conf() { echo "/etc/apache2/sites-available/jewbuntu-$USER_NAME-$1.conf"; }
+
+cmd_status() {
+    local inst=false run=false share=false sites=()
+    installed && inst=true
+    if $inst; then
+        svc is-active apache2 && svc is-active mariadb && run=true
+        sharing && share=true
+    fi
+    for f in /etc/apache2/sites-enabled/jewbuntu-"$USER_NAME"-*.conf; do
+        [ -e "$f" ] || continue
+        n="${f##*/jewbuntu-$USER_NAME-}"; sites+=("\"${n%.conf}\"")
+    done
+    local IFS=,
+    printf '{"ok":true,"installed":%s,"running":%s,"sharing":%s,"user":"%s","sites":[%s]}\n' \
+        "$inst" "$run" "$share" "$USER_NAME" "${sites[*]}"
+}
+
+cmd_install() {
+    apt-get update -q >/dev/null
+    apt-get install -y -q "${PACKAGES[@]}" >/dev/null
+    configure_local
+    svc start mariadb || true
+    svc reload apache2 || svc start apache2 || true
+    cmd_status
+}
+
+cmd_share() {
+    case "${1:-}" in
+        on)  sed -i -E '/^Listen \[::1\]:80$/d; s/^Listen 127\.0\.0\.1:80$/Listen 80/' "$PORTS"
+             printf '# Managed by Jewbuntu Web Server: sharing ON (anyone on your network)\nRequire all granted\n' > "$ACCESS" ;;
+        off) configure_local ;;
+        *) die "share on|off" ;;
+    esac
+    # Listen addresses changed: restart rather than reload so the sockets are rebound.
+    svc restart apache2 || true
+    cmd_status
+}
+
+cmd_add_site() {
+    local name="${1:-}" sub="${2:-}"
+    valid_name "$name"
+    [ -z "$sub" ] || [ "$sub" = public ] || die "document root option must be 'public'"
+    local dir="$SITES/$name"
+    install -d -o "$USER_NAME" -g "$USER_NAME" -m 755 "$SITES" "$dir"
+    if [ -z "$(ls -A "$dir")" ]; then
+        printf '<?php // Your new Jewbuntu site. Replace this file with your own.\n?><!doctype html><meta charset="utf-8"><title>%s</title>\n<h1>%s.localhost is working</h1>\n<p>Files live in <code>%s</code>. PHP <?= PHP_VERSION ?>.</p>\n' "$name" "$name" "$dir" > "$dir/index.php"
+        chown "$USER_NAME:$USER_NAME" "$dir/index.php"
+    fi
+    local root="$dir"; [ "$sub" = public ] && root="$dir/public"
+    # Let Apache (www-data) reach and write the site without opening the home folder to others.
+    setfacl -m u:www-data:x "$USER_HOME" "$SITES"
+    setfacl -R -m u:www-data:rwX -m d:u:www-data:rwX "$dir"
+    cat > "$(site_conf "$name")" <<CONF
+# Managed by Jewbuntu Web Server for $USER_NAME. Edit freely; removing the site keeps the files.
+<VirtualHost *:80>
+    ServerName $name.localhost
+    DocumentRoot "$root"
+    <Directory "$root">
+        Options FollowSymLinks
+        AllowOverride All
+        Include $ACCESS
+    </Directory>
+    ErrorLog \${APACHE_LOG_DIR}/jewbuntu-$name-error.log
+    CustomLog \${APACHE_LOG_DIR}/jewbuntu-$name-access.log combined
+</VirtualHost>
+CONF
+    a2ensite -q "jewbuntu-$USER_NAME-$name" >/dev/null
+    apache2ctl -t >/dev/null 2>&1 || die "Apache rejected the configuration"
+    svc reload apache2 || svc start apache2 || true
+    printf '{"ok":true,"site":"%s","url":"http://%s.localhost/","path":"%s"}\n' "$name" "$name" "$dir"
+}
+
+cmd_remove_site() {
+    local name="${1:-}"; valid_name "$name"
+    a2dissite -q "jewbuntu-$USER_NAME-$name" >/dev/null 2>&1 || true
+    rm -f "$(site_conf "$name")"
+    svc reload apache2 || true
+    printf '{"ok":true,"removed":"%s","files_kept":"%s"}\n' "$name" "$SITES/$name"
+}
+
+cmd_create_db() {
+    local name="${1:-}"; valid_name "$name"
+    local db="jb_${name//-/_}" pass
+    pass="$(head -c 18 /dev/urandom | base64 | tr -d '/+=' | head -c 20)"
+    svc is-active mariadb || svc start mariadb || true
+    mariadb -e "CREATE DATABASE IF NOT EXISTS \`$db\` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+                CREATE USER IF NOT EXISTS '$db'@'localhost' IDENTIFIED BY '$pass';
+                ALTER USER '$db'@'localhost' IDENTIFIED BY '$pass';
+                GRANT ALL PRIVILEGES ON \`$db\`.* TO '$db'@'localhost'; FLUSH PRIVILEGES;" \
+        || die "could not create the database"
+    printf '{"ok":true,"database":"%s","user":"%s","password":"%s","host":"localhost"}\n' "$db" "$db" "$pass"
+}
+
+case "${1:-}" in
+    status) cmd_status ;;
+    install) cmd_install ;;
+    start) svc start mariadb; svc start apache2; cmd_status ;;
+    stop) svc stop apache2; svc stop mariadb; cmd_status ;;
+    share) cmd_share "${2:-}" ;;
+    add-site) cmd_add_site "${2:-}" "${3:-}" ;;
+    remove-site) cmd_remove_site "${2:-}" ;;
+    create-db) cmd_create_db "${2:-}" ;;
+    *) die "unknown command" ;;
+esac

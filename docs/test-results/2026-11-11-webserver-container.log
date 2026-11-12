@@ -1,0 +1,44 @@
+PASS: helper installed and executable
+PASS: polkit policy installed
+PASS: package pulled in no server
+  status: {"ok":true,"installed":false,"running":false,"sharing":false,"user":"t","sites":[]}
+PASS: status before install: not installed
+PASS: rejects bad site name
+PASS: refuses root as site owner
+  install: {"ok":true,"installed":true,"running":true,"sharing":false,"user":"t","sites":[]}
+PASS: install: installed
+PASS: install: running
+PASS: apache listens on loopback only (ports.conf)
+PASS: original ports.conf kept
+PASS: mariadb bound to 127.0.0.1
+PASS: default site disabled
+  add-site: {"ok":true,"site":"demo","url":"http://demo.localhost/","path":"/home/t/Sites/demo"}
+PASS: add-site ok
+PASS: site folder owned by user
+PASS: home not opened to others (www-data gets x via ACL only)
+PASS: site serves PHP over loopback
+PASS: PHP executed (no raw <?php)
+  unknown vhost answered 200
+  create-db: {"ok":true,"database":"jb_demo","user":"jb_demo",...
+PASS: db user can log in with generated password
+PASS: generated password is 20 chars
+PASS: not sharing: network address refused
+PASS: share on
+PASS: sharing: site answers on network address
+PASS: share on: Listen 80
+PASS: share on: Require all granted
+PASS: share off
+PASS: share off: loopback again
+PASS: share off: Require local
+PASS: share off: network address refused again
+PASS: apache config valid after toggles
+PASS: add-site with public docroot
+PASS: public docroot served
+  status: {"ok":true,"installed":true,"running":true,"sharing":false,"user":"t","sites":["ci","demo"]}
+PASS: status lists both sites
+PASS: remove-site ok
+PASS: remove-site kept files
+PASS: remove-site removed vhost
+PASS: stop
+PASS: start
+failures: 0

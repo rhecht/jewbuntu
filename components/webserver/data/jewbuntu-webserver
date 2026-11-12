@@ -1,0 +1,3 @@
+#!/bin/sh
+# Jewbuntu Web Server (GTK4/libadwaita, GJS)
+exec /usr/bin/gjs -m /usr/share/jewbuntu/webserver/src/main.js "$@"
