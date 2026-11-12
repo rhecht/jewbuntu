@@ -35,7 +35,7 @@ and the checklist in `docs/vm-setup.md` is recorded.
 | `jewbuntu skin apply/undo/status` + one-time first-login question for existing accounts | Implemented | Auto-verified (unit + container with real schemas: apply and undo) |
 | Hebrew keyboard for existing users (appended, not replaced) | Implemented via skin | Auto-verified in container; VM Not tested |
 | Muted audio after VM startup | Investigating (Jewbuntu never changes volume) | Not diagnosed |
-| True blur ("frosted glass") | Not available: no blur extension packaged in Ubuntu 26.04 | n/a |
+| True blur ("frosted glass") | Superseded in m1.7: Ubuntu 26.04 packages no blur extension, so Blur my Shell v78 is vendored in `jewbuntu-gnome` (see below) | see m1.7 / m1.16 rows |
 | Install Shulgo's Linux widget | Waiting for Shulgo build | n/a |
 
 ## Status at 0.1.0~m1.7 (2026-11-11 afternoon)
@@ -44,7 +44,7 @@ and the checklist in `docs/vm-setup.md` is recorded.
 | --- | --- | --- |
 | Jewbuntu Skin = public fork github.com/rhecht/jewbuntu-skin (MacTahoe, MIT), packaged as `jewbuntu-skin` from that repo's `debian/` | Implemented | Package builds (12 theme variants); container: theme active after skin apply; **visual Not tested** |
 | Apple logo/wallpapers/screenshots removed from the fork; original Jewbuntu wallpapers + 2 Star of David wallpapers (owner-supplied, licence TBC, 1586×992) | Implemented | n/a |
-| Blur my Shell v78 vendored unmodified in `jewbuntu-gnome` | Implemented | Schema compiles; runtime Not tested |
+| Blur my Shell v78 vendored unmodified in `jewbuntu-gnome` | Implemented | Schema compiles; **Pass** in arm64 VM at m1.16: extension ACTIVE on GNOME 50.1 (docs/test-results/2026-11-11-vm-arm64.md) |
 | `skin apply` = theme + User Themes + Blur my Shell + Hebrew + libadwaita (~/.config/gtk-4.0) with undo | Implemented | Auto-verified (unit + container) |
 | Calendar core (Hebcal 6.16 in GJS), `jewbuntu-jewish-service` D-Bus | Implemented | 12 fixture tests vs hebcal.com; GJS = Node output; service exercised on a session bus |
 | `jewbuntu-hub` (Today/Calendar/Minyanim/Resources/Settings) | Implemented | Screenshots under Xvfb in Ubuntu 26.04; not yet run in the VM |
