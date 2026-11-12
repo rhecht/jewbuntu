@@ -8,7 +8,7 @@ import Gdk from 'gi://Gdk?version=4.0';
 import Gtk from 'gi://Gtk?version=4.0';
 import Adw from 'gi://Adw?version=1';
 import System from 'system';
-import {helper, readStatus, createSite, SITES, NAME_RE, KINDS, loadDbLogin, saveDbLogin, lanAddress} from './sites.js';
+import {helper, readStatus, createSite, SITES, NAME_RE, KINDS, loadDbLogin, saveDbLogin, lanAddress, PLATFORM} from './sites.js';
 
 // ---------- UI ----------
 
@@ -74,10 +74,10 @@ class WebServerWindow {
         const page = new Adw.StatusPage({
             icon_name: 'org.jewbuntu.WebServer',
             title: 'Run websites on this computer',
-            description: 'Set up Apache, MySQL (MariaDB), PHP, phpMyAdmin and FTP from Ubuntu with one click. Your sites stay private to this computer unless you choose to share them. Each folder in ~/Sites becomes a site at http://name.localhost.',
+            description: `Set up Apache, MySQL (MariaDB), PHP, phpMyAdmin and FTP from ${PLATFORM.name} with one click. Your sites stay private to this computer unless you choose to share them. Each folder in ~/Sites becomes a site at http://name.localhost.`,
         });
         const btn = new Gtk.Button({label: 'Set up the web server', css_classes: ['suggested-action', 'pill'], halign: Gtk.Align.CENTER});
-        btn.connect('clicked', () => this.guard('Setting up Apache, MySQL, PHP, phpMyAdmin and FTP…\nThis downloads packages from Ubuntu and can take a few minutes.', () => helper('install')));
+        btn.connect('clicked', () => this.guard(`Setting up Apache, MySQL, PHP, phpMyAdmin and FTP…\nThis downloads packages from ${PLATFORM.name} and can take a few minutes.`, () => helper('install')));
         const note = new Gtk.Label({label: 'Needs your password once.', css_classes: ['dim-label']});
         const box = new Gtk.Box({orientation: Gtk.Orientation.VERTICAL, spacing: 12});
         box.append(btn);
@@ -92,7 +92,7 @@ class WebServerWindow {
             const finish = new Adw.PreferencesGroup();
             const row = new Adw.ActionRow({title: 'Finish setup', subtitle: 'Adds phpMyAdmin, FTP and Composer to your web server.'});
             const btn = new Gtk.Button({label: 'Add', valign: Gtk.Align.CENTER, css_classes: ['suggested-action']});
-            btn.connect('clicked', () => this.guard('Adding phpMyAdmin, FTP and Composer…\nThis downloads packages from Ubuntu and can take a few minutes.', () => helper('install')));
+            btn.connect('clicked', () => this.guard(`Adding phpMyAdmin, FTP and Composer…\nThis downloads packages from ${PLATFORM.name} and can take a few minutes.`, () => helper('install')));
             row.add_suffix(btn);
             finish.add(row);
             page.add(finish);
@@ -156,7 +156,7 @@ class WebServerWindow {
         page.add(this.ftpGroup(s));
 
         const help = new Adw.PreferencesGroup({title: 'Good to know'});
-        help.add(new Adw.ActionRow({title: 'Logs', subtitle: '/var/log/apache2/jewbuntu-SITE-error.log', use_markup: false}));
+        help.add(new Adw.ActionRow({title: 'Logs', subtitle: `${PLATFORM.logDir}/jewbuntu-SITE-error.log`, use_markup: false}));
         page.add(help);
         return page;
     }
@@ -235,7 +235,7 @@ class WebServerWindow {
         cp.connect('clicked', () => this.copy(host, 'Server address'));
         server.add_suffix(cp);
         g.add(server);
-        g.add(new Adw.ActionRow({title: 'Login', subtitle: `Your Ubuntu username (${GLib.get_user_name()}) and password`, use_markup: false}));
+        g.add(new Adw.ActionRow({title: 'Login', subtitle: `Your ${PLATFORM.name} username (${GLib.get_user_name()}) and password`, use_markup: false}));
         g.add(new Adw.ActionRow({title: 'Folder', subtitle: `${SITES} (FTP users see only this folder)`, use_markup: false}));
         return g;
     }
@@ -251,7 +251,7 @@ class WebServerWindow {
         box.append(entry);
         box.append(kind);
         if (!this.status.composer)
-            box.append(new Gtk.Label({label: 'CodeIgniter needs Composer (sudo apt install composer).', css_classes: ['dim-label', 'caption'], wrap: true}));
+            box.append(new Gtk.Label({label: `CodeIgniter needs Composer (${PLATFORM.install} composer).`, css_classes: ['dim-label', 'caption'], wrap: true}));
         d.set_extra_child(box);
         d.add_response('cancel', 'Cancel');
         d.add_response('create', 'Create');

@@ -66,18 +66,52 @@ function readBinary(path, n) {
     return bytes;
 }
 
+// Distro differences (Ubuntu: apt + apache2; Fedora Asahi Remix: dnf + httpd + php-fpm).
+// The helper picks its backend (helper/jewbuntu-webserver-backend/{debian,fedora}.sh) the same way: Fedora when
+// os-release says ID or ID_LIKE fedora (Fedora Asahi Remix is ID=fedora-asahi-remix,
+// ID_LIKE=fedora), Ubuntu otherwise.
+function isFedora() {
+    const osRelease = readFile('/etc/os-release') ?? readFile('/usr/lib/os-release') ?? '';
+    const field = key => (osRelease.match(new RegExp(`^${key}=["']?([^"'\n]*)`, 'm'))?.[1] ?? '').split(/\s+/);
+    return [...field('ID'), ...field('ID_LIKE')].includes('fedora');
+}
+const FEDORA = isFedora();
+export const PLATFORM = FEDORA ? {
+    name: 'Fedora', install: 'sudo dnf install',
+    packages: {apache: 'httpd', mariadb: 'mariadb-server', php: 'php', phpmyadmin: 'phpMyAdmin', ftp: 'vsftpd', composer: 'composer'},
+    // httpd.conf keeps Fedora's "Listen 80"; sharing is recorded in Jewbuntu's own conf.d file.
+    apacheUnit: 'httpd', sharingFile: '/etc/httpd/conf.d/00-jewbuntu.conf', sharingRe: /^# Sharing: on$/m,
+    sitesDir: '/etc/httpd/conf.d', logDir: '/var/log/httpd',
+} : {
+    name: 'Ubuntu', install: 'sudo apt install',
+    packages: {apache: 'apache2', mariadb: 'mariadb-server', php: 'php', phpmyadmin: 'phpmyadmin', ftp: 'vsftpd', composer: 'composer'},
+    apacheUnit: 'apache2', sharingFile: '/etc/apache2/ports.conf', sharingRe: /^Listen 80$/m,
+    sitesDir: '/etc/apache2/sites-enabled', logDir: '/var/log/apache2',
+};
+
+/** Which of these packages are installed (dpkg on Ubuntu, rpm on Fedora). */
+async function installedPackages(names) {
+    if (FEDORA) {
+        const r = await run(['rpm', '-q', '--qf', '%{NAME}\n', ...names]);
+        return new Set(r.out.split('\n').filter(l => names.includes(l)));
+    }
+    const r = await run(['dpkg-query', '-W', '-f', '${Package} ${db:Status-Abbrev}\n', ...names]);
+    return new Set(r.out.split('\n').filter(l => / ii ?$/.test(l)).map(l => l.split(' ')[0]));
+}
+
 /** Status without root: packages, services, sharing, this user's enabled sites. */
 export async function readStatus() {
-    const dpkg = await run(['dpkg-query', '-W', '-f', '${db:Status-Abbrev}\n', 'apache2', 'mariadb-server', 'php']);
-    const installed = dpkg.out.split('\n').filter(l => l.startsWith('ii')).length === 3;
+    const P = PLATFORM.packages;
+    const have = await installedPackages(Object.values(P));
+    const installed = have.has(P.apache) && have.has(P.mariadb) && have.has(P.php);
     let running = false, sharing = false;
     const sites = [];
     if (installed) {
-        const a = await run(['systemctl', 'is-active', 'apache2']);
+        const a = await run(['systemctl', 'is-active', PLATFORM.apacheUnit]);
         const m = await run(['systemctl', 'is-active', 'mariadb']);
         running = a.out === 'active' && m.out === 'active';
-        sharing = /^Listen 80$/m.test(readFile('/etc/apache2/ports.conf') ?? '');
-        const dir = Gio.File.new_for_path('/etc/apache2/sites-enabled');
+        sharing = PLATFORM.sharingRe.test(readFile(PLATFORM.sharingFile) ?? '');
+        const dir = Gio.File.new_for_path(PLATFORM.sitesDir);
         try {
             const en = dir.enumerate_children('standard::name', Gio.FileQueryInfoFlags.NONE, null);
             let info;
@@ -90,11 +124,9 @@ export async function readStatus() {
         } catch (e) {}
         sites.sort();
     }
-    const extra = await run(['dpkg-query', '-W', '-f', '${Package} ${db:Status-Abbrev}\n', 'phpmyadmin', 'vsftpd', 'composer']);
-    const has = name => new RegExp(`^${name} ii`, 'm').test(extra.out);
-    const composer = has('composer');
-    const phpmyadmin = has('phpmyadmin');
-    const ftp = has('vsftpd');
+    const composer = have.has(P.composer);
+    const phpmyadmin = have.has(P.phpmyadmin);
+    const ftp = have.has(P.ftp);
     return {installed, running, sharing, sites, composer, phpmyadmin, ftp, complete: composer && phpmyadmin && ftp};
 }
 

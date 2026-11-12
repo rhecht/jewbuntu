@@ -1,6 +1,7 @@
 #!/bin/sh
 # Build the Fedora Asahi Remix RPMs: jewbuntu-skin, jewbuntu-icons (from their sibling repos)
-# and jewbuntu-core + jewbuntu-asahi-desktop (from this repo), in a Fedora container.
+# and jewbuntu-core + jewbuntu-asahi-desktop and jewbuntu-webserver (from this repo), in a
+# Fedora container.
 #
 # usage: ci/fedora-build.sh [OUTDIR] [SKIN_REPO] [ICONS_REPO]
 #   OUTDIR defaults to dist/fedora; repos default to ../jewbuntu-skin and ../jewbuntu-icons.
@@ -40,6 +41,7 @@ docker run --rm -v "$SKIN/.git:/skin.git:ro" -v "$ICONS/.git:/icons.git:ro" -v "
     build jewbuntu-skin \$(deb_version jewbuntu-skin)
     build jewbuntu-icons \$(deb_version jewbuntu-icons)
     build jewbuntu $JB_VERSION
+    build jewbuntu-webserver $JB_VERSION
     grep -E \"^(Ran|OK|FAILED)\" jewbuntu.log || true"
   rm -f /out/*.rpm
   cp /home/b/rpmbuild/RPMS/noarch/*.rpm /out/

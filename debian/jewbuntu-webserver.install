@@ -5,3 +5,4 @@ components/webserver/data/org.jewbuntu.WebServer.desktop usr/share/applications/
 components/webserver/data/org.jewbuntu.WebServer.svg usr/share/icons/hicolor/scalable/apps/
 components/webserver/data/org.jewbuntu.webserver.policy usr/share/polkit-1/actions/
 components/webserver/src/sites.js usr/share/jewbuntu/webserver/src/
+components/webserver/helper/jewbuntu-webserver-backend/debian.sh usr/libexec/jewbuntu/jewbuntu-webserver-backend/

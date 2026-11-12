@@ -1,0 +1,18 @@
+; Jewbuntu Web Server SELinux policy module (Fedora / Fedora Asahi Remix, targeted policy).
+; Installed by the Web Server's helper with `semodule -i` when the owner presses Set up;
+; removed with `semodule -r jewbuntu_webserver`. Fedora's own policy files are never edited.
+;
+; 1. Every user's ~/Sites is web content Apache and php-fpm may read and write
+;    (httpd_user_rw_content_t; with httpd_builtin_scripting, which is on by default).
+;    The more specific path wins over the generic HOME_DIR/.+ -> user_home_t rule, and
+;    new files made in ~/Sites inherit the label.
+(filecon "HOME_DIR/Sites(/.*)?" any (system_u object_r httpd_user_rw_content_t ((s0) (s0))))
+
+; 2. vsftpd (ftpd_t) logs users into ~/Sites (chroot) and manages files there, and only there.
+;    Without this, Fedora allows it only through ftpd_full_access, which opens every file
+;    on the system to the FTP server.
+(allow ftpd_t home_root_t (dir (getattr search open)))
+(allow ftpd_t user_home_dir_t (dir (getattr search open)))
+(allow ftpd_t httpd_user_rw_content_t (dir (getattr search open read write add_name remove_name create rmdir rename reparent setattr ioctl lock)))
+(allow ftpd_t httpd_user_rw_content_t (file (getattr open read write append create unlink rename setattr ioctl lock map)))
+(allow ftpd_t httpd_user_rw_content_t (lnk_file (getattr read create unlink rename)))

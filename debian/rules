@@ -11,3 +11,8 @@ include /usr/share/dpkg/pkg-info.mk
 override_dh_builddeb:
 	for p in $$(dh_listpackages); do find debian/$$p -exec touch -h -d @$(SOURCE_DATE_EPOCH) {} +; done
 	dh_builddeb
+
+# The Web Server helper's backend is sourced, not run (dh_fixperms makes usr/libexec files executable).
+override_dh_fixperms:
+	dh_fixperms
+	chmod 644 debian/jewbuntu-webserver/usr/libexec/jewbuntu/jewbuntu-webserver-backend/*.sh

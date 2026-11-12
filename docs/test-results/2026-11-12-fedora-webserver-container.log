@@ -1,0 +1,127 @@
+# ci/fedora-webserver-check.sh (Fedora 45 arm64, systemd + firewalld container) on jewbuntu-webserver jewbuntu-webserver-0.1.0~m1.26-1.fc45.noarch.rpm, 2026-11-12
+NAME="Fedora Linux"
+VERSION="45 (Container Image)"
+systemd: running
+PASS: firewalld running (zone FedoraWorkstation)
+== install the RPM
+PASS: helper installed and executable
+PASS: Fedora backend installed (and no Ubuntu one)
+PASS: polkit policy installed
+PASS: package pulled in no server
+PASS: no Conflicts/Obsoletes
+PASS: every file is owned only by jewbuntu-webserver
+  status: {"ok":true,"installed":false,"complete":false,"running":false,"sharing":false,"user":"t","sites":[]}
+PASS: status before install: not installed
+PASS: rejects bad site name
+PASS: refuses root as site owner
+== Set up (dnf install of httpd, MariaDB, PHP, phpMyAdmin, vsftpd, Composer)
+  install: {"ok":true,"installed":true,"complete":true,"running":true,"sharing":false,"user":"t","sites":[]}
+PASS: install: installed
+PASS: install: running
+PASS: status: setup complete (phpMyAdmin, FTP, Composer)
+PASS: services enabled at boot (httpd, php-fpm, mariadb, vsftpd@jewbuntu)
+PASS: phpMyAdmin's config.inc.php is edited by Fedora's own %post (blowfish secret), not by Jewbuntu
+PASS: no Fedora config file edited (rpm -V)
+PASS: httpd.conf still Fedora's own (Listen 80)
+PASS: 00-jewbuntu.conf: sharing off, Require local
+PASS: mariadb listens on 127.0.0.1 only
+PASS: FTP (vsftpd@jewbuntu) listens on 127.0.0.1 only
+PASS: firewall: http not open while not sharing
+== SELinux (policy store; not enforced in a container)
+PASS: Jewbuntu SELinux module installed
+  ftpd_use_passive_mode          (on   ,   on)  Allow ftpd to use passive mode
+  httpd_can_network_connect      (on   ,   on)  Allow httpd to can network connect
+  httpd_enable_homedirs          (on   ,   on)  Allow httpd to enable homedirs
+PASS: boolean httpd_enable_homedirs on (persistent)
+PASS: boolean httpd_can_network_connect on (persistent)
+PASS: boolean ftpd_use_passive_mode on (persistent)
+PASS: ftpd_full_access stays off
+PASS: ~/Sites labelled httpd_user_rw_content_t (file_contexts)
+PASS: other home files keep user_home_t
+PASS: policy: vsftpd may write in ~/Sites
+PASS: module grants vsftpd writes only in ~/Sites (search-only on /home and home folders)
+PASS: policy: Apache/php-fpm may write in ~/Sites (httpd_builtin_scripting)
+PASS: policy: php-fpm binary runs as httpd_t
+== PHP, phpMyAdmin
+PASS: phpMyAdmin login page at http://localhost/phpmyadmin/
+PASS: PHP through php-fpm: JIT off, 128M uploads
+PASS: package upgrade re-applies PHP settings (%post system-refresh)
+PASS: system-refresh needs no user
+== databases, FTP
+PASS: db-login: user can log in with the password
+PASS: db-login: works without password from the user terminal (unix_socket)
+PASS: db-login again: new password works, old one does not
+PASS: phpMyAdmin accepts the login
+PASS: FTP: user logs in and uploads into ~/Sites
+PASS: FTP: uploaded file belongs to the user
+PASS: FTP: locked into ~/Sites (no /etc)
+== sites
+  add-site: {"ok":true,"site":"demo","url":"http://demo.localhost/","path":"/home/t/Sites/demo"}
+PASS: add-site ok
+PASS: site folder owned by user
+PASS: home not opened to others (apache gets x via ACL only)
+PASS: site serves PHP over loopback
+PASS: PHP executed (no raw <?php)
+PASS: unknown name does not land on a user site
+PASS: .htaccess still denied by Fedora's rules
+PASS: db user can log in with generated password
+PASS: generated password is 20 chars
+== sharing (another device = network namespace 'lan' behind a veth pair)
+PASS: the other device reaches this computer (ping)
+PASS: not sharing: network refused (firewalld)
+PASS: not sharing, firewall off: Apache itself refuses the network (403, no site)
+PASS: not sharing, firewall off: FTP refuses the network
+PASS: share on
+PASS: sharing: site answers another device
+PASS: share on: firewall opened http, FTP and passive ports (runtime and permanent)
+PASS: share on: 00-jewbuntu.conf says sharing on
+PASS: share on: phpMyAdmin refused to another device (403)
+PASS: share on: phpMyAdmin still works on this computer
+PASS: share on: FTP reachable on the network
+PASS: share on: FTP refuses plain-text logins
+PASS: share on: FTP over TLS works from another device
+  app status: {"platform":"Fedora","installed":true,"running":true,"sharing":true,"sites":["demo"],"composer":true,"phpmyadmin":true,"ftp":true,"complete":true}
+PASS: app (sites.js) sees sharing on
+PASS: share off
+PASS: share off: Require local again
+PASS: share off: firewall closed again (runtime and permanent)
+PASS: share off: network refused again
+PASS: share off: FTP back to 127.0.0.1 only
+PASS: app (sites.js) sees sharing off
+PASS: share off keeps a firewall opening the owner made
+PASS: Apache config valid after toggles
+== more sites
+PASS: add-site with public docroot
+PASS: public docroot served
+  status: {"ok":true,"installed":true,"complete":true,"running":true,"sharing":false,"user":"t","sites":["ci","demo"]}
+PASS: status lists both sites
+PASS: remove-site ok
+PASS: remove-site kept files
+PASS: remove-site removed vhost
+PASS: stop
+PASS: start
+PASS: install again (Finish setup path) is safe
+PASS: install again keeps sites
+== WordPress, CodeIgniter and empty sites through the app's own code (sites.js), as user t
+CREATED wp http://wp.localhost/wp-admin/install.php db=jb_wp
+CREATED ci4 http://ci4.localhost/
+CREATED plain http://plain.localhost/
+REFUSED duplicate: /home/t/Sites/wp already exists; choose another name for a fresh WordPress site.
+STATUS composer=true sites=ci,ci4,plain,wp
+PASS: sites test: no errors
+PASS: duplicate site name refused
+PASS: composer installed by setup
+PASS: wp-config has FS_METHOD direct
+PASS: wp-config not world-readable
+PASS: WordPress installer reaches its database
+PASS: WordPress installs
+PASS: WordPress home page shows the site
+PASS: Apache (apache user) can write WordPress uploads
+PASS: CodeIgniter welcome page
+PASS: CodeIgniter can write its cache
+PASS: empty site works
+PASS: http://localhost is Fedora's own test page, not a user site
+PASS: still no Fedora config file edited after everything (rpm -V)
+== remove the package
+PASS: removing the app keeps sites, databases and servers
+failures: 0

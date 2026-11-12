@@ -37,9 +37,11 @@ The look is the same. Some workflows differ because Fedora and GNOME differ:
 - **First login:** Fedora shows its own welcome tour, and Jewbuntu asks once whether to apply
   the look.
 - **Web Server:** setup downloads Apache (httpd), php-fpm, MariaDB, phpMyAdmin and vsftpd from
-  Fedora. SELinux stays on (the app labels `~/Sites` for Apache and FTP). Sharing on the network
-  also opens Fedora's firewall (firewalld), and only while sharing is on. FTP logins use your
-  Fedora username.
+  Fedora, then writes only files of its own: Fedora's `httpd.conf` and `vsftpd.conf` stay
+  untouched (FTP runs as its own `vsftpd@jewbuntu` service). SELinux stays enforcing: a small
+  Jewbuntu policy module labels `~/Sites` for Apache and FTP. Sharing on the network also opens
+  Fedora's firewall (firewalld), and only while sharing is on. FTP logins use your Fedora
+  username. Details and undo steps: [web-server.md](web-server.md#on-fedora-asahi-remix).
 - **ShulGo:** the top-bar widget doesn't load on GNOME 51 yet: it uses a GNOME Shell property
   that GNOME 51 removed. The ShulGo team has been asked for the fix. Until then, install
   `jewbuntu-shulgo` only for testing.

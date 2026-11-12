@@ -1,0 +1,20 @@
+# Fedora with systemd as PID 1 for ci/fedora-webserver-check.sh: real httpd/php-fpm/mariadb/
+# vsftpd@ units and a real firewalld (zone FedoraWorkstation, as on Fedora Asahi Remix), plus
+# the SELinux policy store and tools (the policy can be built and queried; it cannot be
+# enforced inside a container).
+ARG FEDORA=45
+FROM fedora:${FEDORA}
+RUN for i in 1 2 3; do dnf -y -q install systemd firewalld selinux-policy-targeted policycoreutils \
+      libselinux-utils setools-console curl sudo iproute iputils procps-ng hostname findutils && break; sleep 5; done \
+    && dnf clean all
+RUN systemctl mask systemd-logind.service console-getty.service getty.target systemd-firstboot.service \
+      systemd-resolved.service systemd-homed.service systemd-userdbd.service >/dev/null 2>&1; \
+    systemctl enable firewalld && firewall-offline-cmd --set-default-zone=FedoraWorkstation >/dev/null \
+    # Docker Desktop's kernel lacks nftables "fib" (IPv6 reverse-path filter) and the NetBIOS
+    # conntrack helper (the zone's samba-client service); firewalld refuses to start with them.
+    && sed -i 's/^IPv6_rpfilter=.*/IPv6_rpfilter=no/' /etc/firewalld/firewalld.conf \
+    && firewall-offline-cmd --zone=FedoraWorkstation --remove-service-from-zone=samba-client >/dev/null \
+    && useradd -m t
+ENV container=docker
+STOPSIGNAL SIGRTMIN+3
+CMD ["/usr/sbin/init"]
