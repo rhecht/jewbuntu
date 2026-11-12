@@ -113,6 +113,41 @@ Replace the startup sound's weekly quiet-window fallback with calendar times.
 ISO from the same packages (ADR 0009), node profile, dev pack, AI tooling with
 admission control, signed hosted repository.
 
+## After Jewbuntu: Asahi Linux port (planned, not started)
+
+**Starts only after Jewbuntu for Ubuntu is verified and launched.**
+
+Bring the Jewbuntu look to Apple Silicon M1/M2 Macs on Asahi Linux, as an option for
+M1s once macOS support fades. Base: **Fedora Asahi Remix** (GNOME edition). Ubuntu is not a
+good fit on Apple Silicon for now. Scope: the skin and look, the ShulGo widgets, and the
+Web Server (LAMP) app with its setup.
+
+- Likely to carry over: `jewbuntu-skin` (no CPU-specific code; build for Fedora's GNOME
+  version with `SKIN_SHELL_VERSION`), vendor gsettings defaults, the Jewbuntu Look extension,
+  `jewbuntu-core`.
+- Needs work: RPM packaging instead of `debian/` (Fedora uses dnf), Fedora package names
+  (fonts, Hebrew), Dash to Dock instead of Ubuntu Dock (map the dock settings), repository
+  enrollment for dnf, Apple Silicon awareness in `jewbuntu doctor` (speakers, notch, displays).
+- ShulGo: an RPM build of the private rhecht/shulgo (an RPM version of `ci/build-shulgo-deb.sh`;
+  still never copied into this repo); declare the GNOME version Fedora ships.
+- Web Server (`jewbuntu-webserver`): Fedora differs from Ubuntu in Apache (`httpd`,
+  `/etc/httpd/conf.d`, no `a2ensite`, PHP via php-fpm), database packages (MariaDB or
+  `community-mysql`), and firewalld. **SELinux** is enforcing by default and will affect
+  `~/Sites`, phpMyAdmin and vsftpd (file labels and booleans such as `httpd_enable_homedirs`).
+  Re-run the container checks (`ci/webserver-check.sh`) on Fedora.
+- Check first: which GNOME version Fedora Asahi Remix ships at that time. Asahi supports
+  M1/M2 today and intends to support M3/M4 later, so don't tie anything to M1/M2.
+- **Must survive Asahi and Fedora updates** (same overlay rule as on Ubuntu):
+  - Ship everything as separate Jewbuntu packages that own only their own files. Never edit
+    or replace files owned by Fedora/Asahi packages, and no `Conflicts`/`Obsoletes` against them.
+  - Settings through our own gschema overrides or dconf defaults, not by changing distro files.
+  - Login-screen skin: Fedora has no `update-alternatives` for GDM's theme bundle as Ubuntu
+    does, and replacing gnome-shell's file would be undone by every gnome-shell update. Find
+    a method that survives updates, or leave the login screen stock.
+  - Fedora moves to a new GNOME release every six months. If the skin or an extension
+    doesn't fit a new version, the desktop must fall back to stock GNOME cleanly, never break.
+    Test each Fedora release before it's offered.
+
 ## Blockers / needs from Rafi
 
 - **VM host**: the installed VMware Fusion 12.2.0 is Intel-only and cannot run VMs on the M1. Install UTM (or Fusion 13+) for an arm64 VM. Say which OS the HP runs, to decide whether it can host the amd64 VM.
