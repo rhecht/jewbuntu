@@ -56,6 +56,24 @@ and the checklist in `docs/vm-setup.md` is recorded.
 VM (`jewbuntu-dev-arm64`) state: m1.4 installed; m1.7 served at http://192.168.64.1:8000/m1.7/ (needs the owner's sudo);
 `disable-extension-version-validation` = true for user `user` (TEST ONLY: set back to false after the Shulgo GNOME 50 test).
 
+## Status at 0.1.0~m1.18 (2026-11-11 evening)
+
+Seen working in the arm64 UTM VM (GNOME Shell 50.1), see docs/test-results/2026-11-11-vm-arm64.md:
+- Jewbuntu Skin (rhecht/jewbuntu-skin): theme, glass dock without box, clear top bar with WCAG-adaptive text,
+  login screen (blurred Star of David + Jewbuntu logo) via the gdm-theme.gresource alternative.
+- Jewbuntu Icons (rhecht/jewbuntu-icons): default icon theme; 23 Apple-copied icons replaced by originals.
+- Default wallpapers: Star of David blue (light) / purple (dark).
+- Settings migration v1->v2 at login (autostart) with verified backup.
+- ShulGo (jewbuntu-shulgo, rhecht/shulgo@83eeaa9): GNOME 50 declared and loaded with version validation ON;
+  navy menu, all four tabs with live data, prefs/API key, offline strip with automatic recovery.
+- Hub (jewbuntu-hub): Today/Calendar/Settings; Minyanim tab hands off to ShulGo.
+
+Not yet seen: ShulGo system location after the 83eeaa9 GeoClue fix (rest of that path never executed);
+startup jingle at a cold boot with audible volume; Hebrew typing/RTL copy-paste in apps; amd64 image; physical hardware.
+
+Planned: first-run setup (incl. "Num Lock on at login"), Ulauncher + Liquid Glass, ISO (M3), node/AI packs (M4),
+Siri-like voice prompter (very end).
+
 ## Milestone 2: useful Jewish desktop (in progress)
 
 Hebcal-in-GJS spike → `jewbuntu-jewish-service` (D-Bus) → Hub (GTK4/libadwaita:
