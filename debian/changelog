@@ -1,3 +1,10 @@
+jewbuntu (0.1.0~m1.20+26.04) resolute; urgency=medium
+
+  * jewbuntu-shulgo: re-vendor rhecht/shulgo@67454d9: the settings window
+    says why system location is not used (Location Services off / error / ok).
+
+ -- Jewbuntu Developers <maintainers@jewbuntu.invalid>  Wed, 11 Nov 2026 20:02:00 -0500
+
 jewbuntu (0.1.0~m1.19+26.04) resolute; urgency=medium
 
   * jewbuntu-shulgo: re-vendor rhecht/shulgo@a6336fc: search for a place from
