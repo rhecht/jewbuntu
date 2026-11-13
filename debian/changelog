@@ -1,3 +1,11 @@
+jewbuntu (0.1.0~m1.28+26.04) resolute; urgency=medium
+
+  * Jewbuntu Look: open app folders shade the app grid at half GNOME's darkness
+    (40% instead of 80%; 17% instead of 33% while dragging an icon out).
+  * Depend on jewbuntu-skin 0.1.0~git20261113.1 (folders match the menus).
+
+ -- Jewbuntu Developers <maintainers@jewbuntu.invalid>  Fri, 13 Nov 2026 00:26:35 -0500
+
 jewbuntu (0.1.0~m1.27+26.04) resolute; urgency=medium
 
   * Terminal (Ptyxis): Jewbuntu palette instead of Ubuntu's purple: white with a

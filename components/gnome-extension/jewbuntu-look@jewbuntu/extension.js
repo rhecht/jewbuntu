@@ -8,8 +8,11 @@
 import GLib from 'gi://GLib';
 import Gio from 'gi://Gio';
 import GdkPixbuf from 'gi://GdkPixbuf';
-import {Extension} from 'resource:///org/gnome/shell/extensions/extension.js';
+import Clutter from 'gi://Clutter';
+import Cogl from 'gi://Cogl';
+import {Extension, InjectionManager} from 'resource:///org/gnome/shell/extensions/extension.js';
 import * as Main from 'resource:///org/gnome/shell/ui/main.js';
+import {AppFolderDialog} from 'resource:///org/gnome/shell/ui/appDisplay.js';
 
 const PANEL_CLASS = 'jewbuntu-panel';
 const DARK_TEXT_CLASS = 'jewbuntu-panel-dark-text';
@@ -43,8 +46,34 @@ export function prefersDarkText(luminance) {
     return (luminance + 0.05) / 0.05 > 1.05 / (luminance + 0.05);
 }
 
+// Open app folders shade the app grid behind them. GNOME hard-codes 80% black (alpha 204), and
+// 33% (alpha 85) while an icon is dragged out. Jewbuntu uses half of each, so the backdrop
+// stays light enough to see the wallpaper (the owner found 80% too dark). GNOME eases to its
+// shade first; easing the same property again replaces that transition with ours.
+export const FOLDER_SHADE_ALPHA = 102;
+export const FOLDER_SHADE_DRAG_ALPHA = 43;
+const FOLDER_SHADE_MS = 200;
+
+function easeShade(dialog, alpha) {
+    dialog.ease({
+        background_color: new Cogl.Color({red: 0, green: 0, blue: 0, alpha}),
+        duration: FOLDER_SHADE_MS,
+        mode: Clutter.AnimationMode.EASE_OUT_QUAD,
+    });
+}
+
 export default class JewbuntuLookExtension extends Extension {
     enable() {
+        this._injections = new InjectionManager();
+        this._injections.overrideMethod(AppFolderDialog.prototype, '_zoomAndFadeIn', original => function (...args) {
+            const ret = original.apply(this, args);
+            easeShade(this, FOLDER_SHADE_ALPHA);
+            return ret;
+        });
+        this._injections.overrideMethod(AppFolderDialog.prototype, '_setLighterBackground', () => function (lighter) {
+            easeShade(this, lighter ? FOLDER_SHADE_DRAG_ALPHA : FOLDER_SHADE_ALPHA);
+        });
+
         this._bg = new Gio.Settings({schema_id: 'org.gnome.desktop.background'});
         this._iface = new Gio.Settings({schema_id: 'org.gnome.desktop.interface'});
         this._bgIds = ['changed::picture-uri', 'changed::picture-uri-dark'].map(s => this._bg.connect(s, () => this._queue()));
@@ -59,6 +88,8 @@ export default class JewbuntuLookExtension extends Extension {
     }
 
     disable() {
+        this._injections?.clear();
+        this._injections = null;
         if (this._idle)
             GLib.source_remove(this._idle);
         this._idle = 0;
