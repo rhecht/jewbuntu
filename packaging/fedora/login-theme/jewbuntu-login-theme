@@ -1,0 +1,22 @@
+#!/bin/sh
+# Switch the Jewbuntu login screen (GDM) on or off for the installed GNOME Shell. Run by the
+# jewbuntu-asahi-desktop package when it, gnome-shell or jewbuntu-skin is installed or updated.
+#
+# The theme files (jewbuntu-skin: /usr/share/jewbuntu-skin/gdm-overlay/<GNOME major>/) are only
+# used through the link /usr/share/jewbuntu/gdm-overlay, which 60-jewbuntu-login-theme.conf
+# hands to GLib as G_RESOURCE_OVERLAYS. When the skin has no files for the running GNOME major
+# (a Fedora upgrade to a newer GNOME), the link is removed and GDM shows Fedora's stock login
+# screen until a matching skin arrives: never a half-styled or broken one.
+#   jewbuntu-login-theme          update the link     jewbuntu-login-theme --off   remove it
+set -eu
+LINK=/usr/share/jewbuntu/gdm-overlay
+BASE=/usr/share/jewbuntu-skin/gdm-overlay
+if [ "${1:-}" = --off ]; then rm -f "$LINK"; exit 0; fi
+major=$(rpm -q --qf '%{VERSION}' gnome-shell 2>/dev/null | cut -d. -f1)
+case "$major" in ''|*[!0-9]*) rm -f "$LINK"; exit 0 ;; esac
+if [ -f "$BASE/$major/gdm.css" ]; then
+  mkdir -p "$(dirname "$LINK")"
+  ln -sfn "$BASE/$major" "$LINK"
+else
+  rm -f "$LINK"
+fi

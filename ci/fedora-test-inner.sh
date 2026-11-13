@@ -21,7 +21,20 @@ FILES=""; for p in $PKGS; do FILES="$FILES $(ls /rpms/$p-[0-9]*.rpm | head -1)";
 for i in 1 2 3; do dnf -y -q install $FILES >/tmp/install.log 2>&1 && break; sleep 5; done || { tail -20 /tmp/install.log; fail "dnf install"; }
 rpm -q $PKGS || fail "packages not installed"
 pass "installed with dependencies from Fedora's repositories"
-[ -z "$(rpm -q --scripts $PKGS)" ] && pass "no install/remove scriptlets (caches come from Fedora's file triggers)" || fail "scriptlets present"
+OTHERS=$(echo $PKGS | tr ' ' '\n' | grep -vx jewbuntu-asahi-desktop | tr '\n' ' ')
+[ -z "$(rpm -q --scripts $OTHERS)" ] && pass "no scriptlets except the login-screen switch (caches come from Fedora's file triggers)" || fail "scriptlets present"
+S=$(rpm -q --scripts --triggers jewbuntu-asahi-desktop | grep -vE "^(postinstall|preuninstall|triggerin|triggerpostun)|^$" || true)
+[ -n "$S" ] && [ -z "$(echo "$S" | grep -v jewbuntu-login-theme)" ] && pass "asahi-desktop scriptlets only run jewbuntu-login-theme" || fail "unexpected scriptlets: $S"
+echo "== login screen (GDM) overlay"
+L=/usr/share/jewbuntu/gdm-overlay
+[ "$(readlink $L)" = /usr/share/jewbuntu-skin/gdm-overlay/51 ] && pass "login-screen overlay on for GNOME 51 ($L)" || fail "overlay link: $(readlink $L)"
+grep -q '^G_RESOURCE_OVERLAYS=/org/gnome/shell/theme=/usr/share/jewbuntu/gdm-overlay' /usr/lib/environment.d/60-jewbuntu-login-theme.conf && pass "G_RESOURCE_OVERLAYS set for sessions and GDM" || fail "environment.d file"
+for f in gdm.css gdm-dark.css jewbuntu-gdm/assets/login-background.jpg; do [ -s "$L/$f" ] && pass "overlay has $f" || fail "overlay missing $f"; done
+[ ! -e "$L/gnome-shell.css" ] && pass "user-session gnome-shell.css is not overlaid" || fail "gnome-shell.css overlaid"
+mv /usr/share/jewbuntu-skin/gdm-overlay/51 /tmp/ov51; /usr/libexec/jewbuntu/jewbuntu-login-theme
+[ ! -e "$L" ] && [ ! -L "$L" ] && pass "overlay switches off when the skin has no files for this GNOME (stock login screen)" || fail "overlay still on for unmatched GNOME"
+mv /tmp/ov51 /usr/share/jewbuntu-skin/gdm-overlay/51; /usr/libexec/jewbuntu/jewbuntu-login-theme
+[ -L "$L" ] && pass "overlay back on when a matching skin is present" || fail "overlay not restored"
 rpm -q --requires $PKGS | grep -iE "^jewbuntu|conflict|obsolete" | sort -u
 [ -z "$(rpm -q --conflicts --obsoletes $PKGS 2>/dev/null | grep -v '^$')" ] && pass "no Conflicts/Obsoletes" || fail "Conflicts/Obsoletes present"
 # One rpm database pass: every path any non-Jewbuntu package lists, against our files (not dirs).
@@ -135,6 +148,7 @@ fi
 echo "== Fedora update of gnome-shell, gdm and the extensions (reinstall = same file writes and triggers)"
 for i in 1 2 3; do dnf -y -q reinstall gnome-shell gdm gnome-shell-extension-user-theme gnome-shell-extension-dash-to-dock gnome-shell-extension-blur-my-shell glib2 >/tmp/re.log 2>&1 && break; sleep 5; done || { tail -20 /tmp/re.log; fail "reinstall"; }
 rpm -V $PKGS && pass "Jewbuntu files unchanged (rpm -V clean)" || fail "rpm -V reports changes"
+[ "$(readlink /usr/share/jewbuntu/gdm-overlay)" = /usr/share/jewbuntu-skin/gdm-overlay/51 ] && pass "login-screen overlay still on after the gnome-shell update" || fail "overlay lost after update"
 check_defaults "after the update"
 su t -c "EXTRA_EXTS='$EXTRA' dbus-run-session -- sh /ci/fedora-shell-check.sh" 2>/dev/null | grep -E "^(PASS|FAIL)" | sed 's/$/ (after the update)/' | tee /tmp/shell2.txt
 grep -q "^FAIL" /tmp/shell2.txt && fail "GNOME Shell check after update"
@@ -143,6 +157,7 @@ echo "== remove jewbuntu-asahi-desktop: Fedora's defaults come back"
 dnf -y -q remove jewbuntu-asahi-desktop >/dev/null
 [ "$(GREETER org.gnome.login-screen logo)" = "$FEDORA_LOGO" ] && pass "GDM logo back to Fedora's" || fail "logo after remove"
 [ "$(G org.gnome.desktop.interface gtk-theme)" = "$FEDORA_THEME" ] && pass "GTK theme default back to Fedora's" || fail "gtk-theme after remove"
+[ ! -e /usr/share/jewbuntu/gdm-overlay ] && [ ! -e /usr/lib/environment.d/60-jewbuntu-login-theme.conf ] && pass "login-screen overlay and its switch removed" || fail "overlay left after remove"
 [ -f /home/t/.local/state/jewbuntu/skin.json ] && pass "per-user Jewbuntu data kept" || fail "user data removed"
 echo "== remove everything"
 dnf -y -q remove $PKGS >/dev/null 2>&1 || true

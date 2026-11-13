@@ -108,6 +108,32 @@ class FedoraDockTests(unittest.TestCase):
         self.assertEqual(values[("org.gnome.shell.extensions.background-logo", "logo-opacity")], "0")
 
 
+class FedoraLoginThemeTests(unittest.TestCase):
+    """GDM theme on Fedora: overlay only gdm*.css and our own assets, switched by GNOME version."""
+
+    def test_overlay_setting_targets_shell_theme_and_keeps_others(self):
+        conf = (FEDORA / "login-theme" / "60-jewbuntu-login-theme.conf").read_text()
+        line = [l for l in conf.splitlines() if l.startswith("G_RESOURCE_OVERLAYS=")]
+        self.assertEqual(len(line), 1)
+        self.assertTrue(line[0].startswith("G_RESOURCE_OVERLAYS=/org/gnome/shell/theme=/usr/share/jewbuntu/gdm-overlay"))
+        self.assertIn("${G_RESOURCE_OVERLAYS:+:${G_RESOURCE_OVERLAYS}}", line[0])
+
+    def test_skin_overlay_never_replaces_session_stylesheet(self):
+        spec = (FEDORA / "jewbuntu-skin.spec").read_text()
+        self.assertIn('> "$ov/gdm.css"', spec)
+        self.assertNotIn('$ov/gnome-shell.css', spec)
+        self.assertIn("resource:///org/gnome/shell/theme/jewbuntu-gdm/assets/", spec)
+
+    def test_switch_checks_gnome_major_and_spec_runs_it(self):
+        script = (FEDORA / "login-theme" / "jewbuntu-login-theme").read_text()
+        self.assertIn("rpm -q --qf '%{VERSION}' gnome-shell", script)
+        self.assertIn('rm -f "$LINK"', script)
+        spec = (FEDORA / "jewbuntu.spec").read_text()
+        for part in ("%triggerin asahi-desktop -- gnome-shell, jewbuntu-skin", "%ghost %{_datadir}/jewbuntu/gdm-overlay",
+                     "60-jewbuntu-login-theme.conf"):
+            self.assertIn(part, spec)
+
+
 def ast_list(text):
     import ast
     return ast.literal_eval(text)

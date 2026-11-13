@@ -129,6 +129,8 @@ install -D -m 644 packaging/core/jewbuntu-migrate.desktop %{buildroot}%{_sysconf
 install -D -m 644 README.md %{buildroot}%{_docdir}/jewbuntu-core/README.md
 
 install -D -m 644 packaging/fedora/zz_jewbuntu-asahi.gschema.override %{buildroot}%{_datadir}/glib-2.0/schemas/zz_jewbuntu-asahi.gschema.override
+install -D -m 755 packaging/fedora/login-theme/jewbuntu-login-theme %{buildroot}%{_libexecdir}/jewbuntu/jewbuntu-login-theme
+install -D -m 644 packaging/fedora/login-theme/60-jewbuntu-login-theme.conf %{buildroot}%{_prefix}/lib/environment.d/60-jewbuntu-login-theme.conf
 install -D -m 644 packaging/fedora/zz_jewbuntu-asahi-dock.gschema.override %{buildroot}%{_datadir}/glib-2.0/schemas/zz_jewbuntu-asahi-dock.gschema.override
 install -D -m 644 packaging/fedora/desktop-defaults.json %{buildroot}%{_datadir}/jewbuntu/desktop-defaults.json
 install -D -m 644 packaging/desktop/jewbuntu-skin-prompt.desktop %{buildroot}%{_sysconfdir}/xdg/autostart/jewbuntu-skin-prompt.desktop
@@ -179,7 +181,25 @@ install -D -m 644 packaging/branding/jewbuntu-wallpapers.xml %{buildroot}%{_data
 %config(noreplace) %{_sysconfdir}/xdg/autostart/jewbuntu-migrate.desktop
 %{_docdir}/jewbuntu-core
 
+# Login screen: the only scriptlets in these packages. They keep the GDM theme link in step with
+# the installed GNOME Shell and skin (see packaging/fedora/login-theme/jewbuntu-login-theme).
+%post asahi-desktop
+%{_libexecdir}/jewbuntu/jewbuntu-login-theme || :
+
+%preun asahi-desktop
+[ "$1" -eq 0 ] && %{_libexecdir}/jewbuntu/jewbuntu-login-theme --off || :
+
+%triggerin asahi-desktop -- gnome-shell, jewbuntu-skin
+%{_libexecdir}/jewbuntu/jewbuntu-login-theme || :
+
+%triggerpostun asahi-desktop -- jewbuntu-skin
+[ "$2" -eq 0 ] && %{_libexecdir}/jewbuntu/jewbuntu-login-theme --off || :
+
 %files asahi-desktop
+%dir %{_libexecdir}/jewbuntu
+%{_libexecdir}/jewbuntu/jewbuntu-login-theme
+%{_prefix}/lib/environment.d/60-jewbuntu-login-theme.conf
+%ghost %{_datadir}/jewbuntu/gdm-overlay
 %{_datadir}/glib-2.0/schemas/zz_jewbuntu-asahi.gschema.override
 %{_datadir}/glib-2.0/schemas/zz_jewbuntu-asahi-dock.gschema.override
 %dir %{_datadir}/jewbuntu
