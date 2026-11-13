@@ -38,7 +38,7 @@ home directories.
 Summary:        Jewbuntu look and Hebrew defaults for Fedora Asahi Remix (GNOME)
 License:        GPL-3.0-or-later AND CC-BY-SA-4.0
 Requires:       jewbuntu-core = %{version}-%{release}
-Requires:       jewbuntu-skin >= 0.1.0~git20261113.1
+Requires:       jewbuntu-skin >= 0.1.0~git20261113.2
 Requires:       jewbuntu-icons
 Requires:       gnome-shell >= %{shell_major}
 Requires:       gnome-shell-extension-user-theme
@@ -214,6 +214,9 @@ install -D -m 644 packaging/branding/jewbuntu-wallpapers.xml %{buildroot}%{_data
 
 
 %changelog
+* Fri Nov 13 2026 Jewbuntu Developers <maintainers@jewbuntu.invalid> - %{jb_version}-1
+- Requires jewbuntu-skin 0.1.0~git20261113.2 (quick settings draw their own 75% dark glass).
+
 * Fri Nov 13 2026 Jewbuntu Developers <maintainers@jewbuntu.invalid> - %{jb_version}-1
 - Blur my Shell overview style-components=0: readable app labels in folders.
 - Jewbuntu Look: lighter backdrop behind open app folders (half GNOME's shade).
