@@ -54,11 +54,48 @@ Then **log out and back in**.
 ## Afterwards
 
 - **Jewbuntu Hub** (Hebrew date, zmanim, calendar) and **Web Server** are in the app grid.
+- The **ShulGo** widget (next minyan, events, mikvaos, zmanim) is in the top bar. The first
+  time, it asks for your own ShulGo key; nothing is built in.
 - Press **Super+Space** to switch between English and Hebrew typing.
 - `jewbuntu doctor` checks the setup.
 - **Updating:** download the newer installer and run it the same way. Ubuntu's own updates
-  keep coming through Software Updater as usual.
-- **Removing:** `sudo apt remove 'jewbuntu-*'`. Your files and settings are kept.
+  keep coming through Software Updater as usual, and never replace Jewbuntu's look.
+
+## Uninstalling
+
+Jewbuntu only adds its own packages, so removing them leaves a normal Ubuntu. Your files are
+never touched. In **Terminal** (Ctrl+Alt+T):
+
+1. **Put your previous look back** (once per account, while still logged in):
+
+   ```bash
+   jewbuntu skin undo
+   ```
+
+2. **Remove Jewbuntu:**
+
+   ```bash
+   sudo apt remove 'jewbuntu-*'
+   ```
+
+   This keeps Jewbuntu's settings in case you reinstall. To remove those too, use
+   `sudo apt purge 'jewbuntu-*'` instead.
+
+3. **Log out and back in.** The Jewbuntu top bar, dock style, ShulGo widget and wallpaper are
+   gone, and Ubuntu's own look is back.
+
+Optional:
+
+- `sudo apt autoremove` removes packages that were installed only for Jewbuntu (Hebrew fonts
+  and language packs, the extension manager). It lists them first; keep any you still want.
+- If you set up the **Web Server**, Apache, MySQL (MariaDB), PHP, phpMyAdmin and FTP stay
+  installed, because your sites may depend on them. Your sites in `~/Sites` are kept. To remove
+  the servers as well: `sudo apt remove apache2 mariadb-server php phpmyadmin vsftpd`.
+- `jewbuntu reset` (before removing) deletes your personal Jewbuntu data, such as Hub settings.
+  It lists what it removes and asks you to confirm.
+
+Tested on a clean Ubuntu 26.04: install, then `skin undo`, `remove` and `purge` leave no
+Jewbuntu packages, apt consistent, and the user's files in place.
 
 ## Options
 

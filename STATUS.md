@@ -77,6 +77,18 @@ Lite (Xfce) note: for ShulGo use its GTK app (integrations/jewbuntu/app, no GNOM
 StatusNotifierItem tray icon (Shulgo session will add it) rather than the Electron shulgo-desktop .deb.
 Measure both on the VM before deciding; the memory comparison is unmeasured (also in shulgo docs/TODO.md).
 
+## Release 0.1.0~m1.29 (2026-11-13)
+
+- **ShulGo included** in the one-file installer and the ISO (owner's decision): jewbuntu-shulgo is
+  built from the public mirror rhecht/shulgo-widgets with ci/build-shulgo-deb.sh. Its API key stays
+  per user. `extensions_once.py` enables the widget once per account (fresh accounts had none).
+- **Published:** GitHub release v0.1.0-m1.29 (the `.run`, with install and uninstall steps), and
+  SourceForge folder `0.1.0-m1.29` (ISO sha256 ccf06f35..., the `.run`, checksums, README).
+- **Uninstall documented and tested** (docs/install.md#uninstalling;
+  docs/test-results/2026-11-13-m1.29-install-uninstall-container.log).
+- **ISO:** rebuilt with m1.29, contents and boot setup checked, not reinstalled (the m1.26 ISO
+  install was tested end to end in emulation).
+
 ## Design fixes (0.1.0~m1.27, skin 0.1.0~git20261112.2, 2026-11-12 night)
 
 - **Terminal menus:** Ptyxis recolours its menus and title bar from its palette; the skin forced

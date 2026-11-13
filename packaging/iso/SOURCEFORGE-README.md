@@ -21,18 +21,21 @@ same software.
   - Sites live at `http://NAME.localhost`; new ones can start empty, as WordPress or as
     CodeIgniter.
   - Only this computer can reach them, unless you switch sharing on.
+- **ShulGo widget:** the next minyan near you in the top bar, plus events, mikvaos and zmanim,
+  from [ShulGo](https://shulgo.com). It asks for your own ShulGo key the first time; no key
+  is built in. Source: [github.com/rhecht/shulgo-widgets](https://github.com/rhecht/shulgo-widgets).
 
 Nothing personal is on the disc. You choose your own name, computer name and password
 during installation.
 
 ## Which file?
 
-Both files are in the **`0.1.0-m1.26`** folder below, next to their `.sha256` checksums.
+Both files are in the **`0.1.0-m1.29`** folder below, next to their `.sha256` checksums.
 
 | You have | Download |
 |---|---|
-| An Intel/AMD PC, and you want a fresh install | **`jewbuntu-0.1.0-m1.26-amd64.iso`** (6.5 GB) |
-| A computer already running Ubuntu 26.04, Intel/AMD **or ARM** | **`jewbuntu-installer-0.1.0-m1.26.run`** (10 MB). In Terminal, run `sh ~/Downloads/jewbuntu-installer-0.1.0-m1.26.run`, then log out and back in. It's also on [GitHub Releases](https://github.com/rhecht/jewbuntu/releases/latest). |
+| An Intel/AMD PC, and you want a fresh install | **`jewbuntu-0.1.0-m1.29-amd64.iso`** (6.5 GB) |
+| A computer already running Ubuntu 26.04, Intel/AMD **or ARM** | **`jewbuntu-installer-0.1.0-m1.29.run`** (10 MB). In Terminal, run `sh ~/Downloads/jewbuntu-installer-0.1.0-m1.29.run`, then log out and back in. It's also on [GitHub Releases](https://github.com/rhecht/jewbuntu/releases/latest). |
 
 ## System requirements
 
@@ -55,13 +58,13 @@ it, but slowly. Adding an SSD and 8 GB of memory makes a big difference.
 Download the `.iso` and the `.sha256` file next to it. Checking the download is optional,
 but it confirms the file arrived intact. In a terminal, in the download folder:
 
-- **Linux:** `sha256sum -c jewbuntu-0.1.0-m1.26-amd64.iso.sha256`
-- **Mac:** `shasum -a 256 -c jewbuntu-0.1.0-m1.26-amd64.iso.sha256`
-- **Windows (PowerShell):** `Get-FileHash .\jewbuntu-0.1.0-m1.26-amd64.iso`
+- **Linux:** `sha256sum -c jewbuntu-0.1.0-m1.29-amd64.iso.sha256`
+- **Mac:** `shasum -a 256 -c jewbuntu-0.1.0-m1.29-amd64.iso.sha256`
+- **Windows (PowerShell):** `Get-FileHash .\jewbuntu-0.1.0-m1.29-amd64.iso`
   - Compare the result with the number in the `.sha256` file.
 
 Expected SHA-256:
-`4edd8fbec49f07c2e467e3cb94f7490ba16d91c5a7a7e5571955c584c2630033`
+`ccf06f35332bab189f503d0799c0e06be95cac251937b44a1009de2ca5984d47`
 
 ## 2. Make the USB stick
 
@@ -113,7 +116,8 @@ The first start can take a little longer than usual.
 
 ## After installing
 
-- **Jewbuntu Hub** and **Web Server** are in the app grid.
+- **Jewbuntu Hub** and **Web Server** are in the app grid; the **ShulGo** widget is in the
+  top bar.
 - **Super+Space** switches between English and Hebrew typing.
 - **Updates:** Ubuntu's updates arrive through Software Updater as usual. For Jewbuntu
   updates, download the newest one-file installer from GitHub and run it.
@@ -121,19 +125,34 @@ The first start can take a little longer than usual.
   in `/usr/local/share/jewbuntu/` with a README explaining the one command that finishes
   the job. The log is at `/var/log/jewbuntu-install.log`.
 
+## Uninstalling
+
+Jewbuntu only adds its own packages; removing them leaves a normal Ubuntu, and your files are
+never touched. In Terminal (Ctrl+Alt+T):
+
+1. `jewbuntu skin undo` puts your previous look back (once per account).
+2. `sudo apt remove 'jewbuntu-*'` removes Jewbuntu (`sudo apt purge 'jewbuntu-*'` also removes
+   its settings).
+3. Log out and back in.
+
+Details, including the Web Server and optional clean-up:
+[docs/install.md](https://github.com/rhecht/jewbuntu/blob/main/docs/install.md#uninstalling).
+
 ## Status
 
-**Tested:** installation from this ISO, start to finish, in an emulated Intel PC (virtual
-machine). That covers Ubuntu's installer with every screen interactive, security updates,
-the offline Jewbuntu step, the Jewbuntu login screen and wallpaper, and the first-login
-question applying the glass look. The same packages are tested on Ubuntu 26.04 by the
-one-file installer.
+**Tested:**
+- The ISO's install path, start to finish, in an emulated Intel PC (with 0.1.0-m1.26):
+  Ubuntu's installer with every screen interactive, security updates, the offline Jewbuntu
+  step, the Jewbuntu login screen and wallpaper, and the first-login question applying the
+  glass look. This ISO is built the same way with newer packages; its contents and boot
+  setup were checked, not reinstalled.
+- These packages (0.1.0-m1.29, with ShulGo) on Ubuntu 26.04: the one-file installer in a
+  clean container (install, update, uninstall) and on the arm64 development VM, where the
+  owner checked the look.
 
 **Not yet tested:**
 - real PC hardware, including Secure Boot (Ubuntu's signed boot files are unchanged)
 - Hebrew typing in apps
-
-**Not included:** ShulGo (minyanim, mikvaos, events) is distributed separately.
 
 Licence: Jewbuntu's own code is open source (see GitHub). Ubuntu and its packages keep
 their own licences.

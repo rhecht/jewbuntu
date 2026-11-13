@@ -1,0 +1,32 @@
+Jewbuntu 0.1.0-m1.29 installer (12 packages incl. jewbuntu-shulgo 0.1.1~git202611130608.d121217) on ubuntu:26.04 (arm64 container), 2026-11-13
+
+ci/installer-test.sh dist/release-m1.29/jewbuntu-installer-0.1.0-m1.29.run
+PASS: damaged download refused
+PASS: --list shows 12 packages
+PASS: ShulGo inside
+PASS: --help
+PASS: final message shows the Jewbuntu version
+PASS: installer exit 0
+PASS: all 12 packages installed
+PASS: Ubuntu desktop pulled in from the archive
+PASS: apt consistent
+PASS: jewbuntu command works
+PASS: Hub and Web Server installed
+PASS: no web server until asked
+PASS: second run (update path) exit 0
+failures: 0
+
+Uninstall (documented steps), same image:
+PASS install                      (12 packages)
+skin undo exit: 0
+PASS remove (exit 0)              still installed: 0
+PASS purge (exit 0)               left (ii/rc): 0
+PASS apt consistent
+PASS user files kept              (~/.config/jewbuntu/mine.txt)
+PASS Jewbuntu extensions gone     (/usr/share/gnome-shell/extensions)
+
+ISO jewbuntu-0.1.0-m1.29-amd64.iso (sha256 ccf06f35332bab189f503d0799c0e06be95cac251937b44a1009de2ca5984d47):
+contents checked with xorriso: /jewbuntu/debs holds the 12 packages above, /jewbuntu/VERSION
+"Jewbuntu 0.1.0-m1.29 (12 packages)", /autoinstall.yaml has the late command; El Torito BIOS and
+UEFI images identical in type and size to ubuntu-26.04.1-desktop-amd64.iso (only LBAs moved).
+Not reinstalled (owner's call: the m1.26 ISO install was tested end to end in emulation).

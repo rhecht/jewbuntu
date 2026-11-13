@@ -26,7 +26,10 @@ and install. Requirements and USB steps are on that page and in
 sh ~/Downloads/jewbuntu-installer-*.run
 ```
 
-Full instructions: [docs/install.md](docs/install.md).
+**Uninstall:** `jewbuntu skin undo`, then `sudo apt remove 'jewbuntu-*'`, then log out and back in.
+Your files are never touched.
+
+Full instructions, including uninstalling: [docs/install.md](docs/install.md).
 
 ## Packages
 
