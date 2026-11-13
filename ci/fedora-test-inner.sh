@@ -59,6 +59,18 @@ PY
 echo "== defaults"
 check_defaults "after install"
 
+echo "== dock, Fedora watermark, ShulGo widget for a new account"
+FAV=$(G org.gnome.shell favorite-apps)
+case "$FAV" in *org.jewbuntu.Hub.desktop*org.jewbuntu.WebServer.desktop*) pass "Hub and Web Server pinned in the dock ($FAV)";; *) fail "dock: $FAV";; esac
+[ "$(G org.gnome.shell.extensions.background-logo logo-opacity)" = 0 ] && pass "Fedora's background logo hidden (opacity 0)" || fail "background logo opacity $(G org.gnome.shell.extensions.background-logo logo-opacity)"
+if [ -n "$SHULGO_RPM" ]; then
+  useradd -m fresh
+  E=$(su fresh -c 'export GSETTINGS_BACKEND=keyfile XDG_CURRENT_DESKTOP=GNOME; jewbuntu config migrate --quiet >/dev/null 2>&1; gsettings get org.gnome.shell enabled-extensions')
+  case "$E" in *jewbuntu@shulgo.com*) pass "ShulGo widget turned on at a new account's first login";; *) fail "ShulGo not enabled for a new account: $E";; esac
+  E2=$(su fresh -c 'export GSETTINGS_BACKEND=keyfile XDG_CURRENT_DESKTOP=GNOME; gsettings set org.gnome.shell enabled-extensions "[]"; jewbuntu config migrate --quiet >/dev/null 2>&1; gsettings get org.gnome.shell enabled-extensions')
+  case "$E2" in *jewbuntu@shulgo.com*) fail "ShulGo re-enabled after the user turned it off";; *) pass "ShulGo stays off once the user turns it off";; esac
+fi
+
 echo "== Jewish calendar service, startup jingle"
 mkdir -p /home/t/.config/jewbuntu
 echo '{"schema_version":2,"location":{"name":"Toronto","latitude":43.65333,"longitude":-79.38389,"timezone":"America/Toronto"},"calendar":{"candle_lighting_minutes":18}}' > /home/t/.config/jewbuntu/settings.json

@@ -78,6 +78,41 @@ class FedoraDefaultsTests(unittest.TestCase):
             self.assertTrue((REPO / "components/core/jewbuntu" / f"{m}.py").is_file(), m)
 
 
+class FedoraDockTests(unittest.TestCase):
+    """The dock list is a default only (not in the manifest, so skin apply never replaces a user's pins)."""
+
+    def setUp(self):
+        self.path = FEDORA / "zz_jewbuntu-asahi-dock.gschema.override"
+        self.values, self.sections = _override_values(self.path)
+
+    def test_hub_and_web_server_pinned_after_files(self):
+        apps = ast_list(self.values[("org.gnome.shell", "favorite-apps")])
+        self.assertEqual(apps[:4], ["org.mozilla.firefox.desktop", "org.gnome.Nautilus.desktop",
+                                    "org.jewbuntu.Hub.desktop", "org.jewbuntu.WebServer.desktop"])
+        self.assertEqual(self.sections, ["org.gnome.shell:GNOME"])
+
+    def test_dock_not_forced_by_skin_apply(self):
+        manifest = json.loads((FEDORA / "desktop-defaults.json").read_text())
+        self.assertNotIn(("org.gnome.shell", "favorite-apps"), {(k["schema"], k["key"]) for k in manifest["keys"]})
+
+    def test_pinned_apps_are_shipped(self):
+        for desktop in ("components/hub/data/org.jewbuntu.Hub.desktop", "components/webserver/data/org.jewbuntu.WebServer.desktop"):
+            self.assertTrue((REPO / desktop).is_file(), desktop)
+
+    def test_dock_file_sorts_after_fedora_and_is_installed(self):
+        self.assertGreater(self.path.name, "org.gnome.login-screen.gschema.override")
+        self.assertIn(self.path.name, (FEDORA / "jewbuntu.spec").read_text())
+
+    def test_fedora_watermark_hidden(self):
+        values, _ = _override_values(FEDORA / "zz_jewbuntu-asahi.gschema.override")
+        self.assertEqual(values[("org.gnome.shell.extensions.background-logo", "logo-opacity")], "0")
+
+
+def ast_list(text):
+    import ast
+    return ast.literal_eval(text)
+
+
 class CoreOnFedoraTests(IsolatedHome):
     def setUp(self):
         super().setUp()

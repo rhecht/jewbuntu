@@ -123,12 +123,14 @@ python3 -B -m unittest discover -s tests/unit -t .
 
 %install
 install -d %{buildroot}%{pydir}
-install -m 644 components/core/jewbuntu/{__init__,cli,config,desktop_defaults,paths,renames,terminal_palette,userdata,version}.py %{buildroot}%{pydir}/
+install -m 644 components/core/jewbuntu/{__init__,cli,config,desktop_defaults,extensions_once,paths,renames,terminal_palette,userdata,version}.py %{buildroot}%{pydir}/
 install -D -m 755 bin/jewbuntu %{buildroot}%{_bindir}/jewbuntu
 install -D -m 644 packaging/core/jewbuntu-migrate.desktop %{buildroot}%{_sysconfdir}/xdg/autostart/jewbuntu-migrate.desktop
 install -D -m 644 README.md %{buildroot}%{_docdir}/jewbuntu-core/README.md
 
 install -D -m 644 packaging/fedora/zz_jewbuntu-asahi.gschema.override %{buildroot}%{_datadir}/glib-2.0/schemas/zz_jewbuntu-asahi.gschema.override
+%{_datadir}/glib-2.0/schemas/zz_jewbuntu-asahi-dock.gschema.override
+install -D -m 644 packaging/fedora/zz_jewbuntu-asahi-dock.gschema.override %{buildroot}%{_datadir}/glib-2.0/schemas/zz_jewbuntu-asahi-dock.gschema.override
 install -D -m 644 packaging/fedora/desktop-defaults.json %{buildroot}%{_datadir}/jewbuntu/desktop-defaults.json
 install -D -m 644 packaging/desktop/jewbuntu-skin-prompt.desktop %{buildroot}%{_sysconfdir}/xdg/autostart/jewbuntu-skin-prompt.desktop
 # Terminal (Ptyxis) palette; `jewbuntu config migrate` links it per user (Ptyxis reads only ~/.local/share).
@@ -173,13 +175,14 @@ install -D -m 644 packaging/branding/jewbuntu-wallpapers.xml %{buildroot}%{_data
 %dir /usr/lib/jewbuntu
 %dir /usr/lib/jewbuntu/python
 %dir %{pydir}
-%{pydir}/{__init__,cli,config,desktop_defaults,paths,renames,terminal_palette,userdata,version}.py
+%{pydir}/{__init__,cli,config,desktop_defaults,extensions_once,paths,renames,terminal_palette,userdata,version}.py
 %dir %{_datadir}/jewbuntu
 %config(noreplace) %{_sysconfdir}/xdg/autostart/jewbuntu-migrate.desktop
 %{_docdir}/jewbuntu-core
 
 %files asahi-desktop
 %{_datadir}/glib-2.0/schemas/zz_jewbuntu-asahi.gschema.override
+%{_datadir}/glib-2.0/schemas/zz_jewbuntu-asahi-dock.gschema.override
 %dir %{_datadir}/jewbuntu
 %{_datadir}/jewbuntu/desktop-defaults.json
 %{_datadir}/jewbuntu/branding

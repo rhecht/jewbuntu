@@ -1,5 +1,6 @@
 #!/bin/sh
-# Build jewbuntu-shulgo as an RPM for Fedora Asahi Remix from a (private) ShulGo checkout.
+# Build jewbuntu-shulgo as an RPM for Fedora Asahi Remix from a ShulGo checkout: the private
+# rhecht/shulgo or the public rhecht/shulgo-widgets mirror (owner's decision 2026-11-13: public).
 # No ShulGo code is kept in this repo; the RPM lands in OUTDIR (dist/ is not committed).
 # usage: ci/build-shulgo-rpm.sh SHULGO_CHECKOUT COMMIT [OUTDIR]     (default dist/shulgo-fedora)
 #   FEDORA=45, SHELL_MAJOR=51 as for ci/fedora-build.sh. Never publish the RPM without the owner.
@@ -17,8 +18,14 @@ VERSION="0.1.1~git$STAMP.$SHORT"
 mkdir -p "$OUT"; OUT="$(cd "$OUT" && pwd)"
 TMP="$(mktemp -d)"; trap 'rm -rf "$TMP"' EXIT
 mkdir -p "$TMP/jewbuntu-shulgo"
-git -C "$SHULGO" archive --format=tar "$REF" integrations/shulgo-core integrations/jewbuntu \
-  | tar -x -C "$TMP/jewbuntu-shulgo" --strip-components=1
+# Private repo (rhecht/shulgo) keeps them under integrations/; the public mirror
+# (rhecht/shulgo-widgets) at the top level. Both unpack to jewbuntu-shulgo/{shulgo-core,jewbuntu}.
+if git -C "$SHULGO" cat-file -e "$REF:integrations/jewbuntu" 2>/dev/null; then
+  git -C "$SHULGO" archive --format=tar "$REF" integrations/shulgo-core integrations/jewbuntu \
+    | tar -x -C "$TMP/jewbuntu-shulgo" --strip-components=1
+else
+  git -C "$SHULGO" archive --format=tar "$REF" shulgo-core jewbuntu | tar -x -C "$TMP/jewbuntu-shulgo"
+fi
 COPYFILE_DISABLE=1 tar -C "$TMP" -czf "$TMP/jewbuntu-shulgo.tar.gz" jewbuntu-shulgo
 cp "$ROOT/packaging/shulgo-recipe/debian/shulgo" "$ROOT/packaging/shulgo-recipe/jewbuntu-shulgo.spec" "$TMP/"
 docker build -q --target build --build-arg FEDORA="$FEDORA" -t "$IMAGE" -f "$ROOT/ci/Dockerfile.fedora" "$ROOT/ci" >/dev/null

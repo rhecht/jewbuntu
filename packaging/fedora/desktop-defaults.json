@@ -222,6 +222,12 @@
       "key": "icon-theme",
       "value": "'Jewbuntu'",
       "why": "Jewbuntu Icons (Mac-style, original replacements for Apple-copied icons)"
+    },
+    {
+      "schema": "org.gnome.shell.extensions.background-logo",
+      "key": "logo-opacity",
+      "value": "0",
+      "why": "No Fedora logo on the wallpaper"
     }
   ]
 }

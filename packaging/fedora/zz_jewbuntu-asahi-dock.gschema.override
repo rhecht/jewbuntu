@@ -1,0 +1,7 @@
+# Jewbuntu dock for Fedora Asahi Remix: Fedora's default apps with the Jewbuntu Hub and Web
+# Server pinned after Files. A default only, and deliberately not in desktop-defaults.json:
+# `jewbuntu skin apply` never replaces dock pins a user chose. Accounts that never changed
+# their dock get this list; removing jewbuntu-asahi-desktop brings Fedora's list back.
+# (Kept in its own file so tests/unit/test_fedora.py can check it separately.)
+[org.gnome.shell:GNOME]
+favorite-apps=['org.mozilla.firefox.desktop', 'org.gnome.Nautilus.desktop', 'org.jewbuntu.Hub.desktop', 'org.jewbuntu.WebServer.desktop', 'org.gnome.Calendar.desktop', 'org.gnome.Software.desktop', 'org.gnome.TextEditor.desktop', 'org.gnome.Calculator.desktop']
