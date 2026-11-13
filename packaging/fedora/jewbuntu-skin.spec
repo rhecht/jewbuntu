@@ -37,15 +37,18 @@ grep -q "var(--" "$stage/Jewbuntu-Light/gtk-4.0/gtk.css"   # libadwaita mode is 
 mkdir -p stage-themes && cp -a "$stage/." stage-themes/
 # Login screen (GDM) for Fedora, which has no gdm-theme alternative like Ubuntu's: the dark
 # Jewbuntu shell style and the blurred Star of David background as loose files, overlaid on
-# gnome-shell's built-in theme only for gdm*.css (plus our own jewbuntu-gdm/ assets) through
-# G_RESOURCE_OVERLAYS, which jewbuntu-asahi-desktop switches on per GNOME version. No Fedora
-# file changes; the user session's gnome-shell.css is not overlaid.
+# gnome-shell's built-in theme (the dark stylesheet the login screen loads, plus our own
+# jewbuntu-gdm/ assets) through G_RESOURCE_OVERLAYS, which jewbuntu-asahi-desktop switches on
+# per GNOME version. No Fedora file changes.
 ov=stage-gdm/%{shell_major}; mkdir -p "$ov/jewbuntu-gdm"
 cp -a stage-themes/Jewbuntu-Dark/gnome-shell/assets "$ov/jewbuntu-gdm/assets"
 magick wallpaper/Jewbuntu-star-blue.png -scale 1920x -blur 0x18 -fill black -colorize 25% -quality 88 "$ov/jewbuntu-gdm/assets/login-background.jpg"
 sed 's#url("assets/background.png")#url("assets/login-background.jpg")#g; s#url("assets/#url("resource:///org/gnome/shell/theme/jewbuntu-gdm/assets/#g; s#url(assets/#url(resource:///org/gnome/shell/theme/jewbuntu-gdm/assets/#g' \
   stage-themes/Jewbuntu-Dark/gnome-shell/gnome-shell.css > "$ov/gdm.css"
-cp "$ov/gdm.css" "$ov/gdm-dark.css"; cp "$ov/gdm.css" "$ov/gdm-light.css"
+# GNOME 51's login screen (session mode gdm) has no gdm.css of its own: it loads the dark
+# shell stylesheet, gnome-shell-dark.css. A Jewbuntu session is unaffected: User Themes
+# replaces that stylesheet with the Jewbuntu theme. gdm*.css copies stay for older shells.
+cp "$ov/gdm.css" "$ov/gnome-shell-dark.css"; cp "$ov/gdm.css" "$ov/gdm-dark.css"; cp "$ov/gdm.css" "$ov/gdm-light.css"
 grep -q "jewbuntu-gdm/assets/login-background.jpg" "$ov/gdm.css"
 test "$(stat -c %s "$ov/jewbuntu-gdm/assets/login-background.jpg")" -gt 20000
 

@@ -121,6 +121,7 @@ class FedoraLoginThemeTests(unittest.TestCase):
     def test_skin_overlay_never_replaces_session_stylesheet(self):
         spec = (FEDORA / "jewbuntu-skin.spec").read_text()
         self.assertIn('> "$ov/gdm.css"', spec)
+        self.assertIn('"$ov/gnome-shell-dark.css"', spec)   # what GNOME 51's login screen loads
         self.assertNotIn('$ov/gnome-shell.css', spec)
         self.assertIn("resource:///org/gnome/shell/theme/jewbuntu-gdm/assets/", spec)
 

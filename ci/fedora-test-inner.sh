@@ -29,8 +29,8 @@ echo "== login screen (GDM) overlay"
 L=/usr/share/jewbuntu/gdm-overlay
 [ "$(readlink $L)" = /usr/share/jewbuntu-skin/gdm-overlay/51 ] && pass "login-screen overlay on for GNOME 51 ($L)" || fail "overlay link: $(readlink $L)"
 grep -q '^G_RESOURCE_OVERLAYS=/org/gnome/shell/theme=/usr/share/jewbuntu/gdm-overlay' /usr/lib/environment.d/60-jewbuntu-login-theme.conf && pass "G_RESOURCE_OVERLAYS set for sessions and GDM" || fail "environment.d file"
-for f in gdm.css gdm-dark.css jewbuntu-gdm/assets/login-background.jpg; do [ -s "$L/$f" ] && pass "overlay has $f" || fail "overlay missing $f"; done
-[ ! -e "$L/gnome-shell.css" ] && pass "user-session gnome-shell.css is not overlaid" || fail "gnome-shell.css overlaid"
+for f in gdm.css gnome-shell-dark.css jewbuntu-gdm/assets/login-background.jpg; do [ -s "$L/$f" ] && pass "overlay has $f" || fail "overlay missing $f"; done
+[ ! -e "$L/gnome-shell-light.css" ] && pass "light shell stylesheet is not overlaid" || fail "gnome-shell-light.css overlaid"
 mv /usr/share/jewbuntu-skin/gdm-overlay/51 /tmp/ov51; /usr/libexec/jewbuntu/jewbuntu-login-theme
 [ ! -e "$L" ] && [ ! -L "$L" ] && pass "overlay switches off when the skin has no files for this GNOME (stock login screen)" || fail "overlay still on for unmatched GNOME"
 mv /tmp/ov51 /usr/share/jewbuntu-skin/gdm-overlay/51; /usr/libexec/jewbuntu/jewbuntu-login-theme
