@@ -55,7 +55,7 @@ cp -a jewbuntu/src/shulgo/gnome %{buildroot}%{_datadir}/jewbuntu-shulgo/shulgo/
 # release, so ShulGo can read and migrate settings saved before its rename (then it goes away).
 install -d %{buildroot}%{_datadir}/glib-2.0/schemas
 install -m 644 jewbuntu/schemas/*.gschema.xml %{buildroot}%{_datadir}/glib-2.0/schemas/
-test -f %{buildroot}%{_datadir}/glib-2.0/schemas/*.gschema.xml
+test -f %{buildroot}%{_datadir}/glib-2.0/schemas/com.shulgo.ShulGo.gschema.xml
 install -D -m 644 jewbuntu/app/com.shulgo.ShulGo.desktop %{buildroot}%{_datadir}/applications/com.shulgo.ShulGo.desktop
 install -D -m 644 jewbuntu/app/com.shulgo.ShulGo.svg %{buildroot}%{_datadir}/icons/hicolor/scalable/apps/com.shulgo.ShulGo.svg
 install -D -m 644 jewbuntu/extension/jewbuntu@shulgo.com/icons/shulgo-symbolic.svg %{buildroot}%{_datadir}/icons/hicolor/symbolic/apps/com.shulgo.ShulGo-symbolic.svg
