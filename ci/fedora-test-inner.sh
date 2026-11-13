@@ -111,7 +111,9 @@ su t -c 'set -eu; export GSETTINGS_BACKEND=keyfile XDG_CURRENT_DESKTOP=GNOME
   echo "PASS: apply appended Hebrew, set the dock, enabled the 4 skin extensions (kept the user'"'"'s own), linked GTK4 and the Terminal palette to the skin"
   jewbuntu skin undo >/dev/null
   [ "$(gsettings get org.gnome.shell.extensions.dash-to-dock dock-position)" = "'"'"'LEFT'"'"'" ] || { echo "FAIL: undo dock"; exit 1; }
-  [ "$(gsettings get org.gnome.shell enabled-extensions)" = "['"'"'background-logo@fedorahosted.org'"'"']" ] || { echo "FAIL: undo extensions"; exit 1; }
+  # Undo restores the look; the ShulGo widget (its own app, turned on once by m1.29) stays as the user left it.
+  U=$(gsettings get org.gnome.shell enabled-extensions)
+  case "$U" in "['"'"'background-logo@fedorahosted.org'"'"']"|"['"'"'background-logo@fedorahosted.org'"'"', '"'"'jewbuntu@shulgo.com'"'"']") ;; *) echo "FAIL: undo extensions: $U"; exit 1;; esac
   grep -q mine ~/.config/gtk-4.0/gtk.css || { echo "FAIL: undo GTK4"; exit 1; }
   echo "PASS: undo restored dock, extensions and the user'"'"'s own GTK4 file"
   rm -rf ~/.config/glib-2.0 ~/.config/gtk-4.0 ~/.local/state/jewbuntu ~/.local/share/org.gnome.Ptyxis'
