@@ -31,6 +31,36 @@ Your files are never touched.
 
 Full instructions, including uninstalling: [docs/install.md](docs/install.md).
 
+### Asahi Linux (Apple Silicon Macs)
+
+Jewbuntu also runs on **Fedora Asahi Remix 45, GNOME edition** (M1 and M2 Macs): the same
+look, Hebrew, the Hub, the Web Server and ShulGo, added on top of Fedora. Fedora and Asahi
+updates keep coming as normal.
+
+1. Install Fedora Asahi Remix from macOS ([asahilinux.org/fedora](https://asahilinux.org/fedora/))
+   and choose the **GNOME** edition.
+2. In Fedora, open Terminal and run (it asks before changing anything, then for your password):
+
+   ```bash
+   curl -fLO https://github.com/rhecht/jewbuntu/releases/download/v0.1.0-m1.29/jewbuntu-asahi-installer-0.1.0-m1.29.run
+   sh jewbuntu-asahi-installer-0.1.0-m1.29.run
+   ```
+
+   Or download `jewbuntu-asahi-installer-VERSION.run` from the
+   [latest release](https://github.com/rhecht/jewbuntu/releases/latest) and run
+   `sh ~/Downloads/jewbuntu-asahi-installer-*.run`.
+3. Log out and back in.
+
+**Uninstall:** run the same file with `--uninstall`. It puts your previous look back and
+removes every Jewbuntu package; then log out and back in. Your files are never touched.
+
+```bash
+sh jewbuntu-asahi-installer-0.1.0-m1.29.run --uninstall
+```
+
+Without the file: `jewbuntu skin undo`, then `sudo dnf remove 'jewbuntu-*'`.
+Details and what works differently from Ubuntu: [docs/asahi.md](docs/asahi.md).
+
 ## Packages
 
 | Package | What it does | State |
@@ -88,6 +118,7 @@ Log out and back in to get the new defaults and the startup jingle.
 
 ## Documentation
 
+- [docs/asahi.md](docs/asahi.md): Jewbuntu on Asahi Linux (Fedora Asahi Remix, Apple Silicon Macs)
 - [docs/architecture.md](docs/architecture.md): how the parts fit together
 - [docs/decisions/](docs/decisions/): architecture decision records
 - [docs/vm-setup.md](docs/vm-setup.md): VM testing advice for this project's hardware

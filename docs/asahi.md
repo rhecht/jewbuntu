@@ -74,6 +74,13 @@ sha256sum -c jewbuntu-asahi-installer-<version>.run.sha256   # optional: checks 
 sh jewbuntu-asahi-installer-<version>.run
 ```
 
+Or download and run it in one go (0.1.0-m1.29 is the current release):
+
+```bash
+curl -fLO https://github.com/rhecht/jewbuntu/releases/download/v0.1.0-m1.29/jewbuntu-asahi-installer-0.1.0-m1.29.run
+sh jewbuntu-asahi-installer-0.1.0-m1.29.run
+```
+
 It says what it will add and asks first, then asks for your password once. It checks that
 this is Fedora 45 with GNOME, checks every package inside against its checksum, and installs
 them with `dnf`. dnf fetches the rest from Fedora's own repositories: Dash to Dock, Blur my
