@@ -163,9 +163,29 @@ are in the session notes, not in the repo.
 | ShulGo RPM (`packaging/shulgo-recipe/jewbuntu-shulgo.spec`, `ci/build-shulgo-rpm.sh`, built from the private repo) | Implemented, from rhecht/shulgo f0a898c (GNOME 51 fix; extension renamed `jewbuntu@shulgo.com`, app/schema `com.shulgo.ShulGo`) | Auto-verified: ACTIVE on GNOME Shell 51.1 before and after the update phase; login migration swaps the old UUID in enabled-extensions; 38/38 checks (docs/test-results/2026-11-12-fedora-asahi-container-shulgo.log). Saved place/options in dconf start fresh after the rename (owner deciding on a copy) |
 | Web Server on Fedora (`jewbuntu-webserver.spec`): shared helper + `jewbuntu-webserver-backend/fedora.sh`; httpd + php-fpm, MariaDB, phpMyAdmin, `vsftpd@jewbuntu`; local-only via Jewbuntu's own `conf.d/00-jewbuntu.conf` (`Require local`, Fedora's `httpd.conf` untouched) plus firewalld opened only while sharing; SELinux CIL module `jewbuntu_webserver` + 3 booleans | Implemented | Auto-verified in container, 99/99 (`ci/fedora-webserver-check.sh`, docs/test-results/2026-11-12-fedora-webserver-container.log): setup, sites, PHP via php-fpm, databases, phpMyAdmin, FTP/TLS, sharing on/off with LAN refusal through firewalld (and by Apache alone with the firewall stopped), WordPress install, CodeIgniter, `rpm -V` clean. Ubuntu re-checked after the helper split: 72/72. **Not tested:** SELinux enforcing (no SELinux in containers; policy built and queried instead), polkit dialog, GTK window, Asahi hardware |
 | Window buttons on the left in GTK4 apps | Default set | Not seen: the test container has no settings portal, so GTK showed its own default there |
+| Ubuntu m1.27 design fixes brought over: skin 0.1.0~git20261112.3 built with `SKIN_LIBADWAITA_SYSTEM=1` (build fails if GTK4 isn't in libadwaita mode); Terminal (Ptyxis 50.1, Fedora's default) Jewbuntu palette + `interface-style='system'`, linked per user; no Blur my Shell blur behind popups and app folders | Implemented | Auto-verified in container, ALL PASS incl. ShulGo (docs/test-results/2026-11-12-fedora-asahi-container-design-m1.27.log): 35/35 defaults (the relocatable Ptyxis profile key read through a path), palette link after `skin apply`. **Not seen:** Terminal menus and rounded-menu corners on screen |
 | Publishing the RPMs (release assets or a dnf repo) | Not started | n/a |
 
 Install steps: docs/asahi.md.
+
+### Upstream news (Asahi progress report 7.3, 2026-11-07)
+
+- **Licence change:** Asahi has begun moving all its repositories from MIT to
+  GPL-2.0-or-later after code was reused without attribution. The report gives no per-repo
+  dates; already-released MIT code reportedly stays MIT (heise). **Effect on Jewbuntu: none
+  today.** The port ships only its own packages on top of Fedora Asahi Remix and contains no
+  Asahi code (checked 2026-11-12: `packaging/fedora/` only `Requires` Fedora packages). Rules:
+  - Don't copy Asahi code (installer, m1n1, asahi-audio, scripts) into Jewbuntu; it would bring
+    GPL-2.0-or-later with it. Write Apple Silicon support from documentation and behaviour, and
+    never use AI to reword Asahi source.
+  - Never take code from personal forks or unreleased branches.
+  - A respun Asahi image (not planned) would redistribute their GPL code: corresponding source
+    and notices required.
+  - Trademarks matter more than the licence: the login logo reads "Jewbuntu for Asahi Linux".
+    Check Asahi's and Fedora's trademark guidance before publishing the RPMs.
+- **M3 is now generally available** in the Asahi installer; M4 Pro/Max boot to a text console
+  only. Nothing in the port is tied to M1/M2.
+- **Fedora Asahi Remix 45** shipped 2026-11-03, the same day as Fedora 45. It ships GNOME 51, which is what the RPMs target.
 
 Original plan (kept for the remaining work):
 
@@ -188,7 +208,8 @@ Web Server (LAMP) app with its setup.
   `~/Sites`, phpMyAdmin and vsftpd (file labels and booleans such as `httpd_enable_homedirs`).
   Re-run the container checks (`ci/webserver-check.sh`) on Fedora.
 - Check first: which GNOME version Fedora Asahi Remix ships at that time. Asahi supports
-  M1/M2 today and intends to support M3/M4 later, so don't tie anything to M1/M2.
+  M1/M2/M3 (M3 generally available since the 7.3 report) and is working on M4, so don't
+  tie anything to one chip generation.
 - **Must survive Asahi and Fedora updates** (same overlay rule as on Ubuntu):
   - Ship everything as separate Jewbuntu packages that own only their own files. Never edit
     or replace files owned by Fedora/Asahi packages, and no `Conflicts`/`Obsoletes` against them.

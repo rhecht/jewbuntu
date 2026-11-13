@@ -39,7 +39,16 @@ import os, sys
 sys.path.insert(0, "/usr/lib/jewbuntu/python")
 os.environ.update(XDG_CURRENT_DESKTOP="GNOME", GSETTINGS_BACKEND="memory")
 from jewbuntu import desktop_defaults as dd
+import subprocess
 rows = dd.status()
+# Relocatable schemas (Ptyxis profiles) have no fixed path: read their default through any path.
+reloc = set(subprocess.run(["gsettings", "list-relocatable-schemas"], capture_output=True, text=True).stdout.split())
+for r in rows:
+    if not r["schema_installed"] and r["schema"] in reloc:
+        out = subprocess.run(["gsettings", "get", f"{r['schema']}:/org/jewbuntu/check/", r["key"]], capture_output=True, text=True)
+        if out.returncode == 0:
+            r["current"] = out.stdout.strip(); r["schema_installed"] = True
+            r["matches_jewbuntu"] = dd._same(r["current"], r["value"])
 bad = [f"{r['schema']} {r['key']}: {r['current']} (want {r['value']})" for r in rows if not (r["schema_installed"] and r["matches_jewbuntu"])]
 print("\n".join(bad))
 sys.exit(1 if bad else 0)
@@ -73,13 +82,14 @@ su t -c 'set -eu; export GSETTINGS_BACKEND=keyfile XDG_CURRENT_DESKTOP=GNOME
   for u in background-logo@fedorahosted.org user-theme@gnome-shell-extensions.gcampax.github.com dash-to-dock@micxgx.gmail.com blur-my-shell@aunetx jewbuntu-look@jewbuntu; do
     case "$E" in *"$u"*) ;; *) echo "FAIL: $u not enabled"; exit 1;; esac; done
   [ "$(readlink -f ~/.config/gtk-4.0/gtk.css)" = /usr/share/themes/Jewbuntu-Light/gtk-4.0/gtk.css ] || { echo "FAIL: libadwaita link"; exit 1; }
-  echo "PASS: apply appended Hebrew, set the dock, enabled the 4 skin extensions (kept the user'"'"'s own), linked GTK4 to the skin"
+  [ "$(readlink ~/.local/share/org.gnome.Ptyxis/palettes/Jewbuntu.palette)" = /usr/share/jewbuntu/terminal/Jewbuntu.palette ] || { echo "FAIL: Terminal palette link"; exit 1; }
+  echo "PASS: apply appended Hebrew, set the dock, enabled the 4 skin extensions (kept the user'"'"'s own), linked GTK4 and the Terminal palette to the skin"
   jewbuntu skin undo >/dev/null
   [ "$(gsettings get org.gnome.shell.extensions.dash-to-dock dock-position)" = "'"'"'LEFT'"'"'" ] || { echo "FAIL: undo dock"; exit 1; }
   [ "$(gsettings get org.gnome.shell enabled-extensions)" = "['"'"'background-logo@fedorahosted.org'"'"']" ] || { echo "FAIL: undo extensions"; exit 1; }
   grep -q mine ~/.config/gtk-4.0/gtk.css || { echo "FAIL: undo GTK4"; exit 1; }
   echo "PASS: undo restored dock, extensions and the user'"'"'s own GTK4 file"
-  rm -rf ~/.config/glib-2.0 ~/.config/gtk-4.0 ~/.local/state/jewbuntu'
+  rm -rf ~/.config/glib-2.0 ~/.config/gtk-4.0 ~/.local/state/jewbuntu ~/.local/share/org.gnome.Ptyxis'
 
 echo "== real GNOME Shell (headless) with the look applied"
 mkdir -p /run/dbus && dbus-daemon --system --fork

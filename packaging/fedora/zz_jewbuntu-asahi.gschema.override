@@ -65,6 +65,23 @@ blur=false
 [org.gnome.shell.extensions.blur-my-shell.dash-to-dock:GNOME]
 blur=false
 
+# ...nor behind popups (menus, quick settings, calendar, notifications, dialogs) or open app
+# folders: Blur my Shell blurs a fixed-radius or square area that doesn't match the skin's
+# rounded shapes, which showed as dark corners. The skin draws their glass itself.
+[org.gnome.shell.extensions.blur-my-shell.popup:GNOME]
+blur=false
+
+[org.gnome.shell.extensions.blur-my-shell.appfolder:GNOME]
+blur=false
+
+# Terminal (Ptyxis, Fedora's default): the Jewbuntu palette, following the system light/dark
+# style. Each user gets the palette file at login (`jewbuntu config migrate`).
+[org.gnome.Ptyxis.Profile:GNOME]
+palette='Jewbuntu'
+
+[org.gnome.Ptyxis:GNOME]
+interface-style='system'
+
 # Login screen: "Jewbuntu for Asahi Linux" wordmark in place of gdm's Fedora logo
 # (plain section, like gdm's own override, which this file sorts after).
 [org.gnome.login-screen]

@@ -38,7 +38,7 @@ home directories.
 Summary:        Jewbuntu look and Hebrew defaults for Fedora Asahi Remix (GNOME)
 License:        GPL-3.0-or-later AND CC-BY-SA-4.0
 Requires:       jewbuntu-core = %{version}-%{release}
-Requires:       jewbuntu-skin
+Requires:       jewbuntu-skin >= 0.1.0~git20261112.3
 Requires:       jewbuntu-icons
 Requires:       gnome-shell >= %{shell_major}
 Requires:       gnome-shell-extension-user-theme
@@ -123,7 +123,7 @@ python3 -B -m unittest discover -s tests/unit -t .
 
 %install
 install -d %{buildroot}%{pydir}
-install -m 644 components/core/jewbuntu/{__init__,cli,config,desktop_defaults,paths,renames,userdata,version}.py %{buildroot}%{pydir}/
+install -m 644 components/core/jewbuntu/{__init__,cli,config,desktop_defaults,paths,renames,terminal_palette,userdata,version}.py %{buildroot}%{pydir}/
 install -D -m 755 bin/jewbuntu %{buildroot}%{_bindir}/jewbuntu
 install -D -m 644 packaging/core/jewbuntu-migrate.desktop %{buildroot}%{_sysconfdir}/xdg/autostart/jewbuntu-migrate.desktop
 install -D -m 644 README.md %{buildroot}%{_docdir}/jewbuntu-core/README.md
@@ -131,6 +131,8 @@ install -D -m 644 README.md %{buildroot}%{_docdir}/jewbuntu-core/README.md
 install -D -m 644 packaging/fedora/zz_jewbuntu-asahi.gschema.override %{buildroot}%{_datadir}/glib-2.0/schemas/zz_jewbuntu-asahi.gschema.override
 install -D -m 644 packaging/fedora/desktop-defaults.json %{buildroot}%{_datadir}/jewbuntu/desktop-defaults.json
 install -D -m 644 packaging/desktop/jewbuntu-skin-prompt.desktop %{buildroot}%{_sysconfdir}/xdg/autostart/jewbuntu-skin-prompt.desktop
+# Terminal (Ptyxis) palette; `jewbuntu config migrate` links it per user (Ptyxis reads only ~/.local/share).
+install -D -m 644 packaging/desktop/terminal/Jewbuntu.palette %{buildroot}%{_datadir}/jewbuntu/terminal/Jewbuntu.palette
 install -D -m 644 assets/logos/jewbuntu-asahi-logo-text-dark.svg %{buildroot}%{_datadir}/jewbuntu/branding/jewbuntu-asahi-logo-text-dark.svg
 ext=%{buildroot}%{_datadir}/gnome-shell/extensions/jewbuntu-look@jewbuntu
 install -d $ext
@@ -171,7 +173,7 @@ install -D -m 644 packaging/branding/jewbuntu-wallpapers.xml %{buildroot}%{_data
 %dir /usr/lib/jewbuntu
 %dir /usr/lib/jewbuntu/python
 %dir %{pydir}
-%{pydir}/{__init__,cli,config,desktop_defaults,paths,renames,userdata,version}.py
+%{pydir}/{__init__,cli,config,desktop_defaults,paths,renames,terminal_palette,userdata,version}.py
 %dir %{_datadir}/jewbuntu
 %config(noreplace) %{_sysconfdir}/xdg/autostart/jewbuntu-migrate.desktop
 %{_docdir}/jewbuntu-core
@@ -181,6 +183,7 @@ install -D -m 644 packaging/branding/jewbuntu-wallpapers.xml %{buildroot}%{_data
 %dir %{_datadir}/jewbuntu
 %{_datadir}/jewbuntu/desktop-defaults.json
 %{_datadir}/jewbuntu/branding
+%{_datadir}/jewbuntu/terminal
 %{_datadir}/gnome-shell/extensions/jewbuntu-look@jewbuntu
 %config(noreplace) %{_sysconfdir}/xdg/autostart/jewbuntu-skin-prompt.desktop
 %{_datadir}/fontconfig/conf.avail/65-jewbuntu-hebrew.conf
@@ -211,5 +214,10 @@ install -D -m 644 packaging/branding/jewbuntu-wallpapers.xml %{buildroot}%{_data
 
 
 %changelog
+* Thu Nov 12 2026 Jewbuntu Developers <maintainers@jewbuntu.invalid> - %{jb_version}-1
+- Terminal (Ptyxis) palette matching the skin, linked per user at login.
+- No Blur my Shell blur behind popups and app folders (dark corners).
+- Requires jewbuntu-skin 0.1.0~git20261112.3 (GTK4 libadwaita mode).
+
 * Thu Nov 12 2026 Jewbuntu Developers <maintainers@jewbuntu.invalid> - %{jb_version}-1
 - First Fedora Asahi Remix build: skin defaults, login logo, Jewbuntu Look, Hebrew.

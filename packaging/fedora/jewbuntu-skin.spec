@@ -29,8 +29,11 @@ sets it as the default and 'jewbuntu skin apply' switches an existing account.
 %build
 # The upstream installer refuses to write inside its source tree: build into a temp dir.
 stage=$(mktemp -d) home=$(mktemp -d)
-HOME=$home TERM=xterm SKIN_SHELL_VERSION=%{shell_major} bash ./install.sh -d "$stage" --shell -i jewbuntu
+# SKIN_LIBADWAITA_SYSTEM=1: GTK4 theme in libadwaita mode, as in debian/rules (readable menus
+# and title bars in apps that colour their own windows, such as Terminal/Ptyxis).
+HOME=$home TERM=xterm SKIN_SHELL_VERSION=%{shell_major} SKIN_LIBADWAITA_SYSTEM=1 bash ./install.sh -d "$stage" --shell -i jewbuntu
 test -d "$stage/Jewbuntu-Light/gnome-shell" && test -f "$stage/Jewbuntu-Light/gtk-4.0/gtk.css"
+grep -q "var(--" "$stage/Jewbuntu-Light/gtk-4.0/gtk.css"   # libadwaita mode is on (old mode has no CSS variables)
 mkdir -p stage-themes && cp -a "$stage/." stage-themes/
 
 %install
@@ -47,5 +50,8 @@ sed 's#@BACKGROUNDDIR@#%{_datadir}/backgrounds#g' wallpaper/Jewbuntu.xml > %{bui
 %{_datadir}/gnome-background-properties/Jewbuntu.xml
 
 %changelog
+* Thu Nov 12 2026 Jewbuntu Developers <maintainers@jewbuntu.invalid> - %{jb_version}-1
+- GTK4 theme built in libadwaita mode (SKIN_LIBADWAITA_SYSTEM=1), as on Ubuntu.
+
 * Thu Nov 12 2026 Jewbuntu Developers <maintainers@jewbuntu.invalid> - %{jb_version}-1
 - First Fedora Asahi Remix build (GNOME Shell %{shell_major}), same sources as the Ubuntu package.

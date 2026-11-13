@@ -188,6 +188,30 @@
       "why": "No rectangular blur box around the rounded dock"
     },
     {
+      "schema": "org.gnome.shell.extensions.blur-my-shell.popup",
+      "key": "blur",
+      "value": "false",
+      "why": "No blur behind menus and popups: Blur my Shell's square/fixed-radius blur showed as dark corners around the skin's rounded menus"
+    },
+    {
+      "schema": "org.gnome.shell.extensions.blur-my-shell.appfolder",
+      "key": "blur",
+      "value": "false",
+      "why": "No blur behind open app folders: it was square, so rounded folders showed black corners"
+    },
+    {
+      "schema": "org.gnome.Ptyxis.Profile",
+      "key": "palette",
+      "value": "'Jewbuntu'",
+      "why": "Terminal colours match the skin (white, or the skin's dark grey in dark mode) instead of Ptyxis's own default"
+    },
+    {
+      "schema": "org.gnome.Ptyxis",
+      "key": "interface-style",
+      "value": "'system'",
+      "why": "Terminal follows the system light/dark style"
+    },
+    {
       "schema": "org.gnome.desktop.interface",
       "key": "icon-theme",
       "value": "'Jewbuntu'",

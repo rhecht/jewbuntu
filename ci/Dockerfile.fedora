@@ -8,5 +8,5 @@ RUN useradd -m b
 
 FROM fedora:${FEDORA} AS test
 RUN for i in 1 2 3; do dnf -y -q install gnome-shell gdm dconf glib2 dbus-daemon mesa-dri-drivers \
-      python3 librsvg2-tools && break; sleep 5; done && dnf clean all
+      python3 librsvg2-tools ptyxis && break; sleep 5; done && dnf clean all
 RUN useradd -m t
