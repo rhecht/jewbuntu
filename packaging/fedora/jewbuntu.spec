@@ -129,7 +129,6 @@ install -D -m 644 packaging/core/jewbuntu-migrate.desktop %{buildroot}%{_sysconf
 install -D -m 644 README.md %{buildroot}%{_docdir}/jewbuntu-core/README.md
 
 install -D -m 644 packaging/fedora/zz_jewbuntu-asahi.gschema.override %{buildroot}%{_datadir}/glib-2.0/schemas/zz_jewbuntu-asahi.gschema.override
-%{_datadir}/glib-2.0/schemas/zz_jewbuntu-asahi-dock.gschema.override
 install -D -m 644 packaging/fedora/zz_jewbuntu-asahi-dock.gschema.override %{buildroot}%{_datadir}/glib-2.0/schemas/zz_jewbuntu-asahi-dock.gschema.override
 install -D -m 644 packaging/fedora/desktop-defaults.json %{buildroot}%{_datadir}/jewbuntu/desktop-defaults.json
 install -D -m 644 packaging/desktop/jewbuntu-skin-prompt.desktop %{buildroot}%{_sysconfdir}/xdg/autostart/jewbuntu-skin-prompt.desktop
