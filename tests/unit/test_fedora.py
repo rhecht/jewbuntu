@@ -134,6 +134,19 @@ class FedoraLoginThemeTests(unittest.TestCase):
             self.assertIn(part, spec)
 
 
+class SpecShapeTests(unittest.TestCase):
+    """A %files-style path line inside %install runs as a command and breaks the build."""
+
+    def test_no_bare_paths_in_install_sections(self):
+        for spec in list(FEDORA.glob("*.spec")) + [REPO / "packaging/shulgo-recipe/jewbuntu-shulgo.spec"]:
+            section = None
+            for n, line in enumerate(spec.read_text().splitlines(), 1):
+                if line.startswith("%") and not line.startswith("%{"):
+                    section = line.split()[0]
+                elif section == "%install" and line.startswith("%{"):
+                    self.fail(f"{spec.name}:{n}: bare path in %install: {line}")
+
+
 def ast_list(text):
     import ast
     return ast.literal_eval(text)

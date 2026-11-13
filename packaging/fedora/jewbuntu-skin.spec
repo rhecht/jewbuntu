@@ -54,7 +54,6 @@ install -d %{buildroot}%{_datadir}/themes %{buildroot}%{_datadir}/backgrounds/Je
 cp -a stage-themes/. %{buildroot}%{_datadir}/themes/
 install -m 644 wallpaper/Jewbuntu-day.jpeg wallpaper/Jewbuntu-night.jpeg wallpaper/Jewbuntu-star-blue.png wallpaper/Jewbuntu-star-purple.png %{buildroot}%{_datadir}/backgrounds/Jewbuntu/
 sed 's#@BACKGROUNDDIR@#%{_datadir}/backgrounds#g' wallpaper/Jewbuntu.xml > %{buildroot}%{_datadir}/gnome-background-properties/Jewbuntu.xml
-%{_datadir}/jewbuntu-skin
 install -d %{buildroot}%{_datadir}/jewbuntu-skin/gdm-overlay
 cp -a stage-gdm/. %{buildroot}%{_datadir}/jewbuntu-skin/gdm-overlay/
 
@@ -64,6 +63,7 @@ cp -a stage-gdm/. %{buildroot}%{_datadir}/jewbuntu-skin/gdm-overlay/
 %{_datadir}/themes/Jewbuntu*
 %{_datadir}/backgrounds/Jewbuntu
 %{_datadir}/gnome-background-properties/Jewbuntu.xml
+%{_datadir}/jewbuntu-skin
 
 %changelog
 * Thu Nov 12 2026 Jewbuntu Developers <maintainers@jewbuntu.invalid> - %{jb_version}-1
