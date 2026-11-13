@@ -1,3 +1,12 @@
+jewbuntu (0.1.0~m1.29+26.04) resolute; urgency=medium
+
+  * Companion extensions: the ShulGo widget (jewbuntu@shulgo.com) is enabled
+    once per user when installed (at login or on skin apply). Installing the
+    package never enabled it, so fresh accounts showed no widget. If the user
+    turns it off, it stays off.
+
+ -- Jewbuntu Developers <maintainers@jewbuntu.invalid>  Fri, 13 Nov 2026 10:37:26 -0500
+
 jewbuntu (0.1.0~m1.28+26.04) resolute; urgency=medium
 
   * Jewbuntu Look: open app folders shade the app grid at half GNOME's darkness

@@ -60,6 +60,13 @@ def cmd_config(args):
                     print(note)
         except Exception as e:
             print(f"note: could not update renamed extensions: {e}", file=sys.stderr)
+        try:  # companion extensions (ShulGo): installing a package never enables it per user
+            from . import extensions_once
+            for note in extensions_once.enable_once():
+                if not args.quiet:
+                    print(note)
+        except Exception as e:
+            print(f"note: could not enable companion extensions: {e}", file=sys.stderr)
     elif args.action == "validate":
         problems = config.validate(config.load())
         print("\n".join(problems) if problems else "settings valid")
@@ -160,9 +167,10 @@ def cmd_skin(args):
         for c in changes:
             print(f"  - {c}")
     elif args.action == "apply":
-        from . import terminal_palette
+        from . import extensions_once, terminal_palette
         note = terminal_palette.ensure_palette()
-        for line in (dd.apply_skin() or []) + ([note] if note else []) or ["already applied; nothing changed"]:
+        extra = ([note] if note else []) + extensions_once.enable_once()
+        for line in (dd.apply_skin() or []) + extra or ["already applied; nothing changed"]:
             print(line)
         print("Log out and back in to see every change.")
     elif args.action == "undo":
