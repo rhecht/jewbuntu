@@ -7,7 +7,8 @@
 # usage: ci/build-iso.sh BASE.iso OUT.iso VERSION DEBDIR...
 #   e.g. ci/build-iso.sh ../iso/ubuntu-26.04.1-desktop-amd64.iso ../iso/jewbuntu-0.1.0-m1.26-amd64.iso \
 #        0.1.0-m1.26 dist/worktree dist/themes
-# jewbuntu-shulgo is never included (ShulGo is private and distributed separately).
+# jewbuntu-shulgo is included (owner's decision 2026-11-13: the widget is public at
+# github.com/rhecht/shulgo-widgets; build it with ci/build-shulgo-deb.sh). Its API key stays per user.
 set -eu
 BASE="$(cd "$(dirname "$1")" && pwd)/$(basename "$1")"
 OUTDIR="$(mkdir -p "$(dirname "$2")" && cd "$(dirname "$2")" && pwd)"; OUT="$OUTDIR/$(basename "$2")"
@@ -17,7 +18,6 @@ STAGE="$ROOT/build/iso-stage"
 rm -rf "$STAGE"; mkdir -p "$STAGE/jewbuntu/debs" "$STAGE/jewbuntu/extra"
 for d in "$@"; do
   for f in "$d"/*.deb; do
-    case "$(basename "$f")" in jewbuntu-shulgo*) continue ;; esac
     cp "$f" "$STAGE/jewbuntu/debs/"
   done
 done

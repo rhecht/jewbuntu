@@ -2,7 +2,8 @@
 # Build the one-file Jewbuntu installer: a shell script with the public .debs appended.
 # usage: ci/make-installer.sh VERSION OUTFILE DEBDIR...
 #   e.g. ci/make-installer.sh 0.1.0-m1.24 dist/release/jewbuntu-installer-0.1.0-m1.24.run dist/worktree dist/themes
-# jewbuntu-shulgo is never included (ShulGo is private and distributed separately).
+# jewbuntu-shulgo is included (owner's decision 2026-11-13: the widget is public at
+# github.com/rhecht/shulgo-widgets; build it with ci/build-shulgo-deb.sh). Its API key stays per user.
 set -eu
 VERSION="$1"; OUTFILE="$2"; shift 2
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
@@ -10,7 +11,6 @@ STAGE="$(mktemp -d)"; trap 'rm -rf "$STAGE"' EXIT
 mkdir -p "$STAGE/jewbuntu/debs"
 for d in "$@"; do
   for f in "$d"/*.deb; do
-    case "$(basename "$f")" in jewbuntu-shulgo*) continue ;; esac
     cp "$f" "$STAGE/jewbuntu/debs/"
   done
 done

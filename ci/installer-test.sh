@@ -13,17 +13,17 @@ useradd -m -s /bin/bash t; echo "t ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/t
 cp /home/inst.run /tmp/i.run; chmod 644 /tmp/i.run
 head -c 5000000 /tmp/i.run > /tmp/bad.run
 out=$(sudo -u t sh /tmp/bad.run --yes 2>&1); [ $? -ne 0 ] && grep -q "damaged" <<<"$out" && pass "damaged download refused" || fail "damaged download not refused: $out"
-n=$(sudo -u t sh /tmp/i.run --list | grep -c "\.deb$"); [ "$n" = 11 ] && pass "--list shows 11 packages" || fail "--list shows $n"
-sudo -u t sh /tmp/i.run --list | grep -q shulgo && fail "ShulGo inside" || pass "no ShulGo inside"
+n=$(sudo -u t sh /tmp/i.run --list | grep -c "\.deb$"); [ "$n" = 12 ] && pass "--list shows 12 packages" || fail "--list shows $n"
+sudo -u t sh /tmp/i.run --list | grep -q shulgo && pass "ShulGo inside" || fail "ShulGo missing"
 sudo -u t sh /tmp/i.run --help | grep -q -- "--no-look" && pass "--help" || fail "--help"
 echo "--- installing (as user t, --yes) ..."
 sudo -u t -H sh /tmp/i.run --yes > /tmp/inst.log 2>&1; rc=$?
 tail -12 /tmp/inst.log
 grep -q "Jewbuntu 0.1.0-m1.29 is installed" /tmp/inst.log && pass "final message shows the Jewbuntu version" || fail "final message version wrong"
 [ $rc = 0 ] && pass "installer exit 0" || { fail "installer exit $rc"; grep -E "^E:|Error" /tmp/inst.log | head; }
-for p in core branding hebrew desktop gnome jewish-service hub upgrade-tools webserver skin icons; do
+for p in core branding hebrew desktop gnome jewish-service hub upgrade-tools webserver skin icons shulgo; do
   dpkg-query -W -f "\${db:Status-Abbrev}" jewbuntu-$p 2>/dev/null | grep -q "^ii" || fail "jewbuntu-$p not installed"
-done && pass "all 11 packages installed"
+done && pass "all 12 packages installed"
 dpkg -l ubuntu-desktop-minimal 2>/dev/null | grep -q ^ii && pass "Ubuntu desktop pulled in from the archive" || fail "ubuntu-desktop-minimal missing"
 apt-get check >/dev/null 2>&1 && pass "apt consistent" || fail "apt-get check"
 sudo -u t jewbuntu version && pass "jewbuntu command works" || fail "jewbuntu version"

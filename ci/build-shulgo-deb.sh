@@ -1,5 +1,6 @@
 #!/bin/sh
-# Build jewbuntu-shulgo from a (private) ShulGo checkout; no ShulGo code is kept in this repo.
+# Build jewbuntu-shulgo from a ShulGo checkout (private rhecht/shulgo or the public rhecht/shulgo-widgets
+# mirror); no ShulGo code is kept in this repo.
 # usage: ci/build-shulgo-deb.sh SHULGO_CHECKOUT COMMIT [OUTDIR]
 set -eu
 SHULGO="$1"; REF="$2"; OUT="${3:-dist/shulgo}"
@@ -7,7 +8,13 @@ ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 SHORT="$(git -C "$SHULGO" rev-parse --short "$REF")"
 TMP="$(mktemp -d)"
 mkdir -p "$TMP/src" "$ROOT/$OUT"
-git -C "$SHULGO" archive --format=tar "$REF" integrations/shulgo-core integrations/jewbuntu | tar -x -C "$TMP/src" --strip-components=1
+# Private repo (rhecht/shulgo) keeps them under integrations/; the public mirror
+# (rhecht/shulgo-widgets) at the top level. Both unpack to $TMP/src/{shulgo-core,jewbuntu}.
+if git -C "$SHULGO" cat-file -e "$REF:integrations/jewbuntu" 2>/dev/null; then
+  git -C "$SHULGO" archive --format=tar "$REF" integrations/shulgo-core integrations/jewbuntu | tar -x -C "$TMP/src" --strip-components=1
+else
+  git -C "$SHULGO" archive --format=tar "$REF" shulgo-core jewbuntu | tar -x -C "$TMP/src"
+fi
 cp -R "$ROOT/packaging/shulgo-recipe/debian" "$TMP/src/debian"
 # Needs rhecht/shulgo f0a898c or later (extension jewbuntu@shulgo.com, app/schema com.shulgo.ShulGo).
 cp "$TMP/src/jewbuntu/extension/jewbuntu@shulgo.com/icons/shulgo-symbolic.svg" "$TMP/src/debian/com.shulgo.ShulGo-symbolic.svg"
@@ -20,7 +27,7 @@ VERSION="0.1.1~git$STAMP.$SHORT+26.04"
 cat > "$TMP/src/debian/changelog" <<CL
 jewbuntu-shulgo ($VERSION) resolute; urgency=medium
 
-  * Built from rhecht/shulgo@$SHORT (integrations/shulgo-core + integrations/jewbuntu).
+  * Built from ShulGo $SHORT (shulgo-core + the GNOME widget and app).
 
  -- Jewbuntu Developers <maintainers@jewbuntu.invalid>  $DATE
 CL
