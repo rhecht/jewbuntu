@@ -1,0 +1,60 @@
+# Jewbuntu Skin for Arch Linux 32 (Xfce on old 32-bit laptops). Built by ci/arch32-build.sh
+# from a git archive of github.com/rhecht/jewbuntu-skin (pkgver comes from its
+# debian/changelog). Owns only its own files under /usr/share, so Arch updates never touch it.
+# Only the "solid" variant: no transparency, which old graphics chips without a compositor
+# cannot draw. GTK 2/3/4 and xfwm4 themes; GNOME Shell and Cinnamon parts are left out.
+pkgname=jewbuntu-skin
+pkgver=${JB_VERSION:-0.1.0}
+pkgrel=1
+pkgdesc="Jewbuntu Skin - Mac-inspired GTK and Xfce theme (solid, for old hardware)"
+arch=('any')
+url="https://github.com/rhecht/jewbuntu-skin"
+license=('MIT' 'CC-BY-SA-4.0' 'LicenseRef-Jewbuntu-Wallpapers-TBC')
+depends=('gtk-engine-murrine')
+makedepends=('bash' 'sassc' 'glib2' 'libxml2' 'python-gobject' 'gdk-pixbuf2')
+optdepends=('xfwm4: Jewbuntu window borders')
+source=("jewbuntu-skin.tar.gz")
+sha256sums=('SKIP')
+
+build() {
+  cd jewbuntu-skin
+  local stage home
+  stage=$(mktemp -d) home=$(mktemp -d)
+  # The upstream installer refuses to write inside its source tree: build into a temp dir.
+  HOME=$home TERM=xterm SKIN_SHELL_VERSION=48 bash ./install.sh -d "$stage" -o solid
+  rm -rf "$stage"/*/gnome-shell "$stage"/*/cinnamon "$stage"/*/plank
+  test -f "$stage/Jewbuntu-Light-solid/gtk-3.0/gtk.css"
+  test -f "$stage/Jewbuntu-Light-solid/gtk-2.0/gtkrc"
+  test -f "$stage/Jewbuntu-Light-solid/xfwm4/themerc"
+  rm -rf "$srcdir/stage-themes" "$srcdir/walls"
+  mkdir -p "$srcdir/stage-themes" "$srcdir/walls"
+  cp -a "$stage/." "$srcdir/stage-themes/"
+  # Wallpapers scaled for laptop screens of the time (up to 1400x1050) and stored as JPEG:
+  # decoding the 4K originals would take seconds and ~33 MB on a Pentium III with 256 MB.
+  # GdkPixbuf rather than ImageMagick (Arch Linux 32's imagemagick is broken: libxml2.so.2).
+  python - "$srcdir/walls" wallpaper/Jewbuntu-day.jpeg wallpaper/Jewbuntu-night.jpeg \
+      wallpaper/Jewbuntu-star-blue.png wallpaper/Jewbuntu-star-purple.png <<'PY'
+import os, sys
+import gi
+gi.require_version("GdkPixbuf", "2.0")
+from gi.repository import GdkPixbuf
+W, H = 1400, 1050
+for src in sys.argv[2:]:
+    p = GdkPixbuf.Pixbuf.new_from_file(src)
+    s = max(W / p.get_width(), H / p.get_height())
+    w, h = max(W, round(p.get_width() * s)), max(H, round(p.get_height() * s))
+    p = p.scale_simple(w, h, GdkPixbuf.InterpType.HYPER).new_subpixbuf((w - W) // 2, (h - H) // 2, W, H)
+    p.savev(os.path.join(sys.argv[1], os.path.splitext(os.path.basename(src))[0] + ".jpg"), "jpeg", ["quality"], ["88"])
+PY
+}
+
+package() {
+  cd jewbuntu-skin
+  install -d "$pkgdir/usr/share/themes" "$pkgdir/usr/share/backgrounds/Jewbuntu"
+  cp -a "$srcdir/stage-themes/." "$pkgdir/usr/share/themes/"
+  # cp -a of "dir/." also copies the build folder's own mode (mktemp: 0700) onto themes/.
+  chmod 755 "$pkgdir/usr/share/themes"
+  install -m644 "$srcdir"/walls/*.jpg "$pkgdir/usr/share/backgrounds/Jewbuntu/"
+  install -Dm644 COPYING "$pkgdir/usr/share/licenses/$pkgname/COPYING"
+  install -Dm644 README.md "$pkgdir/usr/share/doc/$pkgname/README.md"
+}

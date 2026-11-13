@@ -1,0 +1,81 @@
+# Jewbuntu for Arch Linux 32 (Xfce on old 32-bit laptops, e.g. Pentium III with 256 MB):
+# jewbuntu-core (the `jewbuntu` CLI, skin apply/undo, settings) and jewbuntu-xfce-desktop
+# (Jewbuntu session with Xfce defaults, login screen, Hebrew). Built by ci/arch32-build.sh
+# from this repository; Ubuntu packaging is debian/, Fedora is packaging/fedora/.
+#
+# Survives Arch updates: every file is Jewbuntu's own (pacman refuses to overwrite files of
+# other packages), no install scripts, and defaults live in /etc/xdg/jewbuntu, which only the
+# "Jewbuntu" session reads (XDG_CONFIG_DIRS). The stock "Xfce Session" stays stock.
+pkgbase=jewbuntu
+pkgname=('jewbuntu-core' 'jewbuntu-xfce-desktop')
+pkgver=${JB_VERSION:-0.1.0}
+pkgrel=1
+arch=('any')
+url="https://github.com/rhecht/jewbuntu"
+license=('GPL-3.0-or-later' 'CC-BY-SA-4.0')
+makedepends=('python')
+source=("jewbuntu.tar.gz")
+sha256sums=('SKIP')
+
+check() {
+  cd jewbuntu
+  python -B -m unittest discover -s tests/unit -t .
+}
+
+package_jewbuntu-core() {
+  pkgdesc="Jewbuntu command-line tool: settings with backups, skin apply/undo"
+  depends=('python')
+  backup=('etc/xdg/autostart/jewbuntu-migrate.desktop')
+  cd jewbuntu
+  local py="$pkgdir/usr/lib/jewbuntu/python"
+  install -d "$py/jewbuntu"
+  # Every core module (other components add theirs to this package dir on Ubuntu; none of
+  # those are packaged for Arch yet). A fixed list went stale when core gained modules.
+  install -m644 components/core/jewbuntu/*.py "$py/jewbuntu/"
+  # Precompiled bytecode: Python starts noticeably faster on a Pentium III.
+  python -m compileall -q -d /usr/lib/jewbuntu/python "$py"
+  install -Dm755 bin/jewbuntu "$pkgdir/usr/bin/jewbuntu"
+  install -Dm644 packaging/core/jewbuntu-migrate.desktop "$pkgdir/etc/xdg/autostart/jewbuntu-migrate.desktop"
+  install -Dm644 README.md "$pkgdir/usr/share/doc/jewbuntu-core/README.md"
+  install -Dm644 debian/copyright "$pkgdir/usr/share/licenses/jewbuntu-core/copyright"
+}
+
+package_jewbuntu-xfce-desktop() {
+  pkgdesc="Jewbuntu look and Hebrew defaults for Xfce on Arch Linux 32 (old 32-bit laptops)"
+  depends=("jewbuntu-core=$pkgver-$pkgrel" 'jewbuntu-skin' 'jewbuntu-icons'
+           'xfce4-session' 'xfwm4' 'xfdesktop' 'xfce4-panel' 'xfce4-settings' 'xfconf'
+           'thunar' 'xfce4-terminal' 'xfce4-docklike-plugin'
+           'inter-font' 'ttf-dejavu' 'hunspell-he'
+           'libxml2-legacy')  # Arch Linux 32's librsvg needs it to draw SVG (see the hook)
+  optdepends=('lightdm-gtk-greeter: Jewbuntu login screen (or use startx with startjewbuntu)'
+              'mousepad: text editor'
+              'zenity: first-login question for accounts that existed before'
+              'noto-fonts: Noto Hebrew fonts (large)')
+  # makepkg reads backup=() without running the function, so the paths are spelled out.
+  backup=('etc/xdg/jewbuntu/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml'
+          'etc/xdg/jewbuntu/xfce4/xfconf/xfce-perchannel-xml/xfwm4.xml'
+          'etc/xdg/jewbuntu/xfce4/xfconf/xfce-perchannel-xml/keyboard-layout.xml'
+          'etc/xdg/jewbuntu/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml'
+          'etc/xdg/jewbuntu/xfce4/xfconf/xfce-perchannel-xml/xfce4-panel.xml'
+          'etc/xdg/jewbuntu/xfce4/xfconf/xfce-perchannel-xml/xfce4-terminal.xml'
+          'etc/xdg/jewbuntu/xfce4/panel/docklike.rc'
+          'etc/xdg/autostart/jewbuntu-skin-prompt.desktop')
+  local x=etc/xdg/jewbuntu/xfce4
+  cd jewbuntu
+  local a=packaging/arch32 f
+  for f in $a/xdg/xfce4/xfconf/xfce-perchannel-xml/*.xml; do
+    install -Dm644 "$f" "$pkgdir/$x/xfconf/xfce-perchannel-xml/$(basename "$f")"
+  done
+  install -Dm644 $a/xdg/xfce4/panel/docklike.rc "$pkgdir/$x/panel/docklike.rc"
+  install -Dm755 $a/startjewbuntu "$pkgdir/usr/bin/startjewbuntu"
+  install -Dm644 $a/jewbuntu.desktop "$pkgdir/usr/share/xsessions/jewbuntu.desktop"
+  install -Dm644 $a/lightdm/50-jewbuntu.conf "$pkgdir/usr/share/lightdm/lightdm.conf.d/50-jewbuntu.conf"
+  install -Dm644 $a/lightdm/50-jewbuntu-greeter.conf "$pkgdir/usr/share/lightdm/lightdm-gtk-greeter.conf.d/50-jewbuntu.conf"
+  install -Dm644 $a/jewbuntu-skin-prompt.desktop "$pkgdir/etc/xdg/autostart/jewbuntu-skin-prompt.desktop"
+  install -Dm644 $a/jewbuntu-pixbuf-loaders.hook "$pkgdir/usr/share/libalpm/hooks/jewbuntu-pixbuf-loaders.hook"
+  install -Dm644 $a/desktop-defaults.json "$pkgdir/usr/share/jewbuntu/desktop-defaults.json"
+  install -Dm644 $a/jewbuntu-menu.svg "$pkgdir/usr/share/jewbuntu/branding/jewbuntu-menu.svg"
+  install -Dm644 packaging/hebrew/65-jewbuntu-hebrew.conf "$pkgdir/usr/share/fontconfig/conf.avail/65-jewbuntu-hebrew.conf"
+  install -d "$pkgdir/etc/fonts/conf.d"
+  ln -s ../../../usr/share/fontconfig/conf.avail/65-jewbuntu-hebrew.conf "$pkgdir/etc/fonts/conf.d/65-jewbuntu-hebrew.conf"
+}

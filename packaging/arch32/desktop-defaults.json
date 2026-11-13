@@ -1,0 +1,20 @@
+{
+  "about": "Arch Linux 32 (Xfce, old 32-bit laptops): the xfconf properties Jewbuntu sets as defaults in the Jewbuntu session (/etc/xdg/jewbuntu/xfce4/xfconf) and 'jewbuntu skin apply' sets for an existing account. schema = xfconf channel, key = property. Values use xfconf-query output formatting.",
+  "backend": "xfconf",
+  "extensions": [],
+  "wallpaper": "/usr/share/backgrounds/Jewbuntu/Jewbuntu-star-blue.jpg",
+  "keys": [
+    {"schema": "xsettings", "key": "/Net/ThemeName", "type": "string", "value": "Jewbuntu-Light-solid", "why": "Jewbuntu Skin for apps (solid: no transparency, which old graphics chips can't draw)"},
+    {"schema": "xsettings", "key": "/Net/IconThemeName", "type": "string", "value": "Jewbuntu-light", "why": "Jewbuntu Icons (light variant: dark status icons, readable on the light top bar)"},
+    {"schema": "xsettings", "key": "/Gtk/FontName", "type": "string", "value": "Inter 10", "why": "Inter font"},
+    {"schema": "xfwm4", "key": "/general/theme", "type": "string", "value": "Jewbuntu-Light-solid", "why": "Jewbuntu window borders"},
+    {"schema": "xfwm4", "key": "/general/button_layout", "type": "string", "value": "CHM|", "why": "Mac-style window buttons on the left"},
+    {"schema": "xfwm4", "key": "/general/title_alignment", "type": "string", "value": "center", "why": "Centred window titles"},
+    {"schema": "xfwm4", "key": "/general/title_font", "type": "string", "value": "Inter Semi-Bold 10", "why": "Inter font in window titles"},
+    {"schema": "xfwm4", "key": "/general/placement_mode", "type": "string", "value": "center", "why": "Open new windows centred"},
+    {"schema": "xfwm4", "key": "/general/use_compositing", "type": "bool", "value": "false", "why": "No compositing (faster on old hardware)"},
+    {"schema": "keyboard-layout", "key": "/Default/XkbDisable", "type": "bool", "value": "false", "why": "Use the Xfce keyboard list (English and Hebrew)"},
+    {"schema": "keyboard-layout", "key": "/Default/XkbLayout", "type": "string", "value": "us,il", "why": "Hebrew keyboard added (your layouts are kept)"},
+    {"schema": "keyboard-layout", "key": "/Default/XkbOptions/Group", "type": "string", "value": "grp:win_space_toggle", "why": "Super+Space switches keyboards"}
+  ]
+}

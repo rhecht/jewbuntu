@@ -237,6 +237,26 @@ Web Server (LAMP) app with its setup.
     doesn't fit a new version, the desktop must fall back to stock GNOME cleanly, never break.
     Test each Fedora release before it's offered.
 
+## Old 32-bit laptops: Arch Linux 32 + Xfce port (started 2026-11-12)
+
+Owner's goal: run Jewbuntu on a 25-year-old laptop, hence Arch. Their laptop is a Pentium III with
+256 MB. Official Arch has been x86_64-only since 2017 and GNOME can't run on that hardware, so the
+base is **Arch Linux 32 (i686)** with **Xfce 4.18** on X11. Install steps and workarounds: docs/arch32.md.
+
+| Item | State | Test status |
+| --- | --- | --- |
+| Packages `jewbuntu-skin` (solid GTK2/3/4 + xfwm4, wallpapers 1400x1050 JPEG), `jewbuntu-icons`, `jewbuntu-core`, `jewbuntu-xfce-desktop`, all arch=any, no install scripts (`packaging/arch32/`, `ci/arch32-build.sh`) | Implemented | Build Auto-verified in an i686 container (unit tests run in `check()`) |
+| "Jewbuntu" session (`startjewbuntu`): defaults in `/etc/xdg/jewbuntu` via XDG_CONFIG_DIRS, merged over Xfce's by xfconf; stock "Xfce Session" untouched | Implemented | Auto-verified in container |
+| `jewbuntu skin apply/undo` on Xfce (xfconf backend in `desktop_defaults.py`; Hebrew appended to existing layouts, per-monitor wallpaper) | Implemented | Auto-verified against a real xfconfd, in both sessions |
+| Panels: slim top bar + Docklike dock for new accounts; xfce4-terminal colours from `Jewbuntu.palette` | Implemented | Auto-verified in a real Xfce session on Xvfb, 39 checks ALL PASS (docs/test-results/2026-11-13-arch32-container.log, screenshot -xfce.png). The wallpaper is set correctly but takes about 2+ minutes to draw under emulation: it showed in one run and not in the saved screenshot. Check it in the VM |
+| LightDM: Jewbuntu default session and greeter theme via drop-in folders | Implemented | Real greeter Auto-verified in the Pentium III VM (docs/test-results/2026-11-13-arch32-p3vm-greeter.png); LightDM started the Jewbuntu session. The greeter's dark button strip under a light card breaks the one-colour rule (greeter's own styling, open) |
+| Arch Linux 32 breakage: pango 1.58.2 vs fontconfig 2.14.1 stops every GTK program | Workaround documented (hold pango 1:1.54.0 from their signed archive) | Verified in container; Arch Linux 32 not yet told (owner's call) |
+| Arch Linux 32 breakage: librsvg/imagemagick linked to libxml2.so.2 (no SVG at all) | Handled: dependency on `libxml2-legacy` + `jewbuntu-pixbuf-loaders.hook` | Auto-verified (SVG loader registered after a plain install; icons draw) |
+| Pentium III / 256 MB (UTM VM: `ci/arch32-vm-image.sh`, `ci/arch32-utm.sh`, `ci/arch32-serial.py`) | Tested emulated | Pentium III Katmai, no SSE2, 228 MB: boots to login in 46 s, full Jewbuntu desktop, idle 125 MB used / 102 MB available (docs/test-results/2026-11-13-arch32-p3vm.md). **Not tested:** the real laptop, its graphics driver, 16-bit colour, battery/suspend |
+| Top-bar status icons invisible (Jewbuntu icons are white for GNOME's dark bar) | Fixed: Xfce and greeter default to Jewbuntu-light | Confirmed live in the VM; rebuilt package not yet reinstalled there |
+| ShulGo Xfce tray (Python + GTK3, rhecht/shulgo-widgets `shulgo-xfce/` d121217, by the ShulGo session) | First run done in the Pentium III VM | `--check` OK, tray icon and menu appear (icon needs its packaged hicolor file), 43 MB RSS / 24 MB PSS; no data tested (no API key). No tag or licence yet |
+| Publishing (AUR or a pacman repo) | Not started | n/a |
+
 ## Blockers / needs from Rafi
 
 - **VM host**: the installed VMware Fusion 12.2.0 is Intel-only and cannot run VMs on the M1. Install UTM (or Fusion 13+) for an arm64 VM. Say which OS the HP runs, to decide whether it can host the amd64 VM.

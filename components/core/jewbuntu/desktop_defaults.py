@@ -13,6 +13,11 @@ Two layers:
 
 Keyboard sources are merged, never replaced: Hebrew is appended to whatever
 layouts the user already has.
+
+Two settings backends, chosen by the distro's desktop-defaults.json ("backend"):
+GNOME's gsettings (Ubuntu, Fedora Asahi Remix; the default) and Xfce's xfconf
+(Arch Linux 32 on old 32-bit laptops). Rows always use "schema"/"key": for
+xfconf they hold the channel and the property path.
 """
 
 import ast
@@ -44,12 +49,98 @@ def load_manifest():
 
 
 def skin_extensions():
-    """Extensions the skin enables: the manifest's "extensions" list, else the Ubuntu list."""
+    """Extensions the skin enables: the manifest's "extensions" list, else the Ubuntu list.
+
+    An empty list (Xfce has no GNOME Shell extensions) means none.
+    """
     try:
         listed = _manifest().get("extensions")
     except (OSError, ValueError):
         listed = None
-    return list(listed) if listed else list(SKIN_EXTENSIONS)
+    return list(listed) if listed is not None else list(SKIN_EXTENSIONS)
+
+
+def backend():
+    """'gsettings' (GNOME) or 'xfconf' (Xfce), from the distro's manifest."""
+    try:
+        return _manifest().get("backend", "gsettings")
+    except (OSError, ValueError):
+        return "gsettings"
+
+
+def _xfconf(*args):
+    """xfconf-query; returns its output, or None if the property is unset or xfconf is missing."""
+    if not shutil.which("xfconf-query"):
+        return None
+    try:
+        res = subprocess.run(["xfconf-query", *args], capture_output=True, text=True, timeout=10)
+    except (OSError, subprocess.SubprocessError):
+        return None
+    return res.stdout.rstrip("\n") if res.returncode == 0 else None
+
+
+def _xfconf_available():
+    return shutil.which("xfconf-query") is not None
+
+
+# Per-backend get/set/reset. Values are text: GVariant form for gsettings, xfconf-query's
+# output form for xfconf (strings unquoted, booleans true/false).
+def _get(schema, key):
+    if backend() == "xfconf":
+        return _xfconf("-c", schema, "-p", key)
+    return _gsettings("get", schema, key)
+
+
+def _set(schema, key, value, kind="string"):
+    if backend() == "xfconf":
+        if value is None:
+            return _xfconf("-c", schema, "-p", key, "-r")
+        return _xfconf("-c", schema, "-p", key, "-n", "-t", kind, "-s", value)
+    return _gsettings("set", schema, key, value)
+
+
+def _reset(schema, key):
+    if backend() == "xfconf":
+        return _xfconf("-c", schema, "-p", key, "-r")
+    return _gsettings("reset", schema, key)
+
+
+def _installed(current):
+    """Whether the setting exists. xfconf properties can be unset and still settable."""
+    return current is not None or (backend() == "xfconf" and _xfconf_available())
+
+
+# Keyboard: Hebrew is appended, never replacing the user's layouts.
+XKB_LAYOUT = ("keyboard-layout", "/Default/XkbLayout")
+XKB_VARIANT = ("keyboard-layout", "/Default/XkbVariant")
+
+
+def _is_keyboard(schema, key):
+    return (schema, key) in (INPUT_SOURCES, XKB_LAYOUT)
+
+
+def _has_hebrew(current):
+    if backend() == "xfconf":
+        return current is not None and HEBREW[1] in [x.strip() for x in current.split(",")]
+    return current is not None and HEBREW in _parse_sources(current)
+
+
+def _add_hebrew(current, dry_run=False):
+    """Append Hebrew to the current layouts; returns the new value."""
+    if backend() == "xfconf":
+        layouts = [x.strip() for x in (current or "").split(",") if x.strip()] or ["us"]
+        new = ",".join(layouts + [HEBREW[1]])
+        if not dry_run:
+            # Xfce keeps one variant per layout (comma separated); keep them lined up.
+            variants = (_get(*XKB_VARIANT) or "").split(",") if current else []
+            variants = (variants + [""] * len(layouts))[:len(layouts)] + [""]
+            _set(*XKB_VARIANT, ",".join(variants))
+            _set(*XKB_LAYOUT, new)
+        return new
+    new = _format_sources(_parse_sources(current) + [HEBREW])
+    if not dry_run:
+        _gsettings("set", *INPUT_SOURCES, new)
+    return new
 
 
 def _gsettings(*args):
@@ -93,12 +184,12 @@ def status():
     rows = []
     for item in load_manifest():
         schema, key = item["schema"], item["key"]
-        current = _gsettings("get", schema, key)
-        if (schema, key) == INPUT_SOURCES:
-            matches = current is not None and HEBREW in _parse_sources(current)
+        current = _get(schema, key)
+        if _is_keyboard(schema, key):
+            matches = _has_hebrew(current)
         else:
             matches = _same(current, item["value"])
-        rows.append({**item, "current": current, "schema_installed": current is not None, "matches_jewbuntu": matches})
+        rows.append({**item, "current": current, "schema_installed": _installed(current), "matches_jewbuntu": matches})
     return rows
 
 
@@ -108,18 +199,16 @@ def restore(dry_run=False):
     for row in status():
         if not row["schema_installed"] or row["matches_jewbuntu"]:
             continue
-        if (row["schema"], row["key"]) == INPUT_SOURCES:
-            new = _format_sources(_parse_sources(row["current"]) + [HEBREW])
-            if not dry_run:
-                _gsettings("set", row["schema"], row["key"], new)
+        if _is_keyboard(row["schema"], row["key"]):
+            new = _add_hebrew(row["current"], dry_run)
             changed.append(f"{row['schema']} {row['key']}: {row['current']} -> {new}")
         else:
             if not dry_run:
-                _gsettings("reset", row["schema"], row["key"])
-                # A distro's own dconf defaults (e.g. /etc/dconf/db/distro.d) outrank our
-                # gschema override, so a reset can land on their value; then set ours.
-                if not _same(_gsettings("get", row["schema"], row["key"]), row["value"]):
-                    _gsettings("set", row["schema"], row["key"], row["value"])
+                _reset(row["schema"], row["key"])
+                # A distro's own defaults (e.g. /etc/dconf/db/distro.d), or an Xfce session
+                # started without Jewbuntu's defaults, can win after a reset; then set ours.
+                if not _same(_get(row["schema"], row["key"]), row["value"]):
+                    _set(row["schema"], row["key"], row["value"], row.get("type", "string"))
             changed.append(f"{row['schema']} {row['key']}: {row['current']} -> {row['value']}")
     return changed
 
@@ -135,9 +224,12 @@ def extension_state(uuid=None):
     """'enabled', 'disabled' or 'missing' (all skin extensions when uuid is None: worst state wins).
 
     Uses installed files and the enabled-extensions key rather than asking the running
-    shell, so it also works over SSH and before the shell has rescanned.
+    shell, so it also works over SSH and before the shell has rescanned. 'enabled' when
+    the desktop needs no extensions (Xfce).
     """
     uuids = [uuid] if uuid else skin_extensions()
+    if not uuids:
+        return "enabled"
     enabled = _parse_list(_gsettings("get", "org.gnome.shell", "enabled-extensions"))
     states = []
     for u in uuids:
@@ -246,6 +338,28 @@ def _libadwaita_undo(state):
     return "libadwaita apps: previous ~/.config/gtk-4.0 files restored"
 
 
+# --- Xfce wallpaper ------------------------------------------------------------------
+
+def _wallpaper():
+    try:
+        return _manifest().get("wallpaper")
+    except (OSError, ValueError):
+        return None
+
+
+def _xfdesktop_image_props():
+    """This account's xfdesktop wallpaper properties (one per monitor and workspace)."""
+    out = _xfconf("-c", "xfce4-desktop", "-l") or ""
+    return [p for p in out.splitlines() if p.startswith("/backdrop/") and p.endswith("/last-image")]
+
+
+def _wallpaper_pending():
+    wall = _wallpaper()
+    if backend() != "xfconf" or not wall:
+        return []
+    return [p for p in _xfdesktop_image_props() if _xfconf("-c", "xfce4-desktop", "-p", p) != wall]
+
+
 # --- skin apply / undo -------------------------------------------------------------
 
 def _state_file():
@@ -270,6 +384,8 @@ def _write_state(state):
 def pending_changes():
     """What apply_skin() would change for this user (empty list = already Jewbuntu)."""
     changes = [f"{r['why']}" for r in status() if r["schema_installed"] and not r["matches_jewbuntu"]]
+    if _wallpaper_pending():
+        changes.append("Jewbuntu wallpaper on every monitor and workspace")
     if extension_state() == "disabled":
         changes.append("Glass dock and top bar (Blur my Shell) and the Jewbuntu shell theme (User Themes)")
     if SKIN_THEME_DIR.is_dir() and not libadwaita_applied():
@@ -282,10 +398,18 @@ def apply_skin():
     if "backup" not in state:  # keep the *original* pre-Jewbuntu values across re-applies
         state["backup"] = {
             "taken": time.strftime("%Y-%m-%dT%H:%M:%S%z"),
-            "keys": [{"schema": r["schema"], "key": r["key"], "value": r["current"]} for r in status() if r["schema_installed"]],
+            "keys": [{"schema": r["schema"], "key": r["key"], "value": r["current"], "type": r.get("type", "string")}
+                     for r in status() if r["schema_installed"]],
+            "xkb_variant": _get(*XKB_VARIANT) if backend() == "xfconf" else None,
             "extensions_enabled_before": [u for u in skin_extensions() if extension_state(u) == "enabled"],
+            "wallpapers": {p: _xfconf("-c", "xfce4-desktop", "-p", p) for p in _wallpaper_pending()},
         }
     changed = restore()
+    walls = _wallpaper_pending()
+    for p in walls:
+        _xfconf("-c", "xfce4-desktop", "-p", p, "-n", "-t", "string", "-s", _wallpaper())
+    if walls:
+        changed.append(f"wallpaper set on {len(walls)} monitor/workspace slot(s)")
     to_enable = [u for u in skin_extensions() if extension_state(u) == "disabled"]
     if to_enable:
         _set_extensions(to_enable, True)
@@ -304,10 +428,19 @@ def undo_skin():
     if not backup:
         return ["nothing to undo: the skin was never applied for this user"]
     changed = []
+    xfce = backend() == "xfconf"
     for item in backup["keys"]:
         if item["value"] is not None:
-            _gsettings("set", item["schema"], item["key"], item["value"])
+            _set(item["schema"], item["key"], item["value"], item.get("type", "string"))
             changed.append(f"{item['schema']} {item['key']} -> {item['value']}")
+        elif xfce:  # was unset before apply: unset it again (back to the session's default)
+            _reset(item["schema"], item["key"])
+            changed.append(f"{item['schema']} {item['key']} -> (default)")
+        if xfce and (item["schema"], item["key"]) == XKB_LAYOUT:
+            _set(*XKB_VARIANT, backup.get("xkb_variant"))
+    for prop, value in backup.get("wallpapers", {}).items():
+        _xfconf("-c", "xfce4-desktop", "-p", prop, "-n", "-t", "string", "-s", value) if value else _xfconf("-c", "xfce4-desktop", "-p", prop, "-r")
+        changed.append(f"xfce4-desktop {prop} -> {value}")
     was = set(backup.get("extensions_enabled_before", []))
     off = [u for u in skin_extensions() if u not in was]
     if off:

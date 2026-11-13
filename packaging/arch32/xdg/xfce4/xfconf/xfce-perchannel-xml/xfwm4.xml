@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Jewbuntu window defaults: Mac-style buttons on the left, centred titles and windows.
+     Compositing off: a 2001-era laptop has no GPU for it, and the solid skin needs none. -->
+<channel name="xfwm4" version="1.0">
+  <property name="general" type="empty">
+    <property name="theme" type="string" value="Jewbuntu-Light-solid"/>
+    <property name="button_layout" type="string" value="CHM|"/>
+    <property name="title_alignment" type="string" value="center"/>
+    <property name="title_font" type="string" value="Inter Semi-Bold 10"/>
+    <property name="placement_mode" type="string" value="center"/>
+    <property name="use_compositing" type="bool" value="false"/>
+  </property>
+</channel>

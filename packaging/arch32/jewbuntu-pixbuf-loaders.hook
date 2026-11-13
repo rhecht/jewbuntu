@@ -1,0 +1,15 @@
+# Arch Linux 32 workaround (2026-11): its librsvg's image loader still links libxml2.so.2,
+# which only libxml2-legacy provides. Without that loader GTK can't draw any SVG, and every
+# Jewbuntu icon is SVG. Arch's own gdk-pixbuf hook runs only when the loaders folder changes,
+# so refresh the loader cache when libxml2-legacy or this package is installed or upgraded.
+[Trigger]
+Type = Path
+Operation = Install
+Operation = Upgrade
+Target = usr/lib/libxml2.so.2*
+Target = usr/share/jewbuntu/desktop-defaults.json
+
+[Action]
+Description = Refreshing image loaders so SVG icons draw (Jewbuntu)...
+When = PostTransaction
+Exec = /usr/bin/gdk-pixbuf-query-loaders --update-cache

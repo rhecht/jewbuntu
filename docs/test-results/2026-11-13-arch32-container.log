@@ -1,0 +1,66 @@
+INFO: Arch Linux 32 workaround in place: pango 1:1.54.0-1.0 held (IgnorePkg = pango), fontconfig 2:2.14.1-2.0
+i686 "Arch Linux 32" / xfce4-session 4.18.4-3.0 xfconf 4.20.0-2.0 xfwm4 4.18.0-4.0 python 3.11.8-1.1 
+stock Xfce: theme=Adwaita buttons=unset
+== install
+jewbuntu-skin 0.1.0git20261113.2-1
+jewbuntu-icons 0.1.0git20261111-1
+jewbuntu-core 0.1.0m1.28-1
+jewbuntu-xfce-desktop 0.1.0m1.28-1
+PASS: installed with Arch Linux 32's own packages (pacman refuses files owned by other packages)
+PASS: no install scripts (pacman hooks rebuild icon, font and desktop caches)
+PASS: no Conflicts/Replaces
+PASS: all four packages are arch=any
+INFO: jewbuntu-skin 4.17 MiB
+INFO: jewbuntu-icons 61.58 MiB
+INFO: jewbuntu-core 149.45 KiB
+INFO: jewbuntu-xfce-desktop 29.22 KiB
+PASS: nothing in Xfce's or LightDM's own config directories
+PASS: skin (GTK2/3, xfwm4), icons, wallpaper present
+PASS: wallpaper scaled to 1400x1050 JPEG
+PASS: SVG image loader registered (libxml2-legacy + Jewbuntu's loader hook)
+PASS: jewbuntu CLI precompiled
+Jewbuntu 0.1.0~m1.28 (settings schema 2)
+== defaults
+PASS: all 12 Jewbuntu defaults active for a new account in the Jewbuntu session (after install)
+PASS: Jewbuntu wallpaper (after install)
+PASS: Xfce's own defaults still apply where Jewbuntu sets none (/Gdk/WindowScalingFactor=1)
+PASS: stock Xfce session untouched (theme Adwaita)
+== existing account in the stock Xfce session: apply / undo (real xfconfd)
+PASS: apply set the skin, left-side buttons, wallpaper, and appended Hebrew to the German keyboard
+PASS: undo restored keyboard, wallpaper and theme
+== existing account in the Jewbuntu session: own choice reset to Jewbuntu default, undo returns it
+PASS: Jewbuntu session apply/undo
+== LightDM
+A  user-session=jewbuntu
+PASS: LightDM default session is Jewbuntu (from /usr/share/lightdm/lightdm.conf.d)
+PASS: greeter reads lightdm-gtk-greeter.conf.d (Jewbuntu theme, icons, wallpaper)
+== real Xfce session (startjewbuntu on Xvfb 1024x768x24)
+PASS: xfwm4, xfce4-panel and xfdesktop running (xfce4-session 4.18.4 (Xfce 4.20))
+INFO: session XDG_CONFIG_DIRS=/etc/xdg/jewbuntu:/etc/xdg
+PASS: window manager is Xfwm4
+PASS: running session: xfwm4 /general/theme = Jewbuntu-Light-solid
+PASS: running session: xsettings /Net/ThemeName = Jewbuntu-Light-solid
+PASS: running session: xsettings /Net/IconThemeName = Jewbuntu
+PASS: running session: xfwm4 /general/button_layout = CHM|
+PASS: running session: xfwm4 /general/use_compositing = false
+PASS: running session: xfce4-terminal /color-background = #ffffff
+PASS: running session: xfce4-terminal /color-cursor = #0088ff
+PASS: Jewbuntu panels (top bar and Docklike dock) configured without the first-run panel question
+INFO: Docklike runs in its own wrapper process
+PASS: no panel plugin load errors
+PASS: keyboard layouts us,il applied by xfsettingsd
+INFO: wallpaper slots xfdesktop uses: /backdrop/screen0/monitor0/workspace0/last-image=/usr/share/backgrounds/Jewbuntu/Jewbuntu-star-blue.jpg /backdrop/screen0/monitor0/workspace1/last-image=/usr/share/backgrounds/Jewbuntu/Jewbuntu-star-blue.jpg /backdrop/screen0/monitor0/workspace2/last-image=/usr/share/backgrounds/Jewbuntu/Jewbuntu-star-blue.jpg /backdrop/screen0/monitor0/workspace3/last-image=/usr/share/backgrounds/Jewbuntu/Jewbuntu-star-blue.jpg /backdrop/screen0/monitorLVDS-0/workspace0/last-image=/usr/share/backgrounds/Jewbuntu/Jewbuntu-star-blue.jpg /backdrop/screen0/monitorLVDS-0/workspace1/last-image=/usr/share/backgrounds/Jewbuntu/Jewbuntu-star-blue.jpg /backdrop/screen0/monitorLVDS-0/workspace2/last-image=/usr/share/backgrounds/Jewbuntu/Jewbuntu-star-blue.jpg /backdrop/screen0/monitorLVDS-0/workspace3/last-image=/usr/share/backgrounds/Jewbuntu/Jewbuntu-star-blue.jpg /backdrop/screen0/monitorLVDS-1/workspace0/last-image=/usr/share/backgrounds/Jewbuntu/Jewbuntu-star-blue.jpg /backdrop/screen0/monitorLVDS-1/workspace1/last-image=/usr/share/backgrounds/Jewbuntu/Jewbuntu-star-blue.jpg /backdrop/screen0/monitorLVDS-1/workspace2/last-image=/usr/share/backgrounds/Jewbuntu/Jewbuntu-star-blue.jpg /backdrop/screen0/monitorLVDS-1/workspace3/last-image=/usr/share/backgrounds/Jewbuntu/Jewbuntu-star-blue.jpg /backdrop/screen0/monitorLVDS/workspace0/last-image=/usr/share/backgrounds/Jewbuntu/Jewbuntu-star-blue.jpg /backdrop/screen0/monitorLVDS/workspace1/last-image=/usr/share/backgrounds/Jewbuntu/Jewbuntu-star-blue.jpg /backdrop/screen0/monitorLVDS/workspace2/last-image=/usr/share/backgrounds/Jewbuntu/Jewbuntu-star-blue.jpg /backdrop/screen0/monitorLVDS/workspace3/last-image=/usr/share/backgrounds/Jewbuntu/Jewbuntu-star-blue.jpg /backdrop/screen0/monitorLVDS1/workspace0/last-image=/usr/share/backgrounds/Jewbuntu/Jewbuntu-star-blue.jpg /backdrop/screen0/monitorLVDS1/workspace1/last-image=/usr/share/backgrounds/Jewbuntu/Jewbuntu-star-blue.jpg /backdrop/screen0/monitorLVDS1/workspace2/last-image=/usr/share/backgrounds/Jewbuntu/Jewbuntu-star-blue.jpg /backdrop/screen0/monitorLVDS1/workspace3/last-image=/usr/share/backgrounds/Jewbuntu/Jewbuntu-star-blue.jpg /backdrop/screen0/monitorVGA-0/workspace0/last-image=/usr/share/backgrounds/Jewbuntu/Jewbuntu-star-blue.jpg /backdrop/screen0/monitorVGA-0/workspace1/last-image=/usr/share/backgrounds/Jewbuntu/Jewbuntu-star-blue.jpg /backdrop/screen0/monitorVGA-0/workspace2/last-image=/usr/share/backgrounds/Jewbuntu/Jewbuntu-star-blue.jpg /backdrop/screen0/monitorVGA-0/workspace3/last-image=/usr/share/backgrounds/Jewbuntu/Jewbuntu-star-blue.jpg /backdrop/screen0/monitorVGA-1/workspace0/last-image=/usr/share/backgrounds/Jewbuntu/Jewbuntu-star-blue.jpg /backdrop/screen0/monitorVGA-1/workspace1/last-image=/usr/share/backgrounds/Jewbuntu/Jewbuntu-star-blue.jpg /backdrop/screen0/monitorVGA-1/workspace2/last-image=/usr/share/backgrounds/Jewbuntu/Jewbuntu-star-blue.jpg /backdrop/screen0/monitorVGA-1/workspace3/last-image=/usr/share/backgrounds/Jewbuntu/Jewbuntu-star-blue.jpg /backdrop/screen0/monitorVGA/workspace0/last-image=/usr/share/backgrounds/Jewbuntu/Jewbuntu-star-blue.jpg /backdrop/screen0/monitorVGA/workspace1/last-image=/usr/share/backgrounds/Jewbuntu/Jewbuntu-star-blue.jpg /backdrop/screen0/monitorVGA/workspace2/last-image=/usr/share/backgrounds/Jewbuntu/Jewbuntu-star-blue.jpg /backdrop/screen0/monitorVGA/workspace3/last-image=/usr/share/backgrounds/Jewbuntu/Jewbuntu-star-blue.jpg /backdrop/screen0/monitorVGA1/workspace0/last-image=/usr/share/backgrounds/Jewbuntu/Jewbuntu-star-blue.jpg /backdrop/screen0/monitorVGA1/workspace1/last-image=/usr/share/backgrounds/Jewbuntu/Jewbuntu-star-blue.jpg /backdrop/screen0/monitorVGA1/workspace2/last-image=/usr/share/backgrounds/Jewbuntu/Jewbuntu-star-blue.jpg /backdrop/screen0/monitorVGA1/workspace3/last-image=/usr/share/backgrounds/Jewbuntu/Jewbuntu-star-blue.jpg /backdrop/screen0/monitorVirtual-1/workspace0/last-image=/usr/share/backgrounds/Jewbuntu/Jewbuntu-star-blue.jpg /backdrop/screen0/monitorVirtual-1/workspace1/last-image=/usr/share/backgrounds/Jewbuntu/Jewbuntu-star-blue.jpg /backdrop/screen0/monitorVirtual-1/workspace2/last-image=/usr/share/backgrounds/Jewbuntu/Jewbuntu-star-blue.jpg /backdrop/screen0/monitorVirtual-1/workspace3/last-image=/usr/share/backgrounds/Jewbuntu/Jewbuntu-star-blue.jpg /backdrop/screen0/monitorVirtual1/workspace0/last-image=/usr/share/backgrounds/Jewbuntu/Jewbuntu-star-blue.jpg /backdrop/screen0/monitorVirtual1/workspace1/last-image=/usr/share/backgrounds/Jewbuntu/Jewbuntu-star-blue.jpg /backdrop/screen0/monitorVirtual1/workspace2/last-image=/usr/share/backgrounds/Jewbuntu/Jewbuntu-star-blue.jpg /backdrop/screen0/monitorVirtual1/workspace3/last-image=/usr/share/backgrounds/Jewbuntu/Jewbuntu-star-blue.jpg /backdrop/screen0/monitordefault/workspace0/last-image=/usr/share/backgrounds/Jewbuntu/Jewbuntu-star-blue.jpg /backdrop/screen0/monitordefault/workspace1/last-image=/usr/share/backgrounds/Jewbuntu/Jewbuntu-star-blue.jpg /backdrop/screen0/monitordefault/workspace2/last-image=/usr/share/backgrounds/Jewbuntu/Jewbuntu-star-blue.jpg /backdrop/screen0/monitordefault/workspace3/last-image=/usr/share/backgrounds/Jewbuntu/Jewbuntu-star-blue.jpg /backdrop/screen0/monitorscreen/workspace0/last-image=/usr/share/backgrounds/Jewbuntu/Jewbuntu-star-blue.jpg /backdrop/screen0/monitorscreen/workspace1/last-image=/usr/share/backgrounds/Jewbuntu/Jewbuntu-star-blue.jpg /backdrop/screen0/monitorscreen/workspace2/last-image=/usr/share/backgrounds/Jewbuntu/Jewbuntu-star-blue.jpg /backdrop/screen0/monitorscreen/workspace3/last-image=/usr/share/backgrounds/Jewbuntu/Jewbuntu-star-blue.jpg 
+PASS: dock copied the Jewbuntu pinned apps: thunar;xfce4-terminal;xfce-settings-manager;
+INFO: screenshot /tmp/arch32-xfce.png
+== Arch update of Xfce and LightDM (reinstall = same file writes and hooks)
+PASS: Jewbuntu files unchanged (pacman -Qkk clean)
+PASS: all 12 Jewbuntu defaults active for a new account in the Jewbuntu session (after the update)
+PASS: Jewbuntu wallpaper (after the update)
+== remove jewbuntu-xfce-desktop: Xfce's defaults come back
+PASS: theme default back to Xfce's
+PASS: Jewbuntu session and defaults gone
+PASS: per-user Jewbuntu data kept
+== remove everything
+PASS: nothing left behind
+PASS: per-user data still kept after full removal
+ALL PASS

@@ -1,0 +1,30 @@
+# Jewbuntu Icons for Arch Linux 32. Built by ci/arch32-build.sh from a git archive of
+# github.com/rhecht/jewbuntu-icons (cloned inside Linux: the repo has case-only file name
+# pairs a macOS checkout cannot hold). Arch's gtk-update-icon-cache hook builds the cache.
+pkgname=jewbuntu-icons
+pkgver=${JB_VERSION:-0.1.0}
+pkgrel=1
+pkgdesc="Jewbuntu Icons - Mac-inspired icon theme"
+arch=('any')
+url="https://github.com/rhecht/jewbuntu-icons"
+license=('GPL-3.0-or-later')
+depends=('librsvg')
+makedepends=('bash' 'gtk-update-icon-cache' 'findutils')
+source=("jewbuntu-icons.tar.gz")
+sha256sums=('SKIP')
+
+build() {
+  cd jewbuntu-icons
+  rm -rf "$srcdir/stage-icons"; mkdir -p "$srcdir/stage-icons"
+  TERM=xterm bash ./install.sh -d "$srcdir/stage-icons"
+  find "$srcdir/stage-icons" -name icon-theme.cache -delete
+  test -e "$srcdir/stage-icons/Jewbuntu/apps/scalable/org.gnome.Nautilus.svg"
+}
+
+package() {
+  cd jewbuntu-icons
+  install -d "$pkgdir/usr/share/icons"
+  cp -a "$srcdir/stage-icons/." "$pkgdir/usr/share/icons/"
+  install -Dm644 COPYING "$pkgdir/usr/share/licenses/$pkgname/COPYING"
+  install -Dm644 README.md "$pkgdir/usr/share/doc/$pkgname/README.md"
+}

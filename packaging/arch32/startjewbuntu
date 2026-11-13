@@ -1,0 +1,15 @@
+#!/bin/sh
+# Jewbuntu session: Xfce with Jewbuntu's defaults (/etc/xdg/jewbuntu) layered in front of
+# Xfce's own. The stock "Xfce Session" is left untouched, so choosing it at login (or
+# removing jewbuntu-xfce-desktop) gives plain Xfce back.
+# Without a display manager, put `exec startjewbuntu` in ~/.xinitrc and run startx.
+case ":${XDG_CONFIG_DIRS:-}:" in
+  *:/etc/xdg/jewbuntu:*) ;;
+  *) XDG_CONFIG_DIRS="/etc/xdg/jewbuntu${XDG_CONFIG_DIRS:+:$XDG_CONFIG_DIRS}" ;;
+esac
+export XDG_CONFIG_DIRS
+# D-Bus starts xfconfd on demand: give it (and systemd user services) the same directories.
+if command -v dbus-update-activation-environment >/dev/null 2>&1 && [ -n "${DBUS_SESSION_BUS_ADDRESS:-}" ]; then
+  dbus-update-activation-environment --systemd XDG_CONFIG_DIRS >/dev/null 2>&1 || true
+fi
+exec startxfce4 "$@"

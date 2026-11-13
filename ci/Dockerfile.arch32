@@ -1,0 +1,28 @@
+# Arch Linux 32 (i686) build and test environments for the Xfce port (old 32-bit laptops).
+# BASE comes from ci/arch32-rootfs.sh (Arch Linux 32 publishes no container image). i686
+# binaries run under Docker Desktop's qemu binfmt handler, so this is slow but real i686.
+#   build: makepkg + the theme build tools      test: Xfce 4.18, LightDM greeter, Xvfb
+ARG BASE=jewbuntu-arch32-base:latest
+FROM ${BASE} AS build
+RUN systemd-sysusers >/dev/null 2>&1; ok=0; for i in 1 2 3; do \
+      pacman -Syu --noconfirm --needed --noprogressbar base-devel git python sassc glib2 libxml2 \
+        python-gobject gdk-pixbuf2 gtk-update-icon-cache findutils >/tmp/p.log 2>&1 && { ok=1; break; }; sleep 5; done; \
+    [ "$ok" = 1 ] || { tail -20 /tmp/p.log; exit 1; }; pacman -Scc --noconfirm >/dev/null
+RUN useradd -m b
+
+FROM ${BASE} AS test
+RUN systemd-sysusers >/dev/null 2>&1; ok=0; for i in 1 2 3; do \
+      pacman -Syu --noconfirm --needed --noprogressbar xfce4-session xfwm4 xfdesktop xfce4-panel \
+        xfce4-settings xfconf thunar xfce4-terminal xfce4-docklike-plugin inter-font ttf-dejavu \
+        hunspell-he gtk-engine-murrine librsvg python lightdm lightdm-gtk-greeter dbus procps-ng \
+        xorg-server-xvfb xorg-xwd xorg-xprop xorg-xdpyinfo xorg-setxkbmap file >/tmp/p.log 2>&1 && { ok=1; break; }; sleep 5; done; \
+    [ "$ok" = 1 ] || { tail -20 /tmp/p.log; exit 1; }; pacman -Scc --noconfirm >/dev/null
+# Required install step on Arch Linux 32 i686 as of 2026-11 (docs/arch32.md): its pango
+# 1:1.58.2 needs a newer fontconfig than the repo's 2.14.1, so every GTK program (xfwm4,
+# xfce4-panel, thunar) fails with "symbol lookup error". Hold the last working pango from
+# Arch Linux 32's own signed archive until fontconfig is rebuilt.
+RUN pacman -U --noconfirm --noprogressbar \
+      https://archive.archlinux32.org/packages/p/pango/pango-1:1.54.0-1.0-i686.pkg.tar.zst >/dev/null \
+    && sed -i 's/^\[options\]$/[options]\nIgnorePkg = pango/' /etc/pacman.conf && pacman -Scc --noconfirm >/dev/null \
+    && ! xfwm4 --version 2>&1 | grep -q "symbol lookup error"
+RUN useradd -m t

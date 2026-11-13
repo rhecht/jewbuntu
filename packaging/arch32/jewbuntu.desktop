@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Jewbuntu
+Comment=Xfce with the Jewbuntu look
+Exec=/usr/bin/startjewbuntu
+TryExec=/usr/bin/startxfce4
+DesktopNames=XFCE

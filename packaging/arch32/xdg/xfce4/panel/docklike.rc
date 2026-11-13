@@ -1,0 +1,4 @@
+# Docklike's distribution default (read from XDG_CONFIG_DIRS/xfce4/panel/docklike.rc when an
+# account has no dock settings yet). Only apps jewbuntu-xfce-desktop depends on.
+[user]
+pinned=/usr/share/applications/thunar.desktop;/usr/share/applications/xfce4-terminal.desktop;/usr/share/applications/xfce-settings-manager.desktop;

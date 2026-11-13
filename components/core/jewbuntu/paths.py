@@ -62,6 +62,9 @@ def share_path(*parts):
         return installed
     repo_root = Path(__file__).resolve().parents[3]
     candidates = [repo_root.joinpath(*parts), repo_root / "profiles" / parts[-1]]
+    # Ubuntu's copy first: other distros (packaging/arch32, packaging/fedora) ship their own
+    # file of the same name, installed under SHARE_DIR, and tests select them explicitly.
+    candidates.append(repo_root / "packaging" / "desktop" / parts[-1])
     candidates += sorted((repo_root / "packaging").glob(f"*/{parts[-1]}"))
     for candidate in candidates:
         if candidate.exists():

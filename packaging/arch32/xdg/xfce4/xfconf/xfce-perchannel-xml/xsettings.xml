@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Jewbuntu defaults (Xfce on Arch Linux 32). Read only in the Jewbuntu session, where
+     /etc/xdg/jewbuntu comes first in XDG_CONFIG_DIRS; xfconf merges these properties over
+     Xfce's own, and anything a user sets wins. Keep in sync with desktop-defaults.json. -->
+<channel name="xsettings" version="1.0">
+  <property name="Net" type="empty">
+    <property name="ThemeName" type="string" value="Jewbuntu-Light-solid"/>
+    <!-- Jewbuntu-light: dark status icons for the light top bar (Jewbuntu draws them white for GNOME's dark bar). -->
+    <property name="IconThemeName" type="string" value="Jewbuntu-light"/>
+  </property>
+  <property name="Gtk" type="empty">
+    <property name="FontName" type="string" value="Inter 10"/>
+  </property>
+</channel>
