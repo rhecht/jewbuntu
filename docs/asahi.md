@@ -135,3 +135,6 @@ ci/build-shulgo-rpm.sh /path/to/shulgo <commit>   # private ShulGo checkout -> d
 
 It does not test Asahi hardware or a real GDM login. Specs are in `packaging/fedora/`; set
 `FEDORA=` and `SHELL_MAJOR=` for another release.
+
+To see the look on a real desktop (and test SELinux and the password prompts), use a Fedora
+Workstation VM in UTM: [vm-setup-fedora.md](vm-setup-fedora.md).
