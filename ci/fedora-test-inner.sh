@@ -75,7 +75,7 @@ check_defaults "after install"
 echo "== dock, Fedora watermark, ShulGo widget for a new account"
 FAV=$(G org.gnome.shell favorite-apps)
 case "$FAV" in *org.jewbuntu.Hub.desktop*org.jewbuntu.WebServer.desktop*) pass "Hub and Web Server pinned in the dock ($FAV)";; *) fail "dock: $FAV";; esac
-[ "$(G org.gnome.shell.extensions.background-logo logo-opacity)" = 0 ] && pass "Fedora's background logo hidden (opacity 0)" || fail "background logo opacity $(G org.gnome.shell.extensions.background-logo logo-opacity)"
+[ "$(G org.gnome.shell.extensions.background-logo logo-opacity)" = "uint32 0" ] && pass "Fedora's background logo hidden (opacity 0)" || fail "background logo opacity $(G org.gnome.shell.extensions.background-logo logo-opacity)"
 if [ -n "$SHULGO_RPM" ]; then
   useradd -m fresh
   E=$(su fresh -c 'export GSETTINGS_BACKEND=keyfile XDG_CURRENT_DESKTOP=GNOME; jewbuntu config migrate --quiet >/dev/null 2>&1; gsettings get org.gnome.shell enabled-extensions')

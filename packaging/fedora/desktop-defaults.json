@@ -226,7 +226,7 @@
     {
       "schema": "org.gnome.shell.extensions.background-logo",
       "key": "logo-opacity",
-      "value": "0",
+      "value": "uint32 0",
       "why": "No Fedora logo on the wallpaper"
     }
   ]

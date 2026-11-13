@@ -105,7 +105,7 @@ class FedoraDockTests(unittest.TestCase):
 
     def test_fedora_watermark_hidden(self):
         values, _ = _override_values(FEDORA / "zz_jewbuntu-asahi.gschema.override")
-        self.assertEqual(values[("org.gnome.shell.extensions.background-logo", "logo-opacity")], "0")
+        self.assertEqual(values[("org.gnome.shell.extensions.background-logo", "logo-opacity")], "uint32 0")
 
 
 class FedoraLoginThemeTests(unittest.TestCase):

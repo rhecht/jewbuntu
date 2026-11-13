@@ -92,7 +92,7 @@ interface-style='system'
 # Jewbuntu desktop matches Ubuntu's, so the mark is fully transparent; the extension itself
 # stays Fedora's and untouched (a default only: remove this package and the mark returns).
 [org.gnome.shell.extensions.background-logo:GNOME]
-logo-opacity=0
+logo-opacity=uint32 0
 
 # Login screen: "Jewbuntu for Asahi Linux" wordmark in place of gdm's Fedora logo
 # (plain section, like gdm's own override, which this file sorts after).
