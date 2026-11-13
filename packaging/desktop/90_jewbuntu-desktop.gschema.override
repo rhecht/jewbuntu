@@ -60,3 +60,12 @@ blur=false
 
 [org.gnome.shell.extensions.blur-my-shell.dash-to-dock]
 blur=false
+
+# Terminal (Ptyxis): the Jewbuntu palette (white or the skin's dark grey, Jewbuntu blue
+# cursor, matching title bar and menus) instead of Ubuntu's purple, following the system
+# light/dark style. Each user gets the palette file at login (`jewbuntu config migrate`).
+[org.gnome.Ptyxis.Profile]
+palette='Jewbuntu'
+
+[org.gnome.Ptyxis]
+interface-style='system'

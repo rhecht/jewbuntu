@@ -1,8 +1,18 @@
 # Installing Jewbuntu
 
-Jewbuntu installs on top of **Ubuntu 26.04 LTS** (desktop or server, Intel/AMD or ARM).
-It comes as one file, `jewbuntu-installer-VERSION.run`, on the
-[Releases page](https://github.com/rhecht/jewbuntu/releases).
+There are two ways in:
+
+- **Fresh install on an Intel/AMD PC: the Jewbuntu ISO.** Ubuntu's own installer with
+  Jewbuntu added. It's 6.5 GB, too big for GitHub, so it's hosted on
+  [SourceForge](https://sourceforge.net/projects/jewbuntu/files/). That page has the
+  system requirements (64-bit Intel/AMD, 2 GHz dual-core, 6 GB memory, 25 GB disk, an
+  8 GB or larger USB stick) and steps for writing the USB stick on Windows (Rufus), Mac
+  (balenaEtcher) and Ubuntu (Startup Disk Creator). On first login, click **Apply Jewbuntu
+  look**, then log out and back in. The page's text is kept in
+  [`packaging/iso/SOURCEFORGE-README.md`](../packaging/iso/SOURCEFORGE-README.md).
+- **A computer already running Ubuntu 26.04 LTS** (desktop or server, Intel/AMD or ARM):
+  the one-file installer, `jewbuntu-installer-VERSION.run`, described below. It's on the
+  [Releases page](https://github.com/rhecht/jewbuntu/releases) and on SourceForge.
 
 ## 1. Install Ubuntu 26.04 LTS
 

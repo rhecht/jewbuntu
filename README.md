@@ -14,7 +14,12 @@ Ubuntu moves to a new release.
 
 ## Install
 
-On Ubuntu 26.04 LTS, download `jewbuntu-installer-VERSION.run` from the
+**Fresh install on an Intel/AMD PC:** download the Jewbuntu ISO from
+[SourceForge](https://sourceforge.net/projects/jewbuntu/files/), write it to a USB stick
+and install. Requirements and USB steps are on that page and in
+[docs/install.md](docs/install.md).
+
+**Already on Ubuntu 26.04 LTS** (Intel/AMD or ARM): download `jewbuntu-installer-VERSION.run` from the
 [latest release](https://github.com/rhecht/jewbuntu/releases/latest) and run:
 
 ```bash

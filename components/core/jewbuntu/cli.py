@@ -46,6 +46,13 @@ def cmd_config(args):
                 print(note)
         except Exception as e:  # never block login on this
             print(f"note: could not refresh the GTK4 look: {e}", file=sys.stderr)
+        try:  # Terminal (Ptyxis) only loads palettes from the user's data dir
+            from . import terminal_palette
+            note = terminal_palette.ensure_palette()
+            if note and not args.quiet:
+                print(note)
+        except Exception as e:
+            print(f"note: could not add the Terminal palette: {e}", file=sys.stderr)
         try:  # extensions that changed their UUID (ShulGo), so they stay enabled
             from . import renames
             for note in renames.migrate_extensions():
@@ -153,7 +160,9 @@ def cmd_skin(args):
         for c in changes:
             print(f"  - {c}")
     elif args.action == "apply":
-        for line in dd.apply_skin() or ["already applied; nothing changed"]:
+        from . import terminal_palette
+        note = terminal_palette.ensure_palette()
+        for line in (dd.apply_skin() or []) + ([note] if note else []) or ["already applied; nothing changed"]:
             print(line)
         print("Log out and back in to see every change.")
     elif args.action == "undo":

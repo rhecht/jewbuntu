@@ -77,6 +77,36 @@ Lite (Xfce) note: for ShulGo use its GTK app (integrations/jewbuntu/app, no GNOM
 StatusNotifierItem tray icon (Shulgo session will add it) rather than the Electron shulgo-desktop .deb.
 Measure both on the VM before deciding; the memory comparison is unmeasured (also in shulgo docs/TODO.md).
 
+## Design fixes (0.1.0~m1.27, skin 0.1.0~git20261112.2, 2026-11-12 night)
+
+- **Terminal menus:** Ptyxis recolours its menus and title bar from its palette; the skin forced
+  dark menu text and white title-bar edges and button rings. The installed GTK4 theme is now
+  built in MacTahoe's libadwaita mode (`SKIN_LIBADWAITA_SYSTEM=1`), which uses libadwaita's colour
+  variables and currentColor borders. Checked in the arm64 VM: menus readable in light and dark.
+- **Terminal palette:** `Jewbuntu` palette (packaging/desktop/terminal/) replaces Ubuntu's purple;
+  default via the desktop override, linked per user at login (`terminal_palette.py`).
+- **Not checked yet:** other GTK4 apps in libadwaita mode (Files, Settings, Hub, Web Server), and
+  the "black corners" the owner reported (apps not yet identified).
+- **Fedora:** packaging/fedora still needs the palette and the override (Asahi session).
+
+## ISO (2026-11-12)
+
+- **Jewbuntu amd64 ISO** (`ci/build-iso.sh`, design in docs/iso.md): Ubuntu 26.04.1 desktop ISO
+  plus `/jewbuntu` (packages and offline dependencies) and `/autoinstall.yaml`, which keeps every
+  screen interactive and adds one late command. Boot setup replayed unchanged.
+- **Installed end to end in an emulated x86_64 UTM VM** (docs/test-results/2026-11-12-iso-amd64-vm.md):
+  - interactive installer, then security updates
+  - the late command, then reboot
+  - Jewbuntu login screen, wallpaper and dock
+  - first-login prompt, then the glass look, confirmed by the owner
+- **SourceForge** (sourceforge.net/projects/jewbuntu, folder `0.1.0-m1.26`): README, `.run` installer
+  and both checksums are up; the ISO upload was still running at this commit. The README there (packaging/iso/SOURCEFORGE-README.md)
+  covers requirements and USB steps.
+- **Not yet tested:** real PC hardware, Secure Boot. Plymouth crashed once on first boot in the VM;
+  Ubuntu's splash, not ours, and the boot continued.
+- **Follow-up:** on ISO installs, apply the look automatically for new accounts instead of asking.
+  An idea; test it on the arm64 VM, not by emulation.
+
 ## Status at 0.1.0~m1.25 (2026-11-12)
 
 - Release installer m1.24 upgraded the VM from m1.21 cleanly (ShulGo kept, dpkg clean).

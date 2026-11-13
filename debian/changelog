@@ -1,3 +1,14 @@
+jewbuntu (0.1.0~m1.27+26.04) resolute; urgency=medium
+
+  * Terminal (Ptyxis): Jewbuntu palette instead of Ubuntu's purple: white with a
+    white title bar in light mode, the skin's dark greys in dark mode, Jewbuntu
+    blue cursor; follows the system light/dark style. Set as the default by the
+    desktop override; each user gets the palette file at login, since Ptyxis
+    only loads palettes from the user's data dir.
+  * Depend on jewbuntu-skin 0.1.0~git20261112.2 (readable Terminal menus).
+
+ -- Jewbuntu Developers <maintainers@jewbuntu.invalid>  Thu, 12 Nov 2026 21:21:16 -0500
+
 jewbuntu (0.1.0~m1.26+26.04) resolute; urgency=medium
 
   * Web Server: Copy buttons work (gdk_clipboard_set_text is not callable from

@@ -186,6 +186,18 @@
       "key": "icon-theme",
       "value": "'Jewbuntu'",
       "why": "Jewbuntu Icons (Mac-style, original replacements for Apple-copied icons)"
+    },
+    {
+      "schema": "org.gnome.Ptyxis.Profile",
+      "key": "palette",
+      "value": "'Jewbuntu'",
+      "why": "Terminal colours match the skin (white, or the skin's dark grey in dark mode) instead of Ubuntu's purple"
+    },
+    {
+      "schema": "org.gnome.Ptyxis",
+      "key": "interface-style",
+      "value": "'system'",
+      "why": "Terminal follows the system light/dark style"
     }
   ]
 }
