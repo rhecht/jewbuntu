@@ -10,6 +10,10 @@ OUT="${3:-$ROOT/dist/shulgo-fedora}"
 FEDORA="${FEDORA:-45}"; SHELL_MAJOR="${SHELL_MAJOR:-51}"
 IMAGE="jewbuntu-fedora-build:$FEDORA"
 SHORT="$(git -C "$SHULGO" rev-parse --short "$REF")"
+# Version from the commit's UTC timestamp so it always increases (a bare hash sorts randomly).
+# 0.1.1 sorts above every 0.1.0~ version. Same scheme as ci/build-shulgo-deb.sh.
+STAMP="$(TZ=UTC git -C "$SHULGO" log -1 --date=format-local:%Y%m%d%H%M --format=%cd "$REF")"
+VERSION="0.1.1~git$STAMP.$SHORT"
 mkdir -p "$OUT"; OUT="$(cd "$OUT" && pwd)"
 TMP="$(mktemp -d)"; trap 'rm -rf "$TMP"' EXIT
 mkdir -p "$TMP/jewbuntu-shulgo"
@@ -20,6 +24,6 @@ cp "$ROOT/packaging/shulgo-recipe/debian/shulgo" "$ROOT/packaging/shulgo-recipe/
 docker build -q --target build --build-arg FEDORA="$FEDORA" -t "$IMAGE" -f "$ROOT/ci/Dockerfile.fedora" "$ROOT/ci" >/dev/null
 docker run --rm -v "$TMP:/in:ro" -v "$OUT:/out" "$IMAGE" sh -euc "
   su b -c 'set -eu; mkdir -p ~/rpmbuild/SOURCES; cp /in/jewbuntu-shulgo.tar.gz /in/shulgo ~/rpmbuild/SOURCES/
-    rpmbuild -bb --define \"jb_version 0.1.0~git$SHORT\" --define \"jb_shell_major $SHELL_MAJOR\" /in/jewbuntu-shulgo.spec > ~/build.log 2>&1 || { tail -30 ~/build.log; exit 1; }'
+    rpmbuild -bb --define \"jb_version $VERSION\" --define \"jb_shell_major $SHELL_MAJOR\" /in/jewbuntu-shulgo.spec > ~/build.log 2>&1 || { tail -30 ~/build.log; exit 1; }'
   cp /home/b/rpmbuild/RPMS/noarch/jewbuntu-shulgo-*.rpm /out/"
 ls "$OUT"/jewbuntu-shulgo-*"$SHORT"*.rpm

@@ -74,6 +74,12 @@ blur=false
 [org.gnome.shell.extensions.blur-my-shell.appfolder:GNOME]
 blur=false
 
+# Overview: keep the blur, but don't let Blur my Shell restyle the app grid. Its "automatic"
+# style picks light components on a light wallpaper, turning app labels dark grey, which is
+# unreadable on the skin's folder panel. The skin's own label colours apply instead.
+[org.gnome.shell.extensions.blur-my-shell.overview:GNOME]
+style-components=0
+
 # Terminal (Ptyxis, Fedora's default): the Jewbuntu palette, following the system light/dark
 # style. Each user gets the palette file at login (`jewbuntu config migrate`).
 [org.gnome.Ptyxis.Profile:GNOME]
