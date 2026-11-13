@@ -51,7 +51,11 @@ cp -a jewbuntu/src/shulgo/gnome %{buildroot}%{ext}/shulgo/
 install -m 644 jewbuntu/app/main.js jewbuntu/app/style.css %{buildroot}%{_datadir}/jewbuntu-shulgo/
 install -m 644 shulgo-core/*.js %{buildroot}%{_datadir}/jewbuntu-shulgo/shulgo/core/
 cp -a jewbuntu/src/shulgo/gnome %{buildroot}%{_datadir}/jewbuntu-shulgo/shulgo/
-install -D -m 644 jewbuntu/schemas/com.shulgo.ShulGo.gschema.xml %{buildroot}%{_datadir}/glib-2.0/schemas/com.shulgo.ShulGo.gschema.xml
+# Every schema ShulGo ships: since a47006c that includes the old org.jewbuntu.shulgo one for a
+# release, so ShulGo can read and migrate settings saved before its rename (then it goes away).
+install -d %{buildroot}%{_datadir}/glib-2.0/schemas
+install -m 644 jewbuntu/schemas/*.gschema.xml %{buildroot}%{_datadir}/glib-2.0/schemas/
+test -f %{buildroot}%{_datadir}/glib-2.0/schemas/*.gschema.xml
 install -D -m 644 jewbuntu/app/com.shulgo.ShulGo.desktop %{buildroot}%{_datadir}/applications/com.shulgo.ShulGo.desktop
 install -D -m 644 jewbuntu/app/com.shulgo.ShulGo.svg %{buildroot}%{_datadir}/icons/hicolor/scalable/apps/com.shulgo.ShulGo.svg
 install -D -m 644 jewbuntu/extension/jewbuntu@shulgo.com/icons/shulgo-symbolic.svg %{buildroot}%{_datadir}/icons/hicolor/symbolic/apps/com.shulgo.ShulGo-symbolic.svg
@@ -62,7 +66,7 @@ find %{buildroot} -type f -name '*.js' -exec chmod 644 {} +
 %{_bindir}/shulgo
 %{ext}
 %{_datadir}/jewbuntu-shulgo
-%{_datadir}/glib-2.0/schemas/com.shulgo.ShulGo.gschema.xml
+%{_datadir}/glib-2.0/schemas/*.gschema.xml
 %{_datadir}/applications/com.shulgo.ShulGo.desktop
 %{_datadir}/icons/hicolor/scalable/apps/com.shulgo.ShulGo.svg
 %{_datadir}/icons/hicolor/symbolic/apps/com.shulgo.ShulGo-symbolic.svg

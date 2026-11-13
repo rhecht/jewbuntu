@@ -106,6 +106,9 @@ su t -c 'dbus-run-session -- sh /tmp/session.sh' 2>/dev/null | grep -E "^(PASS|F
 [ -s /tmp/fedora-shell.png ] && cp /tmp/fedora-shell.png /out/fedora-shell.png || true
 [ -s /tmp/fedora-hub.png ] && cp /tmp/fedora-hub.png /out/fedora-hub.png || true
 grep -q "^FAIL" /tmp/shell.txt && fail "GNOME Shell check"
+if [ -n "$SHULGO_RPM" ] && [ -f /usr/share/glib-2.0/schemas/org.jewbuntu.shulgo.gschema.xml ]; then
+  gsettings list-schemas | grep -qx org.jewbuntu.shulgo && pass "old ShulGo schema compiled, so ShulGo can migrate pre-rename settings" || fail "old ShulGo schema not compiled"
+fi
 
 echo "== Fedora update of gnome-shell, gdm and the extensions (reinstall = same file writes and triggers)"
 for i in 1 2 3; do dnf -y -q reinstall gnome-shell gdm gnome-shell-extension-user-theme gnome-shell-extension-dash-to-dock gnome-shell-extension-blur-my-shell glib2 >/tmp/re.log 2>&1 && break; sleep 5; done || { tail -20 /tmp/re.log; fail "reinstall"; }

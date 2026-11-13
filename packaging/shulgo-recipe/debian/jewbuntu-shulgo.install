@@ -9,7 +9,7 @@ jewbuntu/app/main.js usr/share/jewbuntu-shulgo/
 jewbuntu/app/style.css usr/share/jewbuntu-shulgo/
 shulgo-core/*.js usr/share/jewbuntu-shulgo/shulgo/core/
 jewbuntu/src/shulgo/gnome usr/share/jewbuntu-shulgo/shulgo/
-jewbuntu/schemas/com.shulgo.ShulGo.gschema.xml usr/share/glib-2.0/schemas/
+jewbuntu/schemas/*.gschema.xml usr/share/glib-2.0/schemas/
 jewbuntu/app/com.shulgo.ShulGo.desktop usr/share/applications/
 jewbuntu/app/com.shulgo.ShulGo.svg usr/share/icons/hicolor/scalable/apps/
 debian/shulgo usr/bin/
