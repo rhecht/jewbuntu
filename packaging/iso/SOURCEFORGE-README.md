@@ -30,12 +30,13 @@ during installation.
 
 ## Which file?
 
-Both files are in the **`0.1.0-m1.29`** folder below, next to their `.sha256` checksums.
+All three files are in the **`0.1.0-m1.29`** folder below, next to their `.sha256` checksums.
 
 | You have | Download |
 |---|---|
 | An Intel/AMD PC, and you want a fresh install | **`jewbuntu-0.1.0-m1.29-amd64.iso`** (6.5 GB) |
 | A computer already running Ubuntu 26.04, Intel/AMD **or ARM** | **`jewbuntu-installer-0.1.0-m1.29.run`** (10 MB). In Terminal, run `sh ~/Downloads/jewbuntu-installer-0.1.0-m1.29.run`, then log out and back in. It's also on [GitHub Releases](https://github.com/rhecht/jewbuntu/releases/latest). |
+| An Apple Silicon Mac (M1/M2) running **Fedora Asahi Remix 45, GNOME edition** | **`jewbuntu-asahi-installer-0.1.0-m1.29.run`** (15 MB). See [Asahi Linux](#asahi-linux-apple-silicon-macs) below. Also on [GitHub Releases](https://github.com/rhecht/jewbuntu/releases/latest). |
 
 ## System requirements
 
@@ -138,6 +139,28 @@ never touched. In Terminal (Ctrl+Alt+T):
 Details, including the Web Server and optional clean-up:
 [docs/install.md](https://github.com/rhecht/jewbuntu/blob/main/docs/install.md#uninstalling).
 
+## Asahi Linux (Apple Silicon Macs)
+
+Jewbuntu's look, Hebrew, the Hub, the Web Server and ShulGo also run on
+**Fedora Asahi Remix**, the official Asahi Linux distribution for M1 and M2 Macs. Jewbuntu
+adds its own packages on top of Fedora; Fedora and Asahi updates keep coming as normal.
+
+1. Install Fedora Asahi Remix 45 from macOS ([asahilinux.org/fedora](https://asahilinux.org/fedora/))
+   and **choose the GNOME edition** (KDE Plasma is not supported).
+2. In Fedora, download `jewbuntu-asahi-installer-0.1.0-m1.29.run` and its `.sha256`, then in
+   Terminal, in the download folder:
+   - `sha256sum -c jewbuntu-asahi-installer-0.1.0-m1.29.run.sha256` (optional check)
+   - `sh jewbuntu-asahi-installer-0.1.0-m1.29.run`
+3. Log out and back in.
+
+**Uninstall:** `sh jewbuntu-asahi-installer-0.1.0-m1.29.run --uninstall` puts your previous
+look back and removes every Jewbuntu package. Your files are never touched.
+
+What's different from Ubuntu: Jewbuntu turns on Dash to Dock for the dock, Fedora shows its
+own welcome tour, and the login screen theme is switched off automatically after a Fedora
+upgrade to a GNOME version Jewbuntu doesn't support yet. Details:
+[docs/asahi.md](https://github.com/rhecht/jewbuntu/blob/main/docs/asahi.md).
+
 ## Status
 
 **Tested:**
@@ -150,8 +173,12 @@ Details, including the Web Server and optional clean-up:
   clean container (install, update, uninstall) and on the arm64 development VM, where the
   owner checked the look.
 
+- The Asahi installer (0.1.0-m1.29) in a clean Fedora 45 container (install, uninstall) and
+  in a Fedora 45 Workstation VM on an Apple Silicon Mac.
+
 **Not yet tested:**
 - real PC hardware, including Secure Boot (Ubuntu's signed boot files are unchanged)
+- Asahi on a real Apple Silicon Mac
 - Hebrew typing in apps
 
 Licence: Jewbuntu's own code is open source (see GitHub). Ubuntu and its packages keep

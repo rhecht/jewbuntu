@@ -2,8 +2,8 @@
 
 Jewbuntu's look runs on **Fedora Asahi Remix**, the official Asahi Linux distribution for
 Apple Silicon Macs (all M1 and M2 models, with initial M3 support). It's an overlay, as on
-Ubuntu: four RPM packages are added on top of Fedora, and Fedora and Asahi updates keep
-coming as normal.
+Ubuntu: Jewbuntu's own RPM packages are added on top of Fedora, and Fedora and Asahi updates
+keep coming as normal. One file installs them all: `jewbuntu-asahi-installer-<version>.run`.
 
 What you get: the same look as Jewbuntu on Ubuntu. That means the Jewbuntu Skin (glass windows,
 clear top bar, floating glass dock), Jewbuntu Icons, the Star of David wallpapers (blue in light
@@ -27,13 +27,19 @@ login screen, and the ShulGo minyan finder widget.
 
 The look is the same. Some workflows differ because Fedora and GNOME differ:
 
-- **Installing:** there's no one-file `.run` installer. You install the RPMs with `dnf`
-  (step 2). Updates come from Fedora, through GNOME Software or `dnf`.
+- **Installing:** a separate one-file installer, `jewbuntu-asahi-installer-<version>.run`
+  (the Ubuntu one refuses to run on Fedora, and this one refuses Ubuntu). It installs with
+  `dnf`, so Fedora's packages come from Fedora's repositories. Fedora and Asahi updates come
+  through GNOME Software or `dnf` as usual. Jewbuntu updates come from a newer installer file.
+- **Removing:** `--uninstall` on the same file (below) instead of `apt remove`.
 - **Dock:** Fedora's GNOME has no dock, so Jewbuntu turns on Dash to Dock, styled exactly like
   the Ubuntu dock. It's enabled per account by `jewbuntu skin apply` or the first-login question.
-- **Login screen:** only the logo changes. The blurred Star of David login background used on
-  Ubuntu isn't available on Fedora. Applying it would mean replacing a gnome-shell file, which
-  updates would undo. The rest of the login screen stays as Fedora draws it.
+- **Login screen:** "Jewbuntu for Asahi Linux" logo and the blurred Star of David background,
+  as on Ubuntu, but done differently. Fedora has no login-theme switch like Ubuntu's, so
+  Jewbuntu hands GNOME Shell a folder of its own theme files through GLib's standard
+  `G_RESOURCE_OVERLAYS` setting, and no Fedora file is replaced. When a Fedora upgrade brings
+  a GNOME version the skin has no login theme for yet, the login screen goes back to Fedora's
+  own until a matching skin arrives.
 - **First login:** Fedora shows its own welcome tour, and Jewbuntu asks once whether to apply
   the look.
 - **Web Server:** setup downloads Apache (httpd), php-fpm, MariaDB, phpMyAdmin and vsftpd from
@@ -56,24 +62,41 @@ needs GNOME). Back up the Mac first. Keep macOS, because Apple firmware updates 
 
 Jewbuntu currently targets Fedora Asahi Remix 45 (GNOME 51).
 
-## 2. Install the Jewbuntu packages
+## 2. Run the Jewbuntu installer
 
-Download the `.rpm` files for your Fedora release into one folder (they are not
-published yet; for now, build them with `ci/fedora-build.sh`, below). Then, in Terminal in
-that folder:
+Download `jewbuntu-asahi-installer-<version>.run` (about 15 MB) and its `.sha256` from
+[SourceForge](https://sourceforge.net/projects/jewbuntu/files/) or
+[GitHub Releases](https://github.com/rhecht/jewbuntu/releases/latest). On the Asahi Mac, in
+Terminal (in the download folder):
 
 ```bash
-sudo dnf install ./jewbuntu-*.rpm
+sha256sum -c jewbuntu-asahi-installer-<version>.run.sha256   # optional: checks the download
+sh jewbuntu-asahi-installer-<version>.run
 ```
 
-dnf fetches the rest from Fedora's own repositories: Dash to Dock, Blur my Shell, User
-Themes, Inter, and the Hebrew fonts and spelling dictionary. The Web Server installs no server
-until you press **Set up** in the app.
+It says what it will add and asks first, then asks for your password once. It checks that
+this is Fedora 45 with GNOME, checks every package inside against its checksum, and installs
+them with `dnf`. dnf fetches the rest from Fedora's own repositories: Dash to Dock, Blur my
+Shell, User Themes, Inter, and the Hebrew fonts and spelling dictionary. Then it offers to
+apply the look to your account now (your current look is backed up first). The Web Server
+installs no server until you press **Set up** in the app.
+
+| Option | What it does |
+| --- | --- |
+| `--yes` | Install without questions |
+| `--no-look` | Install, but don't apply the look to your account now |
+| `--uninstall` | Put your old look back and remove Jewbuntu (below) |
+| `--list` | Show the packages inside |
+| `--extract DIR` | Only unpack the `.rpm` files and their checksums into `DIR` |
+| `--force` | Try on a release other than Fedora 45 (unsupported) |
+
+**Updating Jewbuntu:** download a newer installer and run it the same way. Your settings stay.
 
 ## 3. Log out and back in
 
-New accounts start with the Jewbuntu look. For an account that already existed, Jewbuntu
-asks once, at the next login, whether to apply the look. You can also do it yourself:
+Log out and back in (or restart) to see the new desktop and login screen. New accounts start
+with the Jewbuntu look. For any other account that already existed, Jewbuntu asks once, at
+its next login, whether to apply the look. You can also do it yourself:
 
 ```bash
 jewbuntu skin apply
@@ -85,14 +108,27 @@ skin. Log out and back in to see everything. `jewbuntu skin status` lists what i
 
 ## Undo or remove
 
+With the installer file:
+
 ```bash
-jewbuntu skin undo                      # your account: back to the settings saved by apply
-sudo dnf remove jewbuntu-asahi-desktop  # everyone: Fedora's defaults and login logo come back
-sudo dnf remove 'jewbuntu-*'                # everything else
+sh jewbuntu-asahi-installer-<version>.run --uninstall
 ```
 
-Run `jewbuntu skin undo` before removing the packages. Removing never deletes your own
-files (`~/.local/state/jewbuntu` and the settings backup are kept).
+It asks first, runs `jewbuntu skin undo` for your account (your look from before Jewbuntu
+comes back), then removes every Jewbuntu package with `dnf`. Fedora's own look, defaults and
+login screen come back after you log out and back in. Other accounts that applied the look:
+run `jewbuntu skin undo` as that user first.
+
+Without the file, the same by hand:
+
+```bash
+jewbuntu skin undo                      # your account: back to the settings saved by apply
+sudo dnf remove 'jewbuntu-*'            # everyone: Fedora's defaults and login screen come back
+```
+
+Removing never deletes your own files (`~/.local/state/jewbuntu` and the settings backup are
+kept). A Web Server you set up keeps its sites in `~/Sites`; see
+[web-server.md](web-server.md#on-fedora-asahi-remix) for removing the servers it installed.
 
 ## Why Fedora and Asahi updates don't break it
 
@@ -101,11 +137,17 @@ files (`~/.local/state/jewbuntu` and the settings backup are kept).
 - The defaults are a gschema override (`zz_jewbuntu-asahi.gschema.override`). It changes
   defaults only, so anything you set yourself wins. The `zz_` name makes it sort after
   Fedora's own overrides (including gdm's login-screen logo), and later files win.
-- The login screen gets only a logo through the standard `org.gnome.login-screen logo`
-  setting. The full login-screen theme used on Ubuntu would have to replace gnome-shell's own
-  file, which every gnome-shell update would undo, so it's left out on Fedora.
-- The packages have no install scripts. Fedora's own triggers rebuild the schema, icon and
-  font caches.
+- The login-screen logo is the standard `org.gnome.login-screen logo` setting. The login
+  theme reaches GNOME Shell through `G_RESOURCE_OVERLAYS`
+  (`/usr/lib/environment.d/60-jewbuntu-login-theme.conf`), which serves Jewbuntu's
+  stylesheet and assets in place of gnome-shell's built-in ones without changing gnome-shell's
+  file. The skin keeps one theme folder per GNOME version
+  (`/usr/share/jewbuntu-skin/gdm-overlay/<major>/`), and
+  `/usr/libexec/jewbuntu/jewbuntu-login-theme` points the overlay at the one matching the
+  installed gnome-shell, or at nothing.
+- That link is the only thing install scripts do: `jewbuntu-asahi-desktop` updates it when
+  it, gnome-shell or the skin is installed or updated, and removes it on removal. Fedora's own
+  triggers rebuild the schema, icon and font caches.
 - Extensions only load on GNOME versions they declare. If a future GNOME release doesn't fit
   the skin or Jewbuntu Look, GNOME skips the extension and the desktop falls back to stock
   GNOME pieces instead of breaking. Each new Fedora release is tested before it's offered.
@@ -124,7 +166,7 @@ ci/build-shulgo-rpm.sh /path/to/shulgo <commit>   # private ShulGo checkout -> d
 `ci/fedora-test.sh` runs these checks:
 
 - installing from Fedora's repositories, file ownership, and no scriptlets;
-- all defaults and the GDM logo;
+- all defaults, the GDM logo and the login-theme link (also with a missing GNOME version);
 - `jewbuntu skin apply`/`undo` for an existing account;
 - a real headless GNOME Shell with the four extensions ACTIVE, plus a screenshot;
 - the calendar service over D-Bus, the jingle, and the Hub as a window on that shell (screenshot);
@@ -133,7 +175,11 @@ ci/build-shulgo-rpm.sh /path/to/shulgo <commit>   # private ShulGo checkout -> d
   Jewbuntu checked again afterwards;
 - removal.
 
-It does not test Asahi hardware or a real GDM login. Specs are in `packaging/fedora/`; set
+`ci/installer-test-asahi.sh` runs the one-file installer in a clean Fedora 45 container:
+`--list`, install, a damaged file being refused, and `--uninstall` leaving nothing under `/usr` (`ci/make-installer-asahi.sh` builds
+it from `dist/fedora` into `dist/release`).
+
+The containers do not test Asahi hardware or a real GDM login. Specs are in `packaging/fedora/`; set
 `FEDORA=` and `SHELL_MAJOR=` for another release.
 
 To see the look on a real desktop (and test SELinux and the password prompts), use a Fedora
