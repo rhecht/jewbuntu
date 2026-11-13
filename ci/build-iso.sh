@@ -5,7 +5,7 @@
 # interactive; one late command installs Jewbuntu into the new system).
 #
 # usage: ci/build-iso.sh BASE.iso OUT.iso VERSION DEBDIR...
-#   e.g. ci/build-iso.sh ../iso/ubuntu-26.04.1-desktop-amd64.iso ../iso/jewbuntu-0.1.0-m1.26-amd64.iso \
+#   e.g. ci/build-iso.sh ../iso/ubuntu-26.04.1-desktop-amd64.iso ../iso/jewbuntu-0.1.0-m1.29-intel-amd-64bit.iso \
 #        0.1.0-m1.26 dist/worktree dist/themes
 # jewbuntu-shulgo is included (owner's decision 2026-11-13: the widget is public at
 # github.com/rhecht/shulgo-widgets; build it with ci/build-shulgo-deb.sh). Its API key stays per user.

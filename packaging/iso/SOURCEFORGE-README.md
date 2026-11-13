@@ -34,7 +34,7 @@ All three files are in the **`0.1.0-m1.29`** folder below, next to their `.sha25
 
 | You have | Download |
 |---|---|
-| An Intel/AMD PC, and you want a fresh install | **`jewbuntu-0.1.0-m1.29-amd64.iso`** (6.5 GB) |
+| An Intel/AMD PC, and you want a fresh install | **`jewbuntu-0.1.0-m1.29-intel-amd-64bit.iso`** (6.5 GB) |
 | A computer already running Ubuntu 26.04, Intel/AMD **or ARM** | **`jewbuntu-installer-0.1.0-m1.29.run`** (10 MB). In Terminal, run `sh ~/Downloads/jewbuntu-installer-0.1.0-m1.29.run`, then log out and back in. It's also on [GitHub Releases](https://github.com/rhecht/jewbuntu/releases/latest). |
 | An Apple Silicon Mac (M1/M2) running **Fedora Asahi Remix 45, GNOME edition** | **`jewbuntu-asahi-installer-0.1.0-m1.29.run`** (15 MB). See [Asahi Linux](#asahi-linux-apple-silicon-macs) below. Also on [GitHub Releases](https://github.com/rhecht/jewbuntu/releases/latest). |
 
@@ -59,9 +59,9 @@ it, but slowly. Adding an SSD and 8 GB of memory makes a big difference.
 Download the `.iso` and the `.sha256` file next to it. Checking the download is optional,
 but it confirms the file arrived intact. In a terminal, in the download folder:
 
-- **Linux:** `sha256sum -c jewbuntu-0.1.0-m1.29-amd64.iso.sha256`
-- **Mac:** `shasum -a 256 -c jewbuntu-0.1.0-m1.29-amd64.iso.sha256`
-- **Windows (PowerShell):** `Get-FileHash .\jewbuntu-0.1.0-m1.29-amd64.iso`
+- **Linux:** `sha256sum -c jewbuntu-0.1.0-m1.29-intel-amd-64bit.iso.sha256`
+- **Mac:** `shasum -a 256 -c jewbuntu-0.1.0-m1.29-intel-amd-64bit.iso.sha256`
+- **Windows (PowerShell):** `Get-FileHash .\jewbuntu-0.1.0-m1.29-intel-amd-64bit.iso`
   - Compare the result with the number in the `.sha256` file.
 
 Expected SHA-256:

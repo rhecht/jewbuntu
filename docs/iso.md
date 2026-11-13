@@ -22,6 +22,12 @@ Nothing personal is on the ISO: no user, password, computer name, location or ke
 If that last step fails, the installation still finishes as plain Ubuntu, and the packages
 are left in `/usr/local/share/jewbuntu/` with a README explaining the one command to finish.
 
+## Naming
+
+Release ISOs are named `jewbuntu-VERSION-intel-amd-64bit.iso`. Ubuntu's own term for that
+architecture is "amd64", but it covers every 64-bit Intel and AMD PC, and most users read it
+as "AMD only". The base ISO keeps Ubuntu's name (`...-desktop-amd64.iso`).
+
 ## Building
 
 On a Mac or Linux machine with Docker and about 15 GB free:
@@ -30,7 +36,7 @@ On a Mac or Linux machine with Docker and about 15 GB free:
 curl -LO https://releases.ubuntu.com/26.04/ubuntu-26.04.1-desktop-amd64.iso    # check against SHA256SUMS
 ci/container-build.sh vX.Y.Z dist/release-debs                                # Jewbuntu packages
 ci/build-theme-debs.sh ../jewbuntu-skin ../jewbuntu-icons dist/themes           # skin and icons
-ci/build-iso.sh ubuntu-26.04.1-desktop-amd64.iso jewbuntu-X.Y.Z-amd64.iso X.Y.Z dist/release-debs dist/themes
+ci/build-iso.sh ubuntu-26.04.1-desktop-amd64.iso jewbuntu-X.Y.Z-intel-amd-64bit.iso X.Y.Z dist/release-debs dist/themes
 ```
 
 `ci/build-iso.sh` reads the installed-system package list from Ubuntu's disc
