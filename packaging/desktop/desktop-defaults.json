@@ -198,6 +198,18 @@
       "key": "interface-style",
       "value": "'system'",
       "why": "Terminal follows the system light/dark style"
+    },
+    {
+      "schema": "org.gnome.shell.extensions.blur-my-shell.popup",
+      "key": "blur",
+      "value": "false",
+      "why": "No blur behind menus and popups: Blur my Shell's square/fixed-radius blur showed as dark corners around the skin's rounded menus"
+    },
+    {
+      "schema": "org.gnome.shell.extensions.blur-my-shell.appfolder",
+      "key": "blur",
+      "value": "false",
+      "why": "No blur behind open app folders: it was square, so rounded folders showed black corners"
     }
   ]
 }

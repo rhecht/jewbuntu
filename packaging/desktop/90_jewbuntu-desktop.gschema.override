@@ -61,6 +61,15 @@ blur=false
 [org.gnome.shell.extensions.blur-my-shell.dash-to-dock]
 blur=false
 
+# ...nor behind popups (menus, quick settings, calendar, notifications, dialogs) or open app
+# folders: Blur my Shell blurs a fixed-radius or square area that doesn't match the skin's
+# rounded shapes, which showed as dark or grey corners. The skin draws their glass itself.
+[org.gnome.shell.extensions.blur-my-shell.popup]
+blur=false
+
+[org.gnome.shell.extensions.blur-my-shell.appfolder]
+blur=false
+
 # Terminal (Ptyxis): the Jewbuntu palette (white or the skin's dark grey, Jewbuntu blue
 # cursor, matching title bar and menus) instead of Ubuntu's purple, following the system
 # light/dark style. Each user gets the palette file at login (`jewbuntu config migrate`).

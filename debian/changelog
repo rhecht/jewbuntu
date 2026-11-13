@@ -6,6 +6,10 @@ jewbuntu (0.1.0~m1.27+26.04) resolute; urgency=medium
     desktop override; each user gets the palette file at login, since Ptyxis
     only loads palettes from the user's data dir.
   * Depend on jewbuntu-skin 0.1.0~git20261112.2 (readable Terminal menus).
+  * Blur my Shell: no blur behind popups (menus, quick settings, calendar,
+    notifications, dialogs) or app folders. Its square or fixed-radius blur did
+    not match the skin's rounded shapes and showed as dark or grey corners,
+    including around the ShulGo popup. The skin draws their glass itself.
 
  -- Jewbuntu Developers <maintainers@jewbuntu.invalid>  Thu, 12 Nov 2026 21:21:16 -0500
 
