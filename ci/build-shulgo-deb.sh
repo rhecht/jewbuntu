@@ -12,8 +12,13 @@ cp -R "$ROOT/packaging/shulgo-recipe/debian" "$TMP/src/debian"
 # Needs rhecht/shulgo f0a898c or later (extension jewbuntu@shulgo.com, app/schema com.shulgo.ShulGo).
 cp "$TMP/src/jewbuntu/extension/jewbuntu@shulgo.com/icons/shulgo-symbolic.svg" "$TMP/src/debian/com.shulgo.ShulGo-symbolic.svg"
 DATE="$(git -C "$SHULGO" log -1 --format=%aD "$REF")"
+# Version from the commit's UTC timestamp so it always increases (a bare hash sorts randomly,
+# and 0.1.0~git<hash> sorted below the old 0.1.0~m1.21, so apt never upgraded those installs).
+# 0.1.1 sorts above every 0.1.0~ version.
+STAMP="$(TZ=UTC git -C "$SHULGO" log -1 --date=format-local:%Y%m%d%H%M --format=%cd "$REF")"
+VERSION="0.1.1~git$STAMP.$SHORT+26.04"
 cat > "$TMP/src/debian/changelog" <<CL
-jewbuntu-shulgo (0.1.0~git$SHORT+26.04) resolute; urgency=medium
+jewbuntu-shulgo ($VERSION) resolute; urgency=medium
 
   * Built from rhecht/shulgo@$SHORT (integrations/shulgo-core + integrations/jewbuntu).
 
