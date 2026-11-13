@@ -10,6 +10,9 @@ jewbuntu (0.1.0~m1.27+26.04) resolute; urgency=medium
     notifications, dialogs) or app folders. Its square or fixed-radius blur did
     not match the skin's rounded shapes and showed as dark or grey corners,
     including around the ShulGo popup. The skin draws their glass itself.
+  * Blur my Shell: don't restyle the overview (style-components 0). Its
+    automatic light style made app labels dark grey, unreadable on the skin's
+    dark app-folder panel.
 
  -- Jewbuntu Developers <maintainers@jewbuntu.invalid>  Thu, 12 Nov 2026 21:21:16 -0500
 

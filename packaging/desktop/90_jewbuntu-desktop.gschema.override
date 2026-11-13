@@ -70,6 +70,12 @@ blur=false
 [org.gnome.shell.extensions.blur-my-shell.appfolder]
 blur=false
 
+# Overview: keep the blur, but don't let Blur my Shell restyle the app grid. Its "automatic"
+# style picks light components on the light wallpaper, turning app labels dark grey, which
+# is unreadable on the skin's dark folder panel. The skin's white labels apply instead.
+[org.gnome.shell.extensions.blur-my-shell.overview]
+style-components=0
+
 # Terminal (Ptyxis): the Jewbuntu palette (white or the skin's dark grey, Jewbuntu blue
 # cursor, matching title bar and menus) instead of Ubuntu's purple, following the system
 # light/dark style. Each user gets the palette file at login (`jewbuntu config migrate`).

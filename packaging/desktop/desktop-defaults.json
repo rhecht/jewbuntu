@@ -210,6 +210,12 @@
       "key": "blur",
       "value": "false",
       "why": "No blur behind open app folders: it was square, so rounded folders showed black corners"
+    },
+    {
+      "schema": "org.gnome.shell.extensions.blur-my-shell.overview",
+      "key": "style-components",
+      "value": "0",
+      "why": "Readable app labels in the overview and app folders (Blur my Shell's automatic light style made them dark grey on the dark folder panel)"
     }
   ]
 }
