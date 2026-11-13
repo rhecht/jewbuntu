@@ -1,0 +1,13 @@
+PASS: installer holds 9 packages
+PASS: install --yes finished
+PASS: 9 Jewbuntu packages installed
+PASS: jewbuntu-shulgo installed
+PASS: jewbuntu-webserver installed
+PASS: jewbuntu-hub installed
+PASS: jewbuntu-skin installed
+PASS: installer reports success
+PASS: damaged installer refused
+PASS: --uninstall --yes finished
+PASS: no Jewbuntu packages left
+PASS: nothing left under /usr
+failures: 0
