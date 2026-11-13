@@ -99,8 +99,9 @@ Measure both on the VM before deciding; the memory comparison is unmeasured (als
   - the late command, then reboot
   - Jewbuntu login screen, wallpaper and dock
   - first-login prompt, then the glass look, confirmed by the owner
-- **SourceForge** (sourceforge.net/projects/jewbuntu, folder `0.1.0-m1.26`): README, `.run` installer
-  and both checksums are up; the ISO upload was still running at this commit. The README there (packaging/iso/SOURCEFORGE-README.md)
+- **Published on SourceForge** (sourceforge.net/projects/jewbuntu, folder `0.1.0-m1.26`, 2026-11-13): the ISO
+  (6,501,433,344 bytes, size verified), the `.run` installer and both checksums (md5 verified against
+  SourceForge's feed), and the README (packaging/iso/SOURCEFORGE-README.md). The README there (packaging/iso/SOURCEFORGE-README.md)
   covers requirements and USB steps.
 - **Not yet tested:** real PC hardware, Secure Boot. Plymouth crashed once on first boot in the VM;
   Ubuntu's splash, not ours, and the boot continued.
