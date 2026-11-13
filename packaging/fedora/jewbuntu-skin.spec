@@ -7,7 +7,7 @@
 
 Name:           jewbuntu-skin
 Version:        %{jb_version}
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Jewbuntu Skin - Mac-inspired GTK and GNOME Shell theme
 License:        MIT AND CC-BY-SA-4.0 AND LicenseRef-Jewbuntu-Wallpapers-TBC
 URL:            https://github.com/rhecht/jewbuntu-skin
@@ -66,6 +66,9 @@ cp -a stage-gdm/. %{buildroot}%{_datadir}/jewbuntu-skin/gdm-overlay/
 %{_datadir}/jewbuntu-skin
 
 %changelog
+* Fri Nov 13 2026 Jewbuntu Developers <maintainers@jewbuntu.invalid> - %{jb_version}-2
+- Login screen (GDM) theme files for Fedora, used through jewbuntu-asahi-desktop's overlay.
+
 * Thu Nov 12 2026 Jewbuntu Developers <maintainers@jewbuntu.invalid> - %{jb_version}-1
 - GTK4 theme built in libadwaita mode (SKIN_LIBADWAITA_SYSTEM=1), as on Ubuntu.
 
