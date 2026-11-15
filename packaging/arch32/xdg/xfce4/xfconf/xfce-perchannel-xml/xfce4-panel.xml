@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Jewbuntu panels for new accounts: a slim Mac-style top bar (menu, clock, tray, log out)
+<!-- Jewbuntu panels for new accounts: a slim Mac-style top bar (menu, ShulGo's next minyan, tray, clock, log out)
      and a centred dock at the bottom (Docklike: pinned apps plus open windows). -->
 <channel name="xfce4-panel" version="1.0">
   <property name="configver" type="int" value="2"/>
@@ -15,6 +15,7 @@
       <property name="plugin-ids" type="array">
         <value type="int" value="1"/>
         <value type="int" value="2"/>
+        <value type="int" value="7"/>
         <value type="int" value="3"/>
         <value type="int" value="4"/>
         <value type="int" value="5"/>
@@ -54,5 +55,13 @@
       <property name="appearance" type="uint" value="0"/>
     </property>
     <property name="plugin-6" type="string" value="docklike"/>
+    <!-- ShulGo's next minyan as text on the bar ("Mincha 4:32 · in 12 min"), from the file the
+         ShulGo widget writes; empty when ShulGo is not installed or not running. -->
+    <property name="plugin-7" type="string" value="genmon">
+      <property name="command" type="string" value="/usr/lib/jewbuntu/shulgo-bar"/>
+      <property name="update-period" type="int" value="15000"/>
+      <property name="use-label" type="bool" value="false"/>
+      <property name="enable-single-row" type="bool" value="true"/>
+    </property>
   </property>
 </channel>

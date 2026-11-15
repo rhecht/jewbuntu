@@ -1,0 +1,13 @@
+#!/bin/sh
+# Jewbuntu top bar: ShulGo's next minyan, shown by xfce4-genmon-plugin (it runs this every 15 s).
+# Only reads the line the ShulGo widget writes, so no Python starts per tick on a Pentium III.
+# Prints an empty label when the file is missing or more than 5 minutes old, so a widget that
+# has stopped never leaves a wrong time on the bar.
+f="${XDG_CACHE_HOME:-$HOME/.cache}/jewbuntu/shulgo-bar.txt"
+now=$(date +%s)
+then=$(stat -c %Y "$f" 2>/dev/null || echo 0)
+if [ -r "$f" ] && [ $((now - then)) -le 300 ]; then
+  cat "$f"
+else
+  echo "<txt></txt>"
+fi

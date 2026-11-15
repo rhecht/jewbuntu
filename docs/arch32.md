@@ -105,6 +105,15 @@ This saves your current settings first, then sets the skin, icons, font, window 
 wallpaper and keyboard. Your own panels are left alone; only new accounts get the Jewbuntu
 panels. `jewbuntu skin status` lists what is set.
 
+## ShulGo on the bar
+
+The top bar has a slot left of the tray and clock for ShulGo's next minyan as text (for example
+"Mincha 4:32 · in 12 min", with the next few minyanim in its tooltip). It's Xfce's generic monitor
+(`xfce4-genmon-plugin`) running `/usr/lib/jewbuntu/shulgo-bar` every 15 seconds. That helper only
+reads `~/.cache/jewbuntu/shulgo-bar.txt`, which the ShulGo widget writes, so no Python starts each
+tick. With no file, or one more than 5 minutes old, the slot stays empty, so a stopped widget never
+shows a wrong time.
+
 ## The web browser: Dillo
 
 The Jewbuntu session uses **Dillo** as its browser: it's in the dock, opens web links, and gets

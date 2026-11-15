@@ -44,7 +44,7 @@ package_jewbuntu-xfce-desktop() {
   pkgdesc="Jewbuntu look and Hebrew defaults for Xfce on Arch Linux 32 (old 32-bit laptops)"
   depends=("jewbuntu-core=$pkgver-$pkgrel" 'jewbuntu-skin' 'jewbuntu-icons'
            'xfce4-session' 'xfwm4' 'xfdesktop' 'xfce4-panel' 'xfce4-settings' 'xfconf'
-           'thunar' 'xfce4-terminal' 'xfce4-docklike-plugin'
+           'thunar' 'xfce4-terminal' 'xfce4-docklike-plugin' 'xfce4-genmon-plugin'
            'inter-font' 'ttf-dejavu' 'hunspell-he'
            'libxml2-legacy'  # Arch Linux 32's librsvg needs it to draw SVG (see the hook)
            'dillo')          # the browser: Firefox needs more than 256 MB (docs/arch32.md)
@@ -74,6 +74,7 @@ package_jewbuntu-xfce-desktop() {
   install -Dm644 $a/xdg/mimeapps.list "$pkgdir/etc/xdg/jewbuntu/mimeapps.list"
   install -Dm644 $a/dillo/dillorc "$pkgdir/usr/share/jewbuntu/dillo/dillorc"
   install -Dm755 $a/startjewbuntu "$pkgdir/usr/bin/startjewbuntu"
+  install -Dm755 $a/shulgo-bar "$pkgdir/usr/lib/jewbuntu/shulgo-bar"
   install -Dm644 $a/jewbuntu.desktop "$pkgdir/usr/share/xsessions/jewbuntu.desktop"
   install -Dm644 $a/lightdm/50-jewbuntu.conf "$pkgdir/usr/share/lightdm/lightdm.conf.d/50-jewbuntu.conf"
   install -Dm644 $a/lightdm/50-jewbuntu-greeter.conf "$pkgdir/usr/share/lightdm/lightdm-gtk-greeter.conf.d/50-jewbuntu.conf"

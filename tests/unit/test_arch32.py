@@ -149,6 +149,32 @@ class Arch32FilesTests(unittest.TestCase):
             subprocess.run(["sh", str(Path(tmp) / "s.sh")], env=env, check=True)
             self.assertEqual(rc.read_text(), "# mine\n", "a user's own file is never replaced")
 
+    def test_shulgo_line_on_the_bar(self):
+        root = ET.parse(CHANNELS / "xfce4-panel.xml").getroot()
+        plugins = {p.get("name"): p for p in root.find("property[@name='plugins']").findall("property")}
+        genmon = next(p for p in plugins.values() if p.get("value") == "genmon")
+        props = {c.get("name"): c.get("value") for c in genmon.findall("property")}
+        self.assertEqual(props["command"], "/usr/lib/jewbuntu/shulgo-bar")
+        self.assertGreaterEqual(int(props["update-period"]), 10000, "cheap on a Pentium III")
+        text = (ARCH32 / "PKGBUILD").read_text()
+        self.assertIn("'xfce4-genmon-plugin'", text.split("optdepends=")[0])
+        self.assertIn('/usr/lib/jewbuntu/shulgo-bar"', text)
+
+    def test_shulgo_bar_reads_only_a_fresh_file(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            cache = Path(tmp) / "jewbuntu"; cache.mkdir()
+            env = {"PATH": "/usr/bin:/bin", "HOME": tmp, "XDG_CACHE_HOME": tmp}
+            run = lambda: subprocess.run(["sh", str(ARCH32 / "shulgo-bar")], env=env, capture_output=True, text=True).stdout.strip()
+            self.assertEqual(run(), "<txt></txt>", "nothing when ShulGo has written nothing")
+            line = cache / "shulgo-bar.txt"
+            line.write_text("<txt>Mincha 4:32 · in 12 min</txt>\n")
+            if subprocess.run(["sh", "-c", "stat -c %Y /"], capture_output=True).returncode != 0:
+                self.skipTest("needs GNU stat (the target has it; macOS does not)")
+            self.assertEqual(run(), "<txt>Mincha 4:32 · in 12 min</txt>")
+            old = line.stat().st_mtime - 600
+            os.utime(line, (old, old))
+            self.assertEqual(run(), "<txt></txt>", "a stopped widget never leaves a wrong time")
+
     def test_svg_loader_workaround_is_packaged(self):
         hook = (ARCH32 / "jewbuntu-pixbuf-loaders.hook").read_text()
         self.assertIn("Target = usr/lib/libxml2.so.2*", hook)
