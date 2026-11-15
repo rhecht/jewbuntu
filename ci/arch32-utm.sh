@@ -40,7 +40,7 @@ config = {
                  "PortForward": [], "IsolateFromHost": False}],
     "Sound": [],
     "Input": {"UsbBusSupport": "2.0", "UsbSharing": False, "MaximumUsbShare": 3},
-    "Sharing": {"DirectoryShareMode": "None", "ClipboardSharing": False, "DirectoryShareReadOnly": False},
+    "Sharing": {"DirectoryShareMode": "None", "ClipboardSharing": True, "DirectoryShareReadOnly": False},  # needs spice-vdagent in the guest
 }
 with open(path, "wb") as f:
     plistlib.dump(config, f)

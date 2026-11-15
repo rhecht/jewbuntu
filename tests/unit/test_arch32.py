@@ -110,12 +110,44 @@ class Arch32FilesTests(unittest.TestCase):
         rc = configparser.RawConfigParser()
         rc.read(ARCH32 / "xdg" / "xfce4" / "panel" / "docklike.rc")
         pinned = [p for p in rc.get("user", "pinned").split(";") if p]
-        owners = {"thunar.desktop": "'thunar'", "xfce4-terminal.desktop": "'xfce4-terminal'", "xfce-settings-manager.desktop": "'xfce4-settings'"}
+        owners = {"thunar.desktop": "'thunar'", "xfce4-terminal.desktop": "'xfce4-terminal'", "xfce-settings-manager.desktop": "'xfce4-settings'",
+                  "dillo.desktop": "'dillo'"}
         depends = (ARCH32 / "PKGBUILD").read_text().split("optdepends=")[0]
         for p in pinned:
             name = p.rsplit("/", 1)[1]
             self.assertIn(name, owners, f"{name}: pinned app from a package jewbuntu-xfce-desktop does not depend on")
             self.assertIn(owners[name], depends)
+
+    def test_dillo_is_the_browser(self):
+        mime = configparser.RawConfigParser()
+        mime.read(ARCH32 / "xdg" / "mimeapps.list")
+        for t in ("x-scheme-handler/http", "x-scheme-handler/https", "text/html"):
+            self.assertEqual(mime.get("Default Applications", t), "dillo.desktop")
+        self.assertIn("WebBrowser=dillo", (ARCH32 / "xdg" / "xfce4" / "helpers.rc").read_text())
+        text = (ARCH32 / "PKGBUILD").read_text()
+        self.assertIn("'dillo'", text.split("optdepends=")[0])
+        self.assertNotIn("'firefox", text.lower(), "no Firefox dependency: it needs more than the 256 MB this targets")
+
+    def test_dillo_colours_follow_the_skin(self):
+        rc = dict(l.split("=", 1) for l in (ARCH32 / "dillo" / "dillorc").read_text().splitlines() if l and not l.startswith("#"))
+        self.assertEqual(rc["ui_main_bg_color"], "0xf1f1f1", "same light grey as the top bar")
+        self.assertEqual(rc["ui_fg_color"], "0x363636")
+        self.assertEqual(rc["ui_selection_color"], "0x0088ff")
+        self.assertEqual(rc["bg_color"], "0xffffff")
+
+    def test_startjewbuntu_gives_dillo_colours_once(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            home = Path(tmp) / "home"; home.mkdir()
+            fake = Path(tmp) / "startxfce4"; fake.write_text("#!/bin/sh\nexit 0\n"); fake.chmod(0o755)
+            script = (ARCH32 / "startjewbuntu").read_text().replace("/usr/share/jewbuntu/dillo/dillorc", str(ARCH32 / "dillo" / "dillorc"))
+            (Path(tmp) / "s.sh").write_text(script)
+            env = {"PATH": f"{tmp}:/usr/bin:/bin", "HOME": str(home)}
+            subprocess.run(["sh", str(Path(tmp) / "s.sh")], env=env, check=True)
+            rc = home / ".dillo" / "dillorc"
+            self.assertEqual(rc.read_text(), (ARCH32 / "dillo" / "dillorc").read_text())
+            rc.write_text("# mine\n")
+            subprocess.run(["sh", str(Path(tmp) / "s.sh")], env=env, check=True)
+            self.assertEqual(rc.read_text(), "# mine\n", "a user's own file is never replaced")
 
     def test_svg_loader_workaround_is_packaged(self):
         hook = (ARCH32 / "jewbuntu-pixbuf-loaders.hook").read_text()

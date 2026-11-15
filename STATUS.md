@@ -255,6 +255,7 @@ base is **Arch Linux 32 (i686)** with **Xfce 4.18** on X11. Install steps and wo
 | Pentium III / 256 MB (UTM VM: `ci/arch32-vm-image.sh`, `ci/arch32-utm.sh`, `ci/arch32-serial.py`) | Tested emulated | Pentium III Katmai, no SSE2, 228 MB: boots to login in 46 s, full Jewbuntu desktop, idle 125 MB used / 102 MB available (docs/test-results/2026-11-13-arch32-p3vm.md). **Not tested:** the real laptop, its graphics driver, 16-bit colour, battery/suspend |
 | Top-bar status icons invisible (Jewbuntu icons are white for GNOME's dark bar) | Fixed: Xfce and greeter default to Jewbuntu-light | Confirmed live in the VM; rebuilt package not yet reinstalled there |
 | ShulGo Xfce tray (Python + GTK3, rhecht/shulgo-widgets `shulgo-xfce/` d121217, by the ShulGo session) | First run done in the Pentium III VM | `--check` OK, tray icon and menu appear (icon needs its packaged hicolor file), 43 MB RSS / 24 MB PSS; no data tested (no API key). No tag or licence yet |
+| Browser: Dillo (dependency, dock pin, default for web links, Jewbuntu colours via `dillorc` copied at login); Firefox 114 is unusable on 256 MB, Chrome isn't available for this CPU | Implemented (0.1.0~m1.29) | Seen in the Pentium III VM: opens in about 6 s, Wikipedia in about 11 s, 29 MB, Jewbuntu colours after a fresh login. Modern JavaScript sites don't render (expected for Dillo) |
 | Publishing (AUR or a pacman repo) | Not started | n/a |
 
 ## Blockers / needs from Rafi

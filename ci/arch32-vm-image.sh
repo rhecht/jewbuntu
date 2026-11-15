@@ -57,7 +57,7 @@ start=2048, type=83, bootable" | sfdisk -q $IMG
     pacstrap -C /tmp/pacman32.conf -G -M /mnt base linux mkinitcpio syslinux sudo \
       xorg-server xf86-video-vesa xf86-input-libinput xorg-xwd xorg-xdpyinfo xorg-setxkbmap \
       lightdm lightdm-gtk-greeter mousepad zenity procps-ng \
-      python-gobject gtk3 libayatana-appindicator >/tmp/strap.log 2>&1 && { ok=1; break; }; sleep 5; done
+      python-gobject gtk3 libayatana-appindicator spice-vdagent >/tmp/strap.log 2>&1 && { ok=1; break; }; sleep 5; done
   [ "$ok" = 1 ] || { tail -30 /tmp/strap.log; exit 1; }
   cp -a /etc/pacman.d/gnupg /mnt/etc/pacman.d/
   { echo "[options]"; echo "Architecture = i686"; echo "IgnorePkg = pango"; echo "SigLevel = Required DatabaseOptional"; echo "LocalFileSigLevel = Optional"
@@ -102,7 +102,12 @@ CFG
   dd if=/dev/zero of=/mnt/swapfile bs=1M count=256 2>/dev/null && chmod 600 /mnt/swapfile && mkswap /mnt/swapfile >/dev/null
   echo "/swapfile none swap defaults 0 0" >> /mnt/etc/fstab
   printf "[Match]\nName=en* eth*\n[Network]\nDHCP=yes\n" > /mnt/etc/systemd/network/20-wired.network
+  # spice-vdagentd: copy and paste between the Mac and the VM (UTM clipboard sharing).
   arch-chroot /mnt systemctl enable systemd-networkd systemd-resolved lightdm >/dev/null 2>&1
+  arch-chroot /mnt systemctl add-wants multi-user.target spice-vdagentd.service >/dev/null 2>&1
+  # -X: no logind session check. Without it the daemon logs "Error getting active session" and
+  # never passes the clipboard to the agent in the autologin session (seen on 2026-11-13).
+  echo "SPICE_VDAGENTD_EXTRA_ARGS=-X" > /mnt/etc/conf.d/spice-vdagentd
   arch-chroot /mnt useradd -m -c "Jewbuntu Test" -G wheel tester
   arch-chroot /mnt passwd -d root >/dev/null   # TEST VM ONLY (serial console on 127.0.0.1)
   printf "%%wheel ALL=(ALL:ALL) NOPASSWD: ALL\n" > /mnt/etc/sudoers.d/10-test-vm

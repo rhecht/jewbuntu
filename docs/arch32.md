@@ -105,6 +105,31 @@ This saves your current settings first, then sets the skin, icons, font, window 
 wallpaper and keyboard. Your own panels are left alone; only new accounts get the Jewbuntu
 panels. `jewbuntu skin status` lists what is set.
 
+## The web browser: Dillo
+
+The Jewbuntu session uses **Dillo** as its browser: it's in the dock, opens web links, and gets
+the Jewbuntu colours (`startjewbuntu` copies `/usr/share/jewbuntu/dillo/dillorc` to
+`~/.dillo/dillorc` at login, only if that file doesn't exist yet; delete it to get Dillo's own
+look back). On the emulated Pentium III it opens in about 6 seconds, loads a Wikipedia article in
+about 11, and uses about 29 MB.
+
+The trade-off: Dillo runs no JavaScript and supports only older CSS. Text pages such as news and
+Wikipedia work, but modern web apps and sites built on current layout methods don't look right.
+
+Other browsers, tested or checked on 2026-11-14:
+
+- **Firefox** (Arch Linux 32 has only version 114, built June 2023, with no security updates
+  since) installs, but on 256 MB it took 8 minutes to open an empty window, and swap filled up.
+  Not usable on this hardware.
+- **Chrome and Chromium** aren't available: Google stopped 32-bit Linux builds in 2016, and
+  current versions need SSE3, which a Pentium III lacks. Browsers built on them (Falkon,
+  qutebrowser) need the same.
+- **NetSurf** (4 MB) is the other light option, with a bit more CSS than Dillo.
+
+To see modern sites properly on such a laptop, use a rendering proxy (for example Browservice
+or WRP), which runs a modern browser on another computer and sends the old one a simple version,
+or add RAM if the laptop takes it.
+
 ## Undo or remove
 
 ```bash

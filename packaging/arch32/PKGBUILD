@@ -46,7 +46,8 @@ package_jewbuntu-xfce-desktop() {
            'xfce4-session' 'xfwm4' 'xfdesktop' 'xfce4-panel' 'xfce4-settings' 'xfconf'
            'thunar' 'xfce4-terminal' 'xfce4-docklike-plugin'
            'inter-font' 'ttf-dejavu' 'hunspell-he'
-           'libxml2-legacy')  # Arch Linux 32's librsvg needs it to draw SVG (see the hook)
+           'libxml2-legacy'  # Arch Linux 32's librsvg needs it to draw SVG (see the hook)
+           'dillo')          # the browser: Firefox needs more than 256 MB (docs/arch32.md)
   optdepends=('lightdm-gtk-greeter: Jewbuntu login screen (or use startx with startjewbuntu)'
               'mousepad: text editor'
               'zenity: first-login question for accounts that existed before'
@@ -59,6 +60,8 @@ package_jewbuntu-xfce-desktop() {
           'etc/xdg/jewbuntu/xfce4/xfconf/xfce-perchannel-xml/xfce4-panel.xml'
           'etc/xdg/jewbuntu/xfce4/xfconf/xfce-perchannel-xml/xfce4-terminal.xml'
           'etc/xdg/jewbuntu/xfce4/panel/docklike.rc'
+          'etc/xdg/jewbuntu/xfce4/helpers.rc'
+          'etc/xdg/jewbuntu/mimeapps.list'
           'etc/xdg/autostart/jewbuntu-skin-prompt.desktop')
   local x=etc/xdg/jewbuntu/xfce4
   cd jewbuntu
@@ -67,6 +70,9 @@ package_jewbuntu-xfce-desktop() {
     install -Dm644 "$f" "$pkgdir/$x/xfconf/xfce-perchannel-xml/$(basename "$f")"
   done
   install -Dm644 $a/xdg/xfce4/panel/docklike.rc "$pkgdir/$x/panel/docklike.rc"
+  install -Dm644 $a/xdg/xfce4/helpers.rc "$pkgdir/$x/helpers.rc"
+  install -Dm644 $a/xdg/mimeapps.list "$pkgdir/etc/xdg/jewbuntu/mimeapps.list"
+  install -Dm644 $a/dillo/dillorc "$pkgdir/usr/share/jewbuntu/dillo/dillorc"
   install -Dm755 $a/startjewbuntu "$pkgdir/usr/bin/startjewbuntu"
   install -Dm644 $a/jewbuntu.desktop "$pkgdir/usr/share/xsessions/jewbuntu.desktop"
   install -Dm644 $a/lightdm/50-jewbuntu.conf "$pkgdir/usr/share/lightdm/lightdm.conf.d/50-jewbuntu.conf"

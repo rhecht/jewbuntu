@@ -1,0 +1,23 @@
+# Jewbuntu colours for Dillo, the browser on old laptops (Arch Linux 32 + Xfce).
+# Copied to ~/.dillo/dillorc by startjewbuntu at login, only when that file does not exist.
+# Delete ~/.dillo/dillorc to get Dillo's own defaults; edit it to change anything.
+# Matches the Jewbuntu skin: white pages and fields, the light #f1f1f1 of the top bar for the
+# toolbar, #363636 text, Jewbuntu blue #0088ff for selections, Inter for page text.
+
+bg_color=0xffffff
+allow_white_bg=YES
+
+theme=gleam
+ui_fg_color=0x363636
+ui_main_bg_color=0xf1f1f1
+ui_text_bg_color=0xffffff
+ui_selection_color=0x0088ff
+ui_button_highlight_color=0xe2e2e2
+ui_tab_active_bg_color=0xffffff
+ui_tab_active_fg_color=0x363636
+ui_tab_bg_color=0xe4e4e4
+ui_tab_fg_color=0x363636
+
+font_sans_serif="Inter"
+font_serif="DejaVu Serif"
+font_monospace="DejaVu Sans Mono"

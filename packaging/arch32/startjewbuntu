@@ -12,4 +12,9 @@ export XDG_CONFIG_DIRS
 if command -v dbus-update-activation-environment >/dev/null 2>&1 && [ -n "${DBUS_SESSION_BUS_ADDRESS:-}" ]; then
   dbus-update-activation-environment --systemd XDG_CONFIG_DIRS >/dev/null 2>&1 || true
 fi
+# Dillo, the browser on these laptops, reads its colours only from /etc/dillo (its own
+# package's file) or ~/.dillo: give a new account Jewbuntu's, once, never replacing a file.
+if [ -r /usr/share/jewbuntu/dillo/dillorc ] && [ ! -e "$HOME/.dillo/dillorc" ]; then
+  mkdir -p "$HOME/.dillo" && cp /usr/share/jewbuntu/dillo/dillorc "$HOME/.dillo/dillorc" 2>/dev/null || true
+fi
 exec startxfce4 "$@"

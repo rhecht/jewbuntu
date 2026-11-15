@@ -5,6 +5,7 @@ usage:
   python3 ci/arch32-serial.py wait               # until the guest answers (boot can take minutes)
   python3 ci/arch32-serial.py run 'free -m'      # prints output, exits with the command's status
   python3 ci/arch32-serial.py fetch /tmp/s.png dist/s.png
+  python3 ci/arch32-serial.py put dist/x.pkg.tar.zst /var/cache/x.pkg.tar.zst   (small files)
   PORT=4555 TIMEOUT=600 to change the port or the per-command timeout (seconds).
 """
 import base64
@@ -109,6 +110,18 @@ def main():
             f.write(data)
         print(f"{sys.argv[3]}: {len(data)} bytes")
         return 0
+    if action == "put":  # put LOCAL REMOTE: small files only (base64 in chunks the tty accepts)
+        data = base64.b64encode(open(sys.argv[2], "rb").read()).decode()
+        remote = sys.argv[3]
+        c.run(f": > {remote}.b64")
+        for i in range(0, len(data), 3000):
+            rc, out = c.run(f"printf %s '{data[i:i + 3000]}' >> {remote}.b64")
+            if rc:
+                print(out, file=sys.stderr)
+                return rc
+        rc, out = c.run(f"base64 -d {remote}.b64 > {remote} && rm {remote}.b64 && wc -c < {remote}")
+        print(f"{remote}: {out.strip()} bytes")
+        return rc
     print(__doc__)
     return 2
 

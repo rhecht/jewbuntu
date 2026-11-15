@@ -1,0 +1,6 @@
+# Jewbuntu session: Dillo opens web links (light enough for 256 MB; Firefox is not).
+[Default Applications]
+x-scheme-handler/http=dillo.desktop
+x-scheme-handler/https=dillo.desktop
+text/html=dillo.desktop
+application/xhtml+xml=dillo.desktop
