@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=ShulGo
+Comment=The next minyan near you on the top bar (starts only in the Jewbuntu session, when ShulGo is installed)
+Exec=/usr/bin/shulgo-xfce
+TryExec=/usr/bin/shulgo-xfce
+Icon=shulgo
+NoDisplay=true
+OnlyShowIn=XFCE;
+X-GNOME-Autostart-Delay=10

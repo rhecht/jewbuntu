@@ -31,7 +31,13 @@ dbus-run-session -- sh -c '
   done
   [ "$(xfconf-query -c xfce4-panel -p /plugins/plugin-6 2>/dev/null)" = docklike ] && [ -n "$(xfconf-query -c xfce4-panel -p /panels/panel-2/position 2>/dev/null)" ] \
     && echo "PASS: Jewbuntu panels (top bar and Docklike dock) configured without the first-run panel question" || { echo "FAIL: panel layout"; rc=1; }
-  pgrep -f "xfce4/panel/wrapper|libdocklike" >/dev/null && echo "INFO: Docklike runs in its own wrapper process" || true
+  w=$(pgrep -u $(id -u) -f "xfce4/panel/wrapper" | wc -l | tr -d " ")
+  [ "$w" = 0 ] && echo "PASS: panel plugins run inside the panel (no wrapper processes)" || { echo "FAIL: $w panel plugin wrapper process(es): $(pgrep -u $(id -u) -af xfce4/panel/wrapper | cut -c1-80 | tr "\n" " ")"; rc=1; }
+  pgrep -u $(id -u) -f at-spi-bus-launcher >/dev/null && { echo "FAIL: accessibility bus running in the Jewbuntu session"; rc=1; } || echo "PASS: no accessibility bus (NO_AT_BRIDGE)"
+  if [ -x /usr/bin/shulgo-xfce ]; then
+    pgrep -u $(id -u) -f "shulgo_xfce|shulgo-xfce" >/dev/null && echo "PASS: ShulGo widget started at login" || { echo "FAIL: ShulGo installed but not started"; rc=1; }
+  fi
+  echo "INFO: session memory (PSS MB): $(for p in $(pgrep -u $(id -u)); do awk "/^Pss:/{print \$2}" /proc/$p/smaps_rollup 2>/dev/null; done | awk "{s+=\$1} END {printf \"%.0f\", s/1024}")"
   grep -iE "docklike.*(fail|error)|Failed to load plugin" /tmp/xfce-$(id -u).log && { echo "FAIL: panel plugin errors"; rc=1; } || echo "PASS: no panel plugin load errors"
   kb=$(setxkbmap -query | sed -n "s/^layout: *//p")
   [ "$kb" = us,il ] && echo "PASS: keyboard layouts us,il applied by xfsettingsd" || { echo "FAIL: keyboard layouts $kb"; rc=1; }

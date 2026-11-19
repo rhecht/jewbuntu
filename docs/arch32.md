@@ -1,5 +1,11 @@
 # Jewbuntu for old 32-bit laptops (Arch Linux 32 + Xfce)
 
+> **Not for modern web browsing.** No current browser runs on hardware this old: Firefox needs
+> far more memory, and Chrome doesn't exist for these processors. The bundled Dillo and Lynx
+> show simple pages (news, Wikipedia) but not today's web apps (Gmail, shopping, banking, the full
+> ShulGo website). This edition puts the information on the bar instead: ShulGo's next minyan
+> sits next to the clock.
+
 This brings the Jewbuntu look to laptops from about 2001: a Pentium III with 256 MB of RAM is
 the target. Modern GNOME can't run on hardware like that, and official Arch Linux has supported
 only 64-bit PCs since 2017, so this port uses:
@@ -16,8 +22,8 @@ chips can't draw), Jewbuntu Icons, the Star of David wallpapers scaled for scree
 the Inter font, window buttons on the left, the light variant of Jewbuntu Icons (dark status icons that stay readable on the light top bar), a slim top bar and a dock at the bottom, an English
 and Hebrew keyboard (Super+Space switches) and Hebrew fonts, and a Jewbuntu login screen.
 
-Not yet available: ShulGo (a light Xfce tray version exists in rhecht/shulgo-widgets, untested
-here), the Web Server app, the Hub and the startup jingle.
+Also included: ShulGo's Xfce widget (the next minyan on the top bar, zmanim in its menu; link it
+to your ShulGo account from its menu). Not available: the Web Server app, the Hub and the startup jingle.
 
 | Package | What it contains |
 | --- | --- |

@@ -1,0 +1,8 @@
+# Jewbuntu session on old laptops: no accessibility bus (startjewbuntu also sets NO_AT_BRIDGE=1).
+# Saves memory and start-up time in every GTK program on a Pentium III with 256 MB. The plain Xfce
+# session is unaffected, so anyone who needs a screen reader can choose it at the login screen.
+[Desktop Entry]
+Type=Application
+Name=AT-SPI D-Bus Bus
+Exec=/usr/lib/at-spi-bus-launcher --launch-immediately
+Hidden=true

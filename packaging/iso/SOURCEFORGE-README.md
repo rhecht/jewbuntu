@@ -30,13 +30,14 @@ during installation.
 
 ## Which file?
 
-All three files are in the **`0.1.0-m1.29`** folder below, next to their `.sha256` checksums.
+All four files are in the **`0.1.0-m1.29`** folder below, next to their `.sha256` checksums.
 
 | You have | Download |
 |---|---|
 | An Intel/AMD PC, and you want a fresh install | **`jewbuntu-0.1.0-m1.29-intel-amd-64bit.iso`** (6.5 GB) |
 | A computer already running Ubuntu 26.04, Intel/AMD **or ARM** | **`jewbuntu-installer-0.1.0-m1.29.run`** (10 MB). In Terminal, run `sh ~/Downloads/jewbuntu-installer-0.1.0-m1.29.run`, then log out and back in. It's also on [GitHub Releases](https://github.com/rhecht/jewbuntu/releases/latest). |
 | An Apple Silicon Mac (M1/M2) running **Fedora Asahi Remix 45, GNOME edition** | **`jewbuntu-asahi-installer-0.1.0-m1.29.run`** (15 MB). See [Asahi Linux](#asahi-linux-apple-silicon-macs) below. Also on [GitHub Releases](https://github.com/rhecht/jewbuntu/releases/latest). |
+| An **old 32-bit laptop** (about 2001, e.g. Pentium III, 256 MB) running **Arch Linux 32** | **`jewbuntu-arch32-installer-0.1.0-m1.29.run`**. **Not for modern web browsing.** See [Old 32-bit laptops](#old-32-bit-laptops-arch-linux-32) below. |
 
 ## System requirements
 
@@ -161,6 +162,36 @@ own welcome tour, and the login screen theme is switched off automatically after
 upgrade to a GNOME version Jewbuntu doesn't support yet. Details:
 [docs/asahi.md](https://github.com/rhecht/jewbuntu/blob/main/docs/asahi.md).
 
+## Old 32-bit laptops (Arch Linux 32)
+
+A light edition for laptops from about 2001: a **Pentium III (or newer) with 256 MB** of memory,
+running [Arch Linux 32](https://www.archlinux32.org) with the Xfce desktop. It gives you the
+Jewbuntu look in a version old graphics chips can draw (no transparency), Hebrew typing, and
+**ShulGo's next minyan right on the top bar**, with zmanim in its menu.
+
+> **Not for modern web browsing.** No current browser runs on a laptop this old: Firefox needs
+> far more memory, and Chrome doesn't exist for these processors. The included **Dillo** and
+> **Lynx** (text only) show simple pages like news and Wikipedia, but not today's web apps
+> (Gmail, shopping, banking, the full ShulGo website). This edition puts the information on
+> the bar instead.
+
+1. Install Arch Linux 32 (i686) with Xfce: see the [guide](https://github.com/rhecht/jewbuntu/blob/main/docs/arch32.md).
+   Your CPU needs SSE (Pentium III or newer); a swap file is recommended.
+2. Download `jewbuntu-arch32-installer-0.1.0-m1.29.run` and its `.sha256`, then in a terminal,
+   in the download folder:
+   - `sha256sum -c jewbuntu-arch32-installer-0.1.0-m1.29.run.sha256` (optional check)
+   - `sh jewbuntu-arch32-installer-0.1.0-m1.29.run`
+
+   It asks before every change. Arch Linux 32's current pango breaks every GTK program; the
+   installer explains this and offers to hold the last working version. If you have no login
+   screen yet, it offers to add one.
+3. Log out and choose the **Jewbuntu** session (the plain Xfce session stays as it was).
+4. ShulGo: click its icon on the top bar, then **Link this computer**, and approve the code on
+   your phone at shulgo.com/link. A ShulGo administrator then approves the computer.
+
+**Uninstall:** `sh jewbuntu-arch32-installer-0.1.0-m1.29.run --uninstall`. Xfce and your files
+stay.
+
 ## Status
 
 **Tested:**
@@ -176,9 +207,14 @@ upgrade to a GNOME version Jewbuntu doesn't support yet. Details:
 - The Asahi installer (0.1.0-m1.29) in a clean Fedora 45 container (install, uninstall) and
   in a Fedora 45 Workstation VM on an Apple Silicon Mac.
 
+- The Arch Linux 32 edition (0.1.0-m1.29) in an i686 container (install, real Xfce session,
+  update, uninstall) and in an emulated Pentium III with 256 MB (UTM), where the desktop boots to
+  the login screen in under a minute and uses about 125 MB when idle.
+
 **Not yet tested:**
 - real PC hardware, including Secure Boot (Ubuntu's signed boot files are unchanged)
 - Asahi on a real Apple Silicon Mac
+- the Arch Linux 32 edition on a real old laptop
 - Hebrew typing in apps
 
 Licence: Jewbuntu's own code is open source (see GitHub). Ubuntu and its packages keep
