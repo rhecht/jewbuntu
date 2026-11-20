@@ -1,0 +1,6 @@
+# Tools for the Jewbuntu Classic (Ubuntu 7.10 i386) remaster: native (arm64/amd64) helpers that
+# work on the unpacked 7.10 tree. 7.10's own binaries run through Docker's i386 emulation in a chroot.
+FROM ubuntu:26.04
+RUN apt-get update -qq && DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --no-install-recommends \
+      python3 librsvg2-bin imagemagick cpio file binutils xorriso squashfs-tools unzip xz-utils \
+      bzip2 zstd gcc make libc6-dev zlib1g-dev ca-certificates fontconfig fonts-dejavu-core && rm -rf /var/lib/apt/lists/*

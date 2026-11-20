@@ -1,0 +1,13 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Lynx Web Browser
+Name[he]=דפדפן Lynx
+GenericName=Text Web Browser
+Comment=Browse today's secure websites as text (works where Firefox 2 no longer can)
+Exec=lynx %u
+Terminal=true
+Icon=web-browser
+Categories=Network;WebBrowser;
+MimeType=text/html;x-scheme-handler/http;x-scheme-handler/https;
+StartupNotify=false

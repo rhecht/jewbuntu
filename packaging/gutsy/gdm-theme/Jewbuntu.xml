@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE greeter SYSTEM "greeter.dtd">
+<!-- Jewbuntu Classic login screen for GDM 2.20. Structure follows Ubuntu 7.10's Human theme;
+     colours follow the Jewbuntu skin: light glass (white, ~95% opaque), dark text, Jewbuntu
+     blue #0088FF for highlights. The wallpaper's star is the logo; the login box sits below it
+     (checked at 800x600 and 1024x768). -->
+<greeter>
+  <item type="pixmap">
+    <normal file="background.jpg"/>
+    <pos y="0" x="0" width="100%" height="100%"/>
+  </item>
+
+  <!-- bottom strip -->
+  <item type="pixmap">
+    <normal file="bar.svg"/>
+    <pos y="100%" x="0" width="100%" height="42" anchor="sw"/>
+  </item>
+  <item type="rect">
+    <pos y="100%" x="0" width="100%" height="42" anchor="sw"/>
+    <box xpadding="10" spacing="16" orientation="horizontal">
+      <item type="rect" id="language_button" button="true">
+        <pos y="50%" width="box" height="box" anchor="w"/>
+        <box xpadding="0" spacing="4" orientation="horizontal">
+          <item type="pixmap"><normal file="icon-language.png"/><pos y="50%" anchor="w"/></item>
+          <item type="label">
+            <normal font="Inter 10" color="#1d1d1f"/>
+            <prelight font="Inter 10" color="#0088ff"/>
+            <active font="Inter 10" color="#005fb3"/>
+            <pos y="50%" anchor="w"/>
+            <stock type="language"/>
+          </item>
+        </box>
+      </item>
+      <item type="rect" id="session_button" button="true">
+        <pos y="50%" width="box" height="box" anchor="w"/>
+        <box xpadding="0" spacing="4" orientation="horizontal">
+          <item type="pixmap"><normal file="icon-session.png"/><pos y="50%" anchor="w"/></item>
+          <item type="label">
+            <normal font="Inter 10" color="#1d1d1f"/>
+            <prelight font="Inter 10" color="#0088ff"/>
+            <active font="Inter 10" color="#005fb3"/>
+            <pos y="50%" anchor="w"/>
+            <stock type="session"/>
+          </item>
+        </box>
+      </item>
+      <item type="rect" id="options_button" button="true">
+        <pos y="50%" width="box" height="box" anchor="w"/>
+        <box xpadding="0" spacing="4" orientation="horizontal">
+          <item type="pixmap"><normal file="icon-options.png"/><pos y="50%" anchor="w"/></item>
+          <item type="label">
+            <normal font="Inter 10" color="#1d1d1f"/>
+            <prelight font="Inter 10" color="#0088ff"/>
+            <active font="Inter 10" color="#005fb3"/>
+            <pos y="50%" anchor="w"/>
+            <stock type="options"/>
+          </item>
+        </box>
+      </item>
+      <item type="rect" id="disconnect_button" button="true">
+        <pos y="50%" width="box" height="box" anchor="w"/>
+        <show type="remote"/>
+        <box xpadding="0" spacing="4" orientation="horizontal">
+          <item type="label">
+            <normal font="Inter 10" color="#1d1d1f"/>
+            <prelight font="Inter 10" color="#0088ff"/>
+            <active font="Inter 10" color="#005fb3"/>
+            <pos y="50%" anchor="w"/>
+            <stock type="disconnect"/>
+          </item>
+        </box>
+      </item>
+    </box>
+  </item>
+
+  <!-- hostname and clock, right side of the strip -->
+  <item type="rect">
+    <pos x="100%" y="100%" width="box" height="42" anchor="se"/>
+    <box xpadding="12" spacing="10" orientation="horizontal">
+      <item type="label">
+        <pos x="100%" y="50%" anchor="e"/>
+        <normal font="Inter Bold 10" color="#1d1d1f"/>
+        <text>%h</text>
+      </item>
+      <item type="label" id="clock">
+        <pos x="100%" y="50%" anchor="e"/>
+        <normal font="Inter 10" color="#1d1d1f"/>
+        <text>%c</text>
+      </item>
+    </box>
+  </item>
+
+  <!-- login box -->
+  <item type="rect">
+    <pos x="50%" y="81%" width="box" height="box" anchor="c"/>
+    <box xpadding="0" ypadding="0" spacing="0" orientation="vertical">
+      <item type="pixmap">
+        <pos x="0" y="0" width="box" height="box"/>
+        <normal file="box.svg"/>
+        <box xpadding="30" ypadding="14" spacing="8" orientation="vertical">
+          <item type="label" id="pam-prompt">
+            <pos x="0"/>
+            <normal font="Inter Bold 10" color="#1d1d1f"/>
+            <stock type="username-label"/>
+          </item>
+          <item type="pixmap">
+            <normal file="entry.svg"/>
+            <pos width="200" height="26"/>
+            <fixed>
+              <item type="entry" id="user-pw-entry">
+                <normal color="#1d1d1f" font="Inter 11"/>
+                <pos y="3" x="4" width="-8" height="-6" anchor="nw"/>
+              </item>
+            </fixed>
+          </item>
+          <item type="label" id="timed-label">
+            <show type="timed"/>
+            <normal font="Inter Bold 10" color="#1d1d1f"/>
+            <stock type="timed-label"/>
+          </item>
+        </box>
+      </item>
+    </box>
+  </item>
+
+  <!-- error and caps-lock messages, between the star and the login box (white on the blue
+       wallpaper; inside the box they reserved empty space even when hidden) -->
+  <item type="label" id="pam-error">
+    <pos x="50%" y="71%" anchor="c"/>
+    <normal font="Inter Bold 11" color="#ffffff"/>
+    <text></text>
+  </item>
+  <item type="label" id="caps-lock-warning">
+    <pos x="50%" y="74%" anchor="c"/>
+    <normal font="Inter Bold 10" color="#ffffff"/>
+    <stock type="caps-lock-warning"/>
+  </item>
+
+  <!-- pam message (hidden, but required) -->
+  <item type="label" id="pam-message">
+    <pos x="50%" anchor="c"/>
+    <normal alpha="0.00"/>
+    <text></text>
+  </item>
+</greeter>

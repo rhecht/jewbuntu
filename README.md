@@ -61,6 +61,19 @@ sh jewbuntu-asahi-installer-0.1.0-m1.29.run --uninstall
 Without the file: `jewbuntu skin undo`, then `sudo dnf remove 'jewbuntu-*'`.
 Details and what works differently from Ubuntu: [docs/asahi.md](docs/asahi.md).
 
+### Jewbuntu Classic (the oldest 32-bit PCs)
+
+The original 2007 Jewbuntu CD (Ubuntu 7.10), remastered with the Jewbuntu look for PCs from
+about 1998 to 2008: any i686 CPU (Pentium II/III and up, no SSE2 needed), 256 MB of RAM or more.
+It's a live CD that also installs, and it fits a 700 MB CD-R. Besides the skin it adds a current
+Lynx and curl with today's encryption (the 2007 browsers can't open most sites any more),
+English and Hebrew typing, and ShulGo in the top bar. Ubuntu 7.10 has had no security updates
+since 2009, so it's for writing, reading and light browsing, not banking.
+
+Download `jewbuntu-classic-7.10-c1-32bit.iso` from
+[SourceForge](https://sourceforge.net/projects/jewbuntu/files/jewbuntu-classic-7.10-c1/) and burn
+it to a CD. Details and how it's built: [docs/gutsy.md](docs/gutsy.md).
+
 ## Packages
 
 | Package | What it does | State |
@@ -119,6 +132,7 @@ Log out and back in to get the new defaults and the startup jingle.
 ## Documentation
 
 - [docs/asahi.md](docs/asahi.md): Jewbuntu on Asahi Linux (Fedora Asahi Remix, Apple Silicon Macs)
+- [docs/gutsy.md](docs/gutsy.md): Jewbuntu Classic, the 2007 Jewbuntu 7.10 CD remastered for old 32-bit PCs
 - [docs/architecture.md](docs/architecture.md): how the parts fit together
 - [docs/decisions/](docs/decisions/): architecture decision records
 - [docs/vm-setup.md](docs/vm-setup.md): VM testing advice for this project's hardware

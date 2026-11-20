@@ -1,0 +1,32 @@
+# Jewbuntu Classic colour style for Lynx (colour-style syntax: element:mono-attr:fg:bg).
+# "default" keeps the terminal's own background, so text stays readable in light and dark
+# terminals; links use blue, the nearest terminal colour to Jewbuntu blue #0088FF.
+default:normal:default:default
+alink:reverse:white:blue
+a:bold:blue:default
+status:reverse:white:blue
+label:normal:blue:default
+value:normal:default:default
+high:bold:blue:default
+normal:normal:default:default
+whereis:reverse:black:yellow
+h1:bold:blue:default
+h2:bold:blue:default
+h3:bold:default:default
+h4:bold:default:default
+em:bold:default:default
+strong:bold:default:default
+b:bold:default:default
+i:underline:default:default
+code:normal:magenta:default
+pre:normal:default:default
+blockquote:normal:default:default
+menu.bg:normal:black:white
+menu.frame:normal:black:white
+menu.entry:normal:black:white
+menu.n:normal:blue:white
+menu.active:reverse:white:blue
+menu.sb:normal:blue:white
+scroll.bar:normal:blue:default
+scroll.back:normal:default:default
+forwbackw.arrow:normal:blue:default

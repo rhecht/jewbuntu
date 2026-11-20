@@ -260,6 +260,21 @@ base is **Arch Linux 32 (i686)** with **Xfce 4.18** on X11. Install steps and wo
 | One-file installer `jewbuntu-arch32-installer-0.1.0-m1.29.run` (5 packages incl. shulgo-xfce 1.0.0.r202611200053; pango hold offered when needed; optional LightDM; Lynx + Dillo; "not for modern web browsing" stated before installing) | Published on SourceForge (0.1.0-m1.29) | Auto-verified: i686 container test ALL PASS (docs/test-results/2026-11-20-arch32-container.log) and installer test 18/18 (…-installer.log). Memory: NO_AT_BRIDGE in the session; in-panel plugins not possible (xfce4-panel reads only /usr/share) |
 | Publishing (AUR or a pacman repo) | AUR blocked (ShulGo licence unsettled) | n/a |
 
+## Jewbuntu Classic: the 2007 Jewbuntu 7.10 disc, remastered (started 2026-11-19)
+
+The original 2007 Jewbuntu ISO (plain Ubuntu 7.10, i386) with the Jewbuntu look, for the oldest
+PCs. Build steps and design: docs/gutsy.md. Not an overlay on a supported LTS: 7.10 has had no
+security updates since 2009, which the welcome page says plainly.
+
+| Item | State | Test status |
+| --- | --- | --- |
+| Pipeline: `ci/gutsy-unpack.sh`, `ci/gutsy-tools-build.sh`, `ci/gutsy-usplash.sh`, `ci/gutsy-build-debs.sh`, `ci/build-shulgo-gtk2-deb.sh`, `ci/gutsy-remaster.sh`, `ci/gutsy-vm.sh` | Implemented | Full run Auto-verified; ISO 714.7 MB fits a 700 MB CD-R |
+| `jewbuntu-classic-desktop`: solid skin (GTK 2 made to parse on GTK 2.12/murrine 0.53), Jewbuntu-Classic PNG icons, wallpapers, Inter, gconf defaults + Mac-style panel/dock, Hebrew keyboard and font fallback, GDM theme, splash, usplash, welcome page | Implemented | Live CD in QEMU (Pentium III, no SSE2): Pass (docs/test-results/2026-11-19-gutsy-qemu.md) |
+| `jewbuntu-web-tools`: static i686 Lynx 2.9.3 + curl 8.23.0 (OpenSSL 3.5, musl, current CA list) | Implemented | HTTPS Pass on the 2.6.22 kernel (Wikipedia, DuckDuckGo, shulgo.com, certificate verified) |
+| ShulGo GTK2 tray (`jewbuntu-shulgo-gtk2`, by the ShulGo session, from 9af0b58) | Implemented | Its own tests pass under 7.10's Python 2.5 (incl. the real tray under Xvfb); live CD: autostarts, icon in the tray. Menu not opened in the VM |
+| Live desktop with 256 MB RAM | Tested emulated | Boots to the full desktop |
+| Install to disk (Ubiquity), real old hardware | Not tested | n/a |
+
 ## Blockers / needs from Rafi
 
 - **VM host**: the installed VMware Fusion 12.2.0 is Intel-only and cannot run VMs on the M1. Install UTM (or Fusion 13+) for an arm64 VM. Say which OS the HP runs, to decide whether it can host the amd64 VM.

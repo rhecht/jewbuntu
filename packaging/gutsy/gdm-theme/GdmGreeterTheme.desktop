@@ -1,0 +1,7 @@
+[GdmGreeterTheme]
+Greeter=Jewbuntu.xml
+Name=Jewbuntu
+Description=Jewbuntu Classic login screen
+Author=Jewbuntu Developers
+Copyright=(c) 2026 Jewbuntu Developers; layout after Ubuntu's Human theme (c) 2004-2006 Canonical Ltd.
+Screenshot=screenshot.png

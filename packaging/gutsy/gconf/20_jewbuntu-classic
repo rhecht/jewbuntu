@@ -1,0 +1,25 @@
+# Jewbuntu Classic defaults for Ubuntu 7.10 (GNOME 2.20). update-gconf-defaults reads the files
+# in /usr/share/gconf/defaults in order, so these win over Ubuntu's 16_ubuntu-artwork.
+# Per-user changes in ~/.gconf still win over all of them.
+/desktop/gnome/interface/gtk_theme "Jewbuntu-Light-solid"
+/desktop/gnome/interface/icon_theme "Jewbuntu-Classic"
+/apps/metacity/general/theme "Jewbuntu-Light-solid"
+/apps/metacity/general/button_layout "close,minimize,maximize:menu"
+/apps/metacity/general/titlebar_font "Inter Bold 10"
+/desktop/gnome/interface/font_name "Inter 10"
+/desktop/gnome/interface/document_font_name "Inter 10"
+/apps/nautilus/preferences/desktop_font "Inter 10"
+/desktop/gnome/interface/monospace_font_name "DejaVu Sans Mono 10"
+/desktop/gnome/background/picture_filename "/usr/share/backgrounds/jewbuntu/Jewbuntu-star-blue.jpg"
+/desktop/gnome/background/picture_options "zoom"
+/desktop/gnome/background/primary_color "#5b86d6"
+/desktop/gnome/background/secondary_color "#5b86d6"
+/apps/gnome-session/options/splash_image "splash/jewbuntu-splash.png"
+/apps/gnome-terminal/profiles/Default/use_theme_colors true
+/desktop/gnome/peripherals/keyboard/kbd/layouts [us,il]
+/desktop/gnome/peripherals/keyboard/kbd/options [grp	grp:alt_shift_toggle]
+/apps/panel/global/tooltips_enabled true
+/desktop/gnome/applications/browser/exec "firefox"
+# The panel copies the default setup under <id>_screen0, so the clock is clock_screen0.
+/apps/panel/applets/clock_screen0/prefs/format "custom"
+/apps/panel/applets/clock_screen0/prefs/custom_format "%a %l:%M %p"

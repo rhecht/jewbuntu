@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="768" viewBox="0 0 1024 768">
+  <!-- Jewbuntu Classic boot splash (usplash), drawn at 1024x768 and scaled for 800x600/640x480.
+       Original artwork. Flat colours on purpose: usplash shows 256-colour images. -->
+  <rect width="1024" height="768" fill="#16397a"/>
+  <g transform="translate(512 300)">
+    <g fill="none" stroke="#f6e7c4" stroke-width="3.6" stroke-linejoin="round" transform="translate(-64 -64) scale(2)">
+      <path d="M32 9 L53 45 L11 45 Z"/><path d="M32 57 L11 21 L53 21 Z"/>
+    </g>
+    <text x="0" y="130" text-anchor="middle" font-family="Inter" font-size="52" font-weight="600" fill="#ffffff">Jewbuntu</text>
+  </g>
+</svg>

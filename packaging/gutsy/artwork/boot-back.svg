@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600">
+  <!-- Jewbuntu Classic boot menu background (gfxboot back.jpg, 800x600). Original artwork.
+       The menu is drawn over the middle, so the logo sits at the top and the middle stays calm. -->
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0.35" y2="1">
+      <stop offset="0" stop-color="#2a5fb8"/>
+      <stop offset="1" stop-color="#16397a"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.18" r="0.5">
+      <stop offset="0" stop-color="#5b9cff" stop-opacity="0.45"/>
+      <stop offset="1" stop-color="#5b9cff" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="800" height="600" fill="url(#bg)"/>
+  <rect width="800" height="600" fill="url(#glow)"/>
+  <path d="M0 520 C 220 470, 420 560, 800 470 L800 600 L0 600 Z" fill="#ffffff" fill-opacity="0.06"/>
+  <path d="M0 560 C 260 520, 520 600, 800 530 L800 600 L0 600 Z" fill="#ffffff" fill-opacity="0.05"/>
+  <g transform="translate(400 82)">
+    <g fill="none" stroke="#f6e7c4" stroke-width="4" stroke-linejoin="round" transform="translate(-130 -32)">
+      <path d="M32 9 L53 45 L11 45 Z"/><path d="M32 57 L11 21 L53 21 Z"/>
+    </g>
+    <text x="-58" y="12" font-family="Inter" font-size="38" font-weight="600" fill="#ffffff">Jewbuntu</text>
+    <text x="0" y="48" text-anchor="middle" font-family="Inter" font-size="15" fill="#dce8ff" letter-spacing="2">CLASSIC · FOR OLDER COMPUTERS</text>
+  </g>
+</svg>

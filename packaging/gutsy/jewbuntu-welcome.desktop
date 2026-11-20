@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Welcome to Jewbuntu Classic
+Comment=What works, Lynx, Hebrew typing and ShulGo
+Exec=lynx /usr/share/jewbuntu-classic/welcome.html
+Terminal=true
+Icon=start-here
+Categories=GNOME;Application;System;
