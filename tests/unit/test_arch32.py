@@ -149,6 +149,33 @@ class Arch32FilesTests(unittest.TestCase):
             subprocess.run(["sh", str(Path(tmp) / "s.sh")], env=env, check=True)
             self.assertEqual(rc.read_text(), "# mine\n", "a user's own file is never replaced")
 
+    def test_lynx_has_a_menu_entry(self):
+        entry = configparser.RawConfigParser(interpolation=None)
+        entry.optionxform = str
+        entry.read(ARCH32 / "jewbuntu-lynx.desktop", encoding="utf-8")
+        d = entry["Desktop Entry"]
+        self.assertEqual(d["Terminal"], "true", "Lynx is a text browser: it needs a terminal window")
+        self.assertIn("WebBrowser", d["Categories"].split(";"))
+        self.assertNotIn("MimeType", d, "Dillo stays the browser for web links; Lynx is opened by hand")
+        self.assertTrue(d["Exec"].startswith("lynx -cfg=/usr/share/jewbuntu/lynx/lynx.cfg"))
+        text = (ARCH32 / "PKGBUILD").read_text()
+        self.assertIn("'lynx'", text.split("optdepends=")[0])
+        for src, dest in (("jewbuntu-lynx.desktop", "usr/share/applications/jewbuntu-lynx.desktop"),
+                          ("lynx/lynx.cfg", "usr/share/jewbuntu/lynx/lynx.cfg"),
+                          ("lynx/jewbuntu.lss", "usr/share/jewbuntu/lynx/jewbuntu.lss")):
+            self.assertIn(f'$a/{src} "$pkgdir/{dest}"', text)
+
+    def test_lynx_settings_build_on_lynx_own(self):
+        lines = [l for l in (ARCH32 / "lynx" / "lynx.cfg").read_text().splitlines() if l and not l.startswith("#")]
+        self.assertEqual(lines[0], "INCLUDE:/etc/lynx.cfg", "Lynx's own settings first, ours override them")
+        cfg = dict(l.split(":", 1) for l in lines)
+        self.assertEqual(cfg["COLOR_STYLE"], "/usr/share/jewbuntu/lynx/jewbuntu.lss")
+        self.assertEqual(cfg["PERSISTENT_COOKIES"], "FALSE")
+        self.assertTrue(cfg["STARTFILE"].startswith("https://"))
+        for line in (ARCH32 / "lynx" / "jewbuntu.lss").read_text().splitlines():
+            if line and not line.startswith("#"):
+                self.assertEqual(len(line.split(":")), 4, f"colour-style line {line!r}")
+
     def test_shulgo_line_on_the_bar(self):
         root = ET.parse(CHANNELS / "xfce4-panel.xml").getroot()
         plugins = {p.get("name"): p for p in root.find("property[@name='plugins']").findall("property")}

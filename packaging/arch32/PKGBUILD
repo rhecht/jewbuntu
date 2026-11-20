@@ -9,7 +9,7 @@
 pkgbase=jewbuntu
 pkgname=('jewbuntu-core' 'jewbuntu-xfce-desktop')
 pkgver=${JB_VERSION:-0.1.0}
-pkgrel=1
+pkgrel=2
 arch=('any')
 url="https://github.com/rhecht/jewbuntu"
 license=('GPL-3.0-or-later' 'CC-BY-SA-4.0')
@@ -78,6 +78,9 @@ package_jewbuntu-xfce-desktop() {
   install -Dm644 $a/xdg/autostart/shulgo-xfce.desktop "$pkgdir/etc/xdg/jewbuntu/autostart/shulgo-xfce.desktop"
   install -Dm644 $a/xdg/autostart/at-spi-dbus-bus.desktop "$pkgdir/etc/xdg/jewbuntu/autostart/at-spi-dbus-bus.desktop"
   install -Dm644 $a/dillo/dillorc "$pkgdir/usr/share/jewbuntu/dillo/dillorc"
+  install -Dm644 $a/jewbuntu-lynx.desktop "$pkgdir/usr/share/applications/jewbuntu-lynx.desktop"
+  install -Dm644 $a/lynx/lynx.cfg "$pkgdir/usr/share/jewbuntu/lynx/lynx.cfg"
+  install -Dm644 $a/lynx/jewbuntu.lss "$pkgdir/usr/share/jewbuntu/lynx/jewbuntu.lss"
   install -Dm755 $a/startjewbuntu "$pkgdir/usr/bin/startjewbuntu"
   install -Dm755 $a/shulgo-bar "$pkgdir/usr/lib/jewbuntu/shulgo-bar"
   install -Dm644 $a/jewbuntu.desktop "$pkgdir/usr/share/xsessions/jewbuntu.desktop"

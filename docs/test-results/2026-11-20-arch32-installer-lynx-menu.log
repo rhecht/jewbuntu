@@ -1,0 +1,30 @@
+# Arch 32 installer with a Lynx menu entry (jewbuntu-core + jewbuntu-xfce-desktop 0.1.0m1.29-2), shulgo-xfce 39ebca3
+# date: 2026-11-20  size: 10975688  sha256: 0b82aa154a86672608595770c2b6bf006bc22e3847b31234821d61659602a156
+# package build: unit tests Ran 121 tests, OK (inside makepkg check())
+# command: ci/installer-test-arch32.sh (i686 container, qemu-user emulation); the menu entry is launched for real with gio under Xvfb
+PASS: installer holds 5 packages
+PASS: damaged installer refused
+PASS: install --yes finished
+PASS: no pango hold needed here (already held)
+PASS: jewbuntu-skin installed
+PASS: jewbuntu-icons installed
+PASS: jewbuntu-core installed
+PASS: jewbuntu-xfce-desktop installed
+PASS: shulgo-xfce installed
+PASS: dillo installed
+PASS: lynx installed
+PASS: xfce4-genmon-plugin installed
+PASS: installer reports success
+PASS: start-here icons are the Star of David, none is the Apple logo (12 checked)
+PASS: Lynx menu entry installed (/usr/share/applications/jewbuntu-lynx.desktop, opens in a terminal)
+PASS: Lynx menu entry is a valid .desktop file
+PASS: Lynx reads the Jewbuntu settings (start page, colours) on top of /etc/lynx.cfg
+PASS: Lynx renders a page with the Jewbuntu settings
+SpiRegistry daemon is running with well-known name - org.a11y.atspi.Registry
+PASS: the menu entry opens Lynx with the Jewbuntu settings in xfce4-terminal
+PASS: installer states it is not for modern web browsing
+PASS: --uninstall --yes finished
+PASS: no Jewbuntu or ShulGo packages left
+PASS: Xfce itself still installed
+PASS: nothing left behind
+failures: 0

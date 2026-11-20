@@ -130,7 +130,14 @@ so a swap file is still recommended.
 
 ## Web browsers: Dillo and Lynx
 
-The Jewbuntu session uses **Dillo** as its browser, and **Lynx** is installed for text-only browsing in a terminal (`lynx wikipedia.org`). Dillo is in the dock, opens web links, and gets
+The Jewbuntu session uses **Dillo** as its browser, and **Lynx** is installed for text-only
+browsing. Lynx is in the applications menu under Internet as **Lynx Web Browser**: it opens in a
+terminal window on a search page made for text browsers (DuckDuckGo Lite), in Jewbuntu colours.
+In a terminal, `lynx wikipedia.org` works too, with Lynx's own settings. Arrow keys move between
+links, Enter follows one, `g` opens an address, `q` quits. The menu entry's settings are in
+`/usr/share/jewbuntu/lynx/` and build on Lynx's own `/etc/lynx.cfg`, which stays untouched.
+
+Dillo is in the dock, opens web links, and gets
 the Jewbuntu colours (`startjewbuntu` copies `/usr/share/jewbuntu/dillo/dillorc` to
 `~/.dillo/dillorc` at login, only if that file doesn't exist yet; delete it to get Dillo's own
 look back). On the emulated Pentium III it opens in about 6 seconds, loads a Wikipedia article in
