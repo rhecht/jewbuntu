@@ -11,27 +11,9 @@ export XDG_CONFIG_DIRS
 
 # Memory on a 256 MB laptop. No accessibility bridge in GTK programs (the plain Xfce session keeps it).
 export NO_AT_BRIDGE=1
-# Run the panel's plugins inside the panel instead of one helper process each (about 6 MB apiece):
-# copies of the installed plugin descriptions with X-XFCE-Internal=TRUE, made fresh at every login
-# so they always match the installed plugins, found first through XDG_DATA_DIRS.
-plugins="${XDG_CACHE_HOME:-$HOME/.cache}/jewbuntu/data/xfce4/panel/plugins"
-if mkdir -p "$plugins" 2>/dev/null; then
-  rm -f "$plugins"/*.desktop
-  for p in docklike actions systray genmon; do
-    f=/usr/share/xfce4/panel/plugins/$p.desktop
-    [ -r "$f" ] || continue
-    if grep -q '^X-XFCE-Internal=' "$f"; then
-      sed 's/^X-XFCE-Internal=.*/X-XFCE-Internal=TRUE/' "$f" > "$plugins/$p.desktop"
-    else
-      { cat "$f"; echo "X-XFCE-Internal=TRUE"; } > "$plugins/$p.desktop"
-    fi
-  done
-  XDG_DATA_DIRS="${plugins%/xfce4/panel/plugins}:${XDG_DATA_DIRS:-/usr/local/share:/usr/share}"
-  export XDG_DATA_DIRS
-fi
 # D-Bus starts xfconfd on demand: give it (and systemd user services) the same directories.
 if command -v dbus-update-activation-environment >/dev/null 2>&1 && [ -n "${DBUS_SESSION_BUS_ADDRESS:-}" ]; then
-  dbus-update-activation-environment --systemd XDG_CONFIG_DIRS XDG_DATA_DIRS NO_AT_BRIDGE >/dev/null 2>&1 || true
+  dbus-update-activation-environment --systemd XDG_CONFIG_DIRS NO_AT_BRIDGE >/dev/null 2>&1 || true
 fi
 # Dillo, the browser on these laptops, reads its colours only from /etc/dillo (its own
 # package's file) or ~/.dillo: give a new account Jewbuntu's, once, never replacing a file.

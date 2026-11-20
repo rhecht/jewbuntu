@@ -207,9 +207,10 @@ stay.
 - The Asahi installer (0.1.0-m1.29) in a clean Fedora 45 container (install, uninstall) and
   in a Fedora 45 Workstation VM on an Apple Silicon Mac.
 
-- The Arch Linux 32 edition (0.1.0-m1.29) in an i686 container (install, real Xfce session,
-  update, uninstall) and in an emulated Pentium III with 256 MB (UTM), where the desktop boots to
-  the login screen in under a minute and uses about 125 MB when idle.
+- The Arch Linux 32 edition (0.1.0-m1.29): its one-file installer in a clean i686 container
+  (install, uninstall), and the packages in a real Xfce session there (look, panels, ShulGo
+  starting, Arch updates, removal). An earlier build ran in an emulated Pentium III with 256 MB
+  (UTM): it boots to the login screen in under a minute and uses about 125 MB when idle.
 
 **Not yet tested:**
 - real PC hardware, including Secure Boot (Ubuntu's signed boot files are unchanged)

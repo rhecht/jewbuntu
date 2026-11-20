@@ -120,9 +120,17 @@ reads `~/.cache/jewbuntu/shulgo-bar.txt`, which the ShulGo widget writes, so no 
 tick. With no file, or one more than 5 minutes old, the slot stays empty, so a stopped widget never
 shows a wrong time.
 
-## The web browser: Dillo
+## Memory
 
-The Jewbuntu session uses **Dillo** as its browser: it's in the dock, opens web links, and gets
+On 256 MB every megabyte counts, so the Jewbuntu session turns off GTK's accessibility bridge
+(`NO_AT_BRIDGE=1`) and doesn't autostart the accessibility bus. That saves memory and start-up
+time in every GTK program. **If you use a screen reader, choose the plain "Xfce Session"** at the login
+screen, which keeps them. Measured on an emulated Pentium III: the idle desktop uses about 125 MB,
+so a swap file is still recommended.
+
+## Web browsers: Dillo and Lynx
+
+The Jewbuntu session uses **Dillo** as its browser, and **Lynx** is installed for text-only browsing in a terminal (`lynx wikipedia.org`). Dillo is in the dock, opens web links, and gets
 the Jewbuntu colours (`startjewbuntu` copies `/usr/share/jewbuntu/dillo/dillorc` to
 `~/.dillo/dillorc` at login, only if that file doesn't exist yet; delete it to get Dillo's own
 look back). On the emulated Pentium III it opens in about 6 seconds, loads a Wikipedia article in

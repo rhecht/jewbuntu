@@ -186,27 +186,12 @@ class Arch32FilesTests(unittest.TestCase):
     def test_memory_trims_only_in_the_jewbuntu_session(self):
         start = (ARCH32 / "startjewbuntu").read_text()
         self.assertIn("NO_AT_BRIDGE=1", start)
-        self.assertIn("X-XFCE-Internal=TRUE", start)
+        # Not attempted: running panel plugins in-process. xfce4-panel reads plugin descriptions only
+        # from /usr/share/xfce4/panel/plugins, so it would mean editing Xfce's own files.
+        self.assertNotIn("X-XFCE-Internal", start)
         hidden = (ARCH32 / "xdg" / "autostart" / "at-spi-dbus-bus.desktop").read_text()
         self.assertIn("Hidden=true", hidden)
         self.assertIn("etc/xdg/jewbuntu/autostart/at-spi-dbus-bus.desktop", (ARCH32 / "PKGBUILD").read_text())
-
-    def test_startjewbuntu_makes_internal_plugin_copies(self):
-        with tempfile.TemporaryDirectory() as tmp:
-            src = Path(tmp) / "plugins"; src.mkdir()
-            (src / "docklike.desktop").write_text("[Xfce Panel]\nType=X-XFCE-PanelPlugin\nX-XFCE-Module=docklike\nX-XFCE-Internal=FALSE\n")
-            (src / "genmon.desktop").write_text("[Xfce Panel]\nType=X-XFCE-PanelPlugin\nX-XFCE-Module=genmon\n")
-            fake = Path(tmp) / "startxfce4"; fake.write_text('#!/bin/sh\necho "$XDG_DATA_DIRS"\n'); fake.chmod(0o755)
-            script = (ARCH32 / "startjewbuntu").read_text().replace("/usr/share/xfce4/panel/plugins", str(src)).replace("/usr/share/jewbuntu/dillo/dillorc", "/nonexistent")
-            (Path(tmp) / "s.sh").write_text(script)
-            env = {"PATH": f"{tmp}:/usr/bin:/bin", "HOME": tmp, "XDG_CACHE_HOME": f"{tmp}/cache"}
-            out = subprocess.run(["sh", str(Path(tmp) / "s.sh")], env=env, capture_output=True, text=True).stdout.strip()
-            made = Path(tmp) / "cache" / "jewbuntu" / "data" / "xfce4" / "panel" / "plugins"
-            self.assertTrue(out.startswith(f"{tmp}/cache/jewbuntu/data:"), out)
-            self.assertIn("X-XFCE-Internal=TRUE", (made / "docklike.desktop").read_text())
-            self.assertNotIn("X-XFCE-Internal=FALSE", (made / "docklike.desktop").read_text())
-            self.assertIn("X-XFCE-Internal=TRUE", (made / "genmon.desktop").read_text(), "added when missing")
-            self.assertFalse((made / "systray.desktop").exists(), "only plugins that are installed")
 
     def test_svg_loader_workaround_is_packaged(self):
         hook = (ARCH32 / "jewbuntu-pixbuf-loaders.hook").read_text()

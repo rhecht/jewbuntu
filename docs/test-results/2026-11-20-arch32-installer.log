@@ -1,0 +1,19 @@
+PASS: installer holds 5 packages
+PASS: damaged installer refused
+PASS: install --yes finished
+PASS: no pango hold needed here (already held)
+PASS: jewbuntu-skin installed
+PASS: jewbuntu-icons installed
+PASS: jewbuntu-core installed
+PASS: jewbuntu-xfce-desktop installed
+PASS: shulgo-xfce installed
+PASS: dillo installed
+PASS: lynx installed
+PASS: xfce4-genmon-plugin installed
+PASS: installer reports success
+PASS: installer states it is not for modern web browsing
+PASS: --uninstall --yes finished
+PASS: no Jewbuntu or ShulGo packages left
+PASS: Xfce itself still installed
+PASS: nothing left behind
+failures: 0
