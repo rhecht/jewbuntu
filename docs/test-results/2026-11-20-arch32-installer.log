@@ -11,6 +11,7 @@ PASS: dillo installed
 PASS: lynx installed
 PASS: xfce4-genmon-plugin installed
 PASS: installer reports success
+PASS: start-here icons are the Star of David, none is the Apple logo (12 checked)
 PASS: installer states it is not for modern web browsing
 PASS: --uninstall --yes finished
 PASS: no Jewbuntu or ShulGo packages left

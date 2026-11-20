@@ -15,6 +15,9 @@ sh /jewbuntu.run --yes --no-lightdm > /tmp/install.log 2>&1 && pass "install --y
 grep -q "Hold pango" /tmp/install.log && fail "offered the pango hold although pango is already held" || pass "no pango hold needed here (already held)"
 for p in jewbuntu-skin jewbuntu-icons jewbuntu-core jewbuntu-xfce-desktop shulgo-xfce dillo lynx xfce4-genmon-plugin; do pacman -Q $p >/dev/null 2>&1 && pass "$p installed" || fail "$p missing"; done
 grep -q "is installed" /tmp/install.log && pass "installer reports success" || fail "no success message"
+apple=$(grep -l "M10.062 3.2488c0.4829" $(find /usr/share/icons/Jewbuntu* -name "start-here*.svg" 2>/dev/null) 2>/dev/null | wc -l)
+star=$(grep -l "Star of David" /usr/share/icons/Jewbuntu*/places/*/start-here.svg 2>/dev/null | wc -l)
+[ "$apple" = 0 ] && [ "$star" -gt 0 ] && pass "start-here icons are the Star of David, none is the Apple logo ($star checked)" || fail "start-here icons: $apple Apple, $star Star of David"
 grep -q "NOT FOR MODERN WEB BROWSING" /tmp/install.log && pass "installer states it is not for modern web browsing" || fail "browsing note missing"
 sh /jewbuntu.run --uninstall --yes > /tmp/remove.log 2>&1 && pass "--uninstall --yes finished" || { fail "uninstall"; tail -20 /tmp/remove.log; }
 n=$(pacman -Qq | grep -cE "^(jewbuntu-|shulgo-xfce)"); [ "$n" = 0 ] && pass "no Jewbuntu or ShulGo packages left" || fail "$n left"
