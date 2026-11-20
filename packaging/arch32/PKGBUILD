@@ -9,7 +9,7 @@
 pkgbase=jewbuntu
 pkgname=('jewbuntu-core' 'jewbuntu-xfce-desktop')
 pkgver=${JB_VERSION:-0.1.0}
-pkgrel=2
+pkgrel=3
 arch=('any')
 url="https://github.com/rhecht/jewbuntu"
 license=('GPL-3.0-or-later' 'CC-BY-SA-4.0')

@@ -1,0 +1,38 @@
+# Arch 32 installer: Lynx colour fix (menu entry passes -lss; jewbuntu-core + jewbuntu-xfce-desktop 0.1.0m1.29-3), shulgo-xfce 39ebca3
+# date: 2026-11-20  size: 10975688  sha256: f6c04e9db820ee8ee6fc55bf45f01f869f205c4ab2bf8a3a183c84692f3a58a8
+# why: on the Pentium III VM, Lynx from the menu showed /etc/lynx.lss colours (black page); Arch Linux 32's Lynx ignores COLOR_STYLE in a -cfg file, -lss works (escape codes compared in the VM)
+# command: ci/installer-test-arch32.sh (i686 container, qemu-user emulation)
+PASS: installer holds 5 packages
+PASS: damaged installer refused
+PASS: install --yes finished
+PASS: no pango hold needed here (already held)
+PASS: jewbuntu-skin installed
+PASS: jewbuntu-icons installed
+PASS: jewbuntu-core installed
+PASS: jewbuntu-xfce-desktop installed
+PASS: shulgo-xfce installed
+PASS: dillo installed
+PASS: lynx installed
+PASS: xfce4-genmon-plugin installed
+PASS: installer reports success
+PASS: start-here icons are the Star of David, none is the Apple logo (12 checked)
+PASS: Lynx menu entry installed (/usr/share/applications/jewbuntu-lynx.desktop, opens in a terminal)
+PASS: Lynx menu entry is a valid .desktop file
+PASS: Lynx reads the Jewbuntu settings (start page, colours) on top of /etc/lynx.cfg
+PASS: Lynx renders a page with the Jewbuntu settings
+PASS: Lynx from the menu entry draws Jewbuntu blue on the terminal background (no black page)
+SpiRegistry daemon is running with well-known name - org.a11y.atspi.Registry
+PASS: the menu entry opens Lynx with the Jewbuntu settings in xfce4-terminal
+PASS: installer states it is not for modern web browsing
+PASS: --uninstall --yes finished
+PASS: no Jewbuntu or ShulGo packages left
+PASS: Xfce itself still installed
+PASS: nothing left behind
+failures: 0
+
+# upgrade path: first published m1.29 (sha256 4b04dec9...) -> current SourceForge file (0b82aa15...) -> this installer, one container
+PASS: first published m1.29 installed
+PASS: upgrade to the current SourceForge file
+PASS: upgrade to the new installer
+jewbuntu-core 0.1.0m1.29-3 jewbuntu-xfce-desktop 0.1.0m1.29-3 shulgo-xfce 1.0.0.r202611201930-1 lynx 2.9.3-1.0 
+PASS: Lynx menu entry has the colour fix after upgrading

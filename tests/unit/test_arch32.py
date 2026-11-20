@@ -158,6 +158,7 @@ class Arch32FilesTests(unittest.TestCase):
         self.assertIn("WebBrowser", d["Categories"].split(";"))
         self.assertNotIn("MimeType", d, "Dillo stays the browser for web links; Lynx is opened by hand")
         self.assertTrue(d["Exec"].startswith("lynx -cfg=/usr/share/jewbuntu/lynx/lynx.cfg"))
+        self.assertIn("-lss=/usr/share/jewbuntu/lynx/jewbuntu.lss", d["Exec"], "COLOR_STYLE in lynx.cfg alone is ignored by Arch Linux 32's Lynx")
         text = (ARCH32 / "PKGBUILD").read_text()
         self.assertIn("'lynx'", text.split("optdepends=")[0])
         for src, dest in (("jewbuntu-lynx.desktop", "usr/share/applications/jewbuntu-lynx.desktop"),
