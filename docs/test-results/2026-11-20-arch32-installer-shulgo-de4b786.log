@@ -1,0 +1,25 @@
+# Arch 32 installer rebuilt with shulgo-xfce de4b786 (settings window 800x560, scrolling body)
+# date: 2026-11-20  installer: dist/release-next/jewbuntu-arch32-installer-0.1.0-m1.29.run
+# size: 10971592  sha256: 79caa1ee71a1da1286daa177691a3202b68a89c3ed62fe329900b55d4d4bf1cf
+# shulgo-xfce build: 1.0.0.r202611201653-1, upstream tests: Ran 156 tests, OK
+# command: ci/installer-test-arch32.sh (i686 container jewbuntu-arch32-test, qemu-user emulation)
+PASS: installer holds 5 packages
+PASS: damaged installer refused
+PASS: install --yes finished
+PASS: no pango hold needed here (already held)
+PASS: jewbuntu-skin installed
+PASS: jewbuntu-icons installed
+PASS: jewbuntu-core installed
+PASS: jewbuntu-xfce-desktop installed
+PASS: shulgo-xfce installed
+PASS: dillo installed
+PASS: lynx installed
+PASS: xfce4-genmon-plugin installed
+PASS: installer reports success
+PASS: start-here icons are the Star of David, none is the Apple logo (12 checked)
+PASS: installer states it is not for modern web browsing
+PASS: --uninstall --yes finished
+PASS: no Jewbuntu or ShulGo packages left
+PASS: Xfce itself still installed
+PASS: nothing left behind
+failures: 0

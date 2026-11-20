@@ -1,0 +1,28 @@
+# shulgo-xfce de4b786 settings window measured in a real Jewbuntu Xfce session (i686 test container, Xvfb, xfwm4 + xfce4-panel top bar and Docklike dock)
+# date: 2026-11-20  installer: dist/release-next/jewbuntu-arch32-installer-0.1.0-m1.29.run
+# probe: GTK reports from inside the window; 'dragged-tall' = window.resize(800, 3000) to test the max-size hint
+# not covered: the look (Xvfb captures showed panels but not the window's pixels), button positions (probe bug); buttons sit outside the scroller, so the window bottom bounds them
+== 1280x800
+[open] monitor 1280x800 workarea x=0 y=25 1280x726
+[open] window frame x=0 y=25 802x589 bottom=614
+[open] scroller content=496 visible=496 cut_off=0 vscrollbar_mapped=False
+[dragged-tall] monitor 1280x800 workarea x=0 y=25 1280x726
+[dragged-tall] window frame x=0 y=25 802x715 bottom=740
+[dragged-tall] scroller content=622 visible=622 cut_off=0 vscrollbar_mapped=False
+_NET_WORKAREA(CARDINAL) = 0, 25, 1280, 726, 0, 25, 1280, 726, 0, 25, 1280, 726, 0, 25, 1280, 726
+== 1024x768
+[open] monitor 1024x768 workarea x=0 y=25 1024x694
+[open] window frame x=0 y=25 802x589 bottom=614
+[open] scroller content=496 visible=496 cut_off=0 vscrollbar_mapped=False
+[dragged-tall] monitor 1024x768 workarea x=0 y=25 1024x694
+[dragged-tall] window frame x=0 y=25 802x683 bottom=708
+[dragged-tall] scroller content=590 visible=590 cut_off=0 vscrollbar_mapped=False
+_NET_WORKAREA(CARDINAL) = 0, 25, 1024, 694, 0, 25, 1024, 694, 0, 25, 1024, 694, 0, 25, 1024, 694
+== 800x600
+[open] monitor 800x600 workarea x=0 y=25 800x526
+[open] window frame x=0 y=25 754x515 bottom=540
+[open] scroller content=422 visible=422 cut_off=0 vscrollbar_mapped=False
+[dragged-tall] monitor 800x600 workarea x=0 y=25 800x526
+[dragged-tall] window frame x=0 y=25 802x515 bottom=540
+[dragged-tall] scroller content=422 visible=422 cut_off=0 vscrollbar_mapped=False
+_NET_WORKAREA(CARDINAL) = 0, 25, 800, 526, 0, 25, 800, 526, 0, 25, 800, 526, 0, 25, 800, 526
