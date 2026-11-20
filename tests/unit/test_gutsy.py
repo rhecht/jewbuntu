@@ -147,6 +147,11 @@ class DefaultsAndConfig(unittest.TestCase):
         self.assertEqual(mod.best_source({16: "a", "scalable": "s"}, 16), "a")
         self.assertEqual(mod.best_source({16: "a", "scalable": "s"}, 48), "s")
         self.assertEqual(mod.best_source({16: "a", 32: "b"}, 24), "b")
+        with tempfile.TemporaryDirectory() as d:
+            svg = Path(d) / "start-here.svg"
+            svg.write_text('<svg xmlns="http://www.w3.org/2000/svg"><path d="%s"/></svg>' % mod.APPLE_PATH)
+            with self.assertRaises(SystemExit):
+                mod.render(str(svg), str(Path(d) / "out.png"), 16)
 
 
 if __name__ == "__main__":

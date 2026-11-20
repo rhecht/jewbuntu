@@ -55,7 +55,15 @@ def best_source(found, size):
     return found[(bigger or sized)[0]] if sized else None
 
 
+# Path data of the Apple logo that the upstream icon set used for start-here (found by the Arch
+# port, 2026-11-20). No Jewbuntu icon may be drawn from it.
+APPLE_PATH = 'M10.062 3.2488c0.4829'
+
+
 def render(svg, png, size):
+    with open(svg, errors='ignore') as f:
+        if APPLE_PATH in f.read():
+            raise SystemExit('refusing to render the Apple logo: %s -> %s' % (svg, png))
     os.makedirs(os.path.dirname(png), exist_ok=True)
     subprocess.run(['rsvg-convert', '-w', str(size), '-h', str(size), '-f', 'png', '-o', png, svg],
                    check=True)
