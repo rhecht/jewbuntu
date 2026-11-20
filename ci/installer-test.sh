@@ -20,6 +20,9 @@ echo "--- installing (as user t, --yes) ..."
 sudo -u t -H sh /tmp/i.run --yes > /tmp/inst.log 2>&1; rc=$?
 tail -12 /tmp/inst.log
 grep -q "Jewbuntu 0.1.0-m1.29 is installed" /tmp/inst.log && pass "final message shows the Jewbuntu version" || fail "final message version wrong"
+apple=$(grep -l "M10.062 3.2488c0.4829" $(find /usr/share/icons/Jewbuntu* -name "start-here*.svg" 2>/dev/null) 2>/dev/null | wc -l)
+star=$(grep -l "Star of David" /usr/share/icons/Jewbuntu*/places/*/start-here.svg 2>/dev/null | wc -l)
+[ "$apple" = 0 ] && [ "$star" -gt 0 ] && pass "start-here icons are the Star of David, none is the Apple logo ($star checked)" || fail "start-here icons: $apple Apple, $star Star of David"
 [ $rc = 0 ] && pass "installer exit 0" || { fail "installer exit $rc"; grep -E "^E:|Error" /tmp/inst.log | head; }
 for p in core branding hebrew desktop gnome jewish-service hub upgrade-tools webserver skin icons shulgo; do
   dpkg-query -W -f "\${db:Status-Abbrev}" jewbuntu-$p 2>/dev/null | grep -q "^ii" || fail "jewbuntu-$p not installed"

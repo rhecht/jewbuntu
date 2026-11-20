@@ -13,6 +13,9 @@ sh /jewbuntu.run --yes > /tmp/install.log 2>&1 && pass "install --yes finished" 
 n=$(rpm -qa "jewbuntu-*" | wc -l); [ "$n" = 9 ] && pass "9 Jewbuntu packages installed" || fail "installed $n"
 for p in jewbuntu-shulgo jewbuntu-webserver jewbuntu-hub jewbuntu-skin; do rpm -q $p >/dev/null && pass "$p installed" || fail "$p missing"; done
 grep -q "is installed" /tmp/install.log && pass "installer reports success" || fail "no success message"
+apple=$(grep -l "M10.062 3.2488c0.4829" $(find /usr/share/icons/Jewbuntu* -name "start-here*.svg" 2>/dev/null) 2>/dev/null | wc -l)
+star=$(grep -l "Star of David" /usr/share/icons/Jewbuntu*/places/*/start-here.svg 2>/dev/null | wc -l)
+[ "$apple" = 0 ] && [ "$star" -gt 0 ] && pass "start-here icons are the Star of David, none is the Apple logo ($star checked)" || fail "start-here icons: $apple Apple, $star Star of David"
 printf "corrupt" | dd of=/tmp/bad.run bs=1 conv=notrunc 2>/dev/null; cp /jewbuntu.run /tmp/bad.run; printf "X" | dd of=/tmp/bad.run bs=1 seek=$(( $(stat -c %s /tmp/bad.run) - 100 )) conv=notrunc 2>/dev/null
 sh /tmp/bad.run --list >/dev/null 2>&1 && fail "damaged installer accepted" || pass "damaged installer refused"
 sh /jewbuntu.run --uninstall --yes > /tmp/remove.log 2>&1 && pass "--uninstall --yes finished" || { fail "uninstall"; tail -20 /tmp/remove.log; }
