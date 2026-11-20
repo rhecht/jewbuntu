@@ -38,6 +38,7 @@ All four files are in the **`0.1.0-m1.29`** folder below, next to their `.sha256
 | A computer already running Ubuntu 26.04, Intel/AMD **or ARM** | **`jewbuntu-installer-0.1.0-m1.29.run`** (10 MB). In Terminal, run `sh ~/Downloads/jewbuntu-installer-0.1.0-m1.29.run`, then log out and back in. It's also on [GitHub Releases](https://github.com/rhecht/jewbuntu/releases/latest). |
 | An Apple Silicon Mac (M1/M2) running **Fedora Asahi Remix 45, GNOME edition** | **`jewbuntu-asahi-installer-0.1.0-m1.29.run`** (15 MB). See [Asahi Linux](#asahi-linux-apple-silicon-macs) below. Also on [GitHub Releases](https://github.com/rhecht/jewbuntu/releases/latest). |
 | An **old 32-bit laptop** (about 2001, e.g. Pentium III, 256 MB) running **Arch Linux 32** | **`jewbuntu-arch32-installer-0.1.0-m1.29.run`**. **Not for modern web browsing.** See [Old 32-bit laptops](#old-32-bit-laptops-arch-linux-32) below. |
+| An **old PC from about 1998–2008** (Pentium II/III or newer, 256 MB) with a **CD drive**, and nothing installed you need to keep | **`jewbuntu-classic-7.10-c1-32bit.iso`** (715 MB, in the **`jewbuntu-classic-7.10-c1`** folder): a live CD that also installs. See [Jewbuntu Classic](#jewbuntu-classic-the-2007-cd-for-the-oldest-pcs) below. |
 
 ## System requirements
 
@@ -66,7 +67,7 @@ but it confirms the file arrived intact. In a terminal, in the download folder:
   - Compare the result with the number in the `.sha256` file.
 
 Expected SHA-256:
-`ccf06f35332bab189f503d0799c0e06be95cac251937b44a1009de2ca5984d47`
+`24a067df08e4b0d13dbd5a50b6372325d797fef1d98093ae4983a6660cfd2bc5`
 
 ## 2. Make the USB stick
 
@@ -192,6 +193,25 @@ Jewbuntu look in a version old graphics chips can draw (no transparency), Hebrew
 **Uninstall:** `sh jewbuntu-arch32-installer-0.1.0-m1.29.run --uninstall`. Xfce and your files
 stay.
 
+## Jewbuntu Classic (the 2007 CD, for the oldest PCs)
+
+The original 2007 Jewbuntu CD (Ubuntu 7.10), remastered with the Jewbuntu look. It's a live CD
+that also installs, it fits a 700 MB CD-R, and it runs on any **i686 PC (Pentium II/III or newer,
+no SSE2 needed) with 256 MB** of memory. Everything is in the **`jewbuntu-classic-7.10-c1`**
+folder, with its own README.
+
+- The Jewbuntu look (skin, icons, wallpapers, a Mac-style top bar and dock, Jewbuntu boot and login
+  screens), English and Hebrew typing (**Alt+Shift**), and **ShulGo** in the top bar.
+- **Lynx**, a current text browser with today's encryption, because the 2007 Firefox on the disc
+  can't open most websites any more.
+- **Ubuntu 7.10 has had no security updates since 2009.** Use it for writing, reading and light
+  browsing, not for banking.
+
+Burn `jewbuntu-classic-7.10-c1-32bit.iso` to a CD-R **as a disc image**, start the PC from it and
+choose **Start or install Jewbuntu Classic**.
+SHA-256: `73f4ce3c7b11d1045ca730c24971137a520c13fff0c5c7c009c3fd8ad509cd46`.
+Details: [docs/gutsy.md](https://github.com/rhecht/jewbuntu/blob/main/docs/gutsy.md).
+
 ## Status
 
 **Tested:**
@@ -212,10 +232,15 @@ stay.
   starting, Arch updates, removal). An earlier build ran in an emulated Pentium III with 256 MB
   (UTM): it boots to the login screen in under a minute and uses about 125 MB when idle.
 
+- Jewbuntu Classic 7.10 (c1): the live CD in an emulated Pentium III without SSE2, with 512 MB
+  and with 256 MB: boot, desktop, Lynx and curl over HTTPS, Hebrew typing, the login screen and
+  ShulGo's tray icon. Installing it to a hard disk was not tested.
+
 **Not yet tested:**
 - real PC hardware, including Secure Boot (Ubuntu's signed boot files are unchanged)
 - Asahi on a real Apple Silicon Mac
 - the Arch Linux 32 edition on a real old laptop
+- Jewbuntu Classic installed to a hard disk, and on real old PCs
 - Hebrew typing in apps
 
 Licence: Jewbuntu's own code is open source (see GitHub). Ubuntu and its packages keep
