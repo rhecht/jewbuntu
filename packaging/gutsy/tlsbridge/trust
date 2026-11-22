@@ -1,0 +1,70 @@
+#!/bin/sh
+# Jewbuntu Classic: make a Firefox certificate store trust this computer's TLS bridge.
+#
+#   trust --create DIR   the store in DIR (made if missing): the template for new profiles
+#   trust --user         every Firefox profile of the person running it (run at login, as them)
+#
+# The bridge's authority is replaced if it changed (a new computer, or a reinstall), and a profile
+# that Firefox has open is left until the next login, so its store is never written while in use.
+
+CA=/var/lib/jewbuntu-tlsbridge/ca.crt
+NICK="Jewbuntu TLS bridge (this computer only)"
+
+[ -r "$CA" ] || exit 0
+command -v certutil >/dev/null 2>&1 || exit 0
+
+flat() { tr -d '\r\n' ; }
+
+ensure()
+{
+	dir="$1"
+	if [ ! -f "$dir/cert8.db" ]; then
+		[ "$2" = create ] || return 0
+		empty=$(mktemp) || return 1
+		certutil -N -d "$dir" -f "$empty" >/dev/null 2>&1
+		rm -f "$empty"
+		if [ "$3" = template ]; then
+			# Firefox copies the template into each new profile, as that person: it must be readable.
+			chmod 644 "$dir/cert8.db" "$dir/key3.db" "$dir/secmod.db" 2>/dev/null
+			touch "$dir/.jewbuntu-tlsbridge"   # so removing the package removes only what it made
+		fi
+	fi
+	have=$(certutil -L -d "$dir" -n "$NICK" -a 2>/dev/null | flat)
+	want=$(flat < "$CA")
+	[ "$have" = "$want" ] && return 0
+	certutil -D -d "$dir" -n "$NICK" >/dev/null 2>&1
+	certutil -A -d "$dir" -n "$NICK" -t "C,," -i "$CA"
+}
+
+# Firefox 2 marks an open profile with a "lock" symlink to host:+pid. A stale one (after a crash)
+# names a process that is gone.
+in_use()
+{
+	target=$(readlink "$1/lock" 2>/dev/null) || return 1
+	pid=${target##*+}
+	[ -n "$pid" ] && kill -0 "$pid" 2>/dev/null
+}
+
+case "$1" in
+--create)
+	ensure "$2" create template
+	;;
+--user)
+	# The profiles Firefox knows about (profiles.ini), not every folder: 3.6 keeps "Crash Reports"
+	# beside them.
+	ini="$HOME/.mozilla/firefox/profiles.ini"
+	[ -f "$ini" ] || exit 0
+	sed -n 's/^Path=//p' "$ini" | tr -d '\r' | while read -r rel; do
+		case "$rel" in /*) p="$rel" ;; *) p="$HOME/.mozilla/firefox/$rel" ;; esac
+		[ -d "$p" ] || continue
+		in_use "$p" && continue
+		# A profile Firefox 3.6 has just made has no store yet; Firefox uses one it finds.
+		ensure "$p" create
+	done
+	;;
+*)
+	echo "usage: $0 --create DIR | --user" >&2
+	exit 2
+	;;
+esac
+exit 0

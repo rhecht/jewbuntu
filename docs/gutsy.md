@@ -48,7 +48,7 @@ including the 7.10 security updates.
 The screen is at least 800x600 (the installer's minimum) and 1024x768 in a virtual machine:
 `packaging/gutsy/casper/21jewbuntu_xmodes` runs in the initrd after casper writes `xorg.conf`.
 
-## The web in 2026 on a 2007 system: why Lynx
+## The web in 2026 on a 2007 system: Lynx, curl and the TLS bridge
 
 Almost every website now requires TLS 1.2 or newer. Ubuntu 7.10's OpenSSL 0.9.8 only speaks
 TLS 1.0, so Firefox 2, the 2007 Lynx and Python 2.5 all fail to connect, and no package from
@@ -61,13 +61,60 @@ replaced; `/usr/bin/lynx` points there. Lynx shows pages as text: fine for news,
 search (it starts on DuckDuckGo's text page) and most reading. It uses Jewbuntu colours that stay
 readable in light and dark terminals.
 
-Firefox 2 stays on the disc for local files and the few sites that still accept old browsers.
+### Firefox 3.6
+
+`jewbuntu-firefox` puts Mozilla's official Firefox 3.6.28 build (March 2012, the last 3.6) in
+`/opt/firefox-3.6`, unchanged, and makes it the `firefox` command (`dpkg-divert`; Ubuntu's
+Firefox 2 stays as `/usr/bin/firefox.ubuntu`). It is the newest Firefox that runs on 7.10's own
+libraries: 4 to 10 would need a newer C++ library, and 52 ESR (the last for CPUs without SSE2)
+a private copy of a newer base system. Its settings (the bridge, the start page, no update
+checks, the user agent below) are in `distribution/distribution.ini`, Mozilla's customisation
+file. The launcher (`packaging/gutsy/firefox/firefox`) makes the profile on first start and
+adds the bridge's authority before Firefox opens, so the first page is already trusted.
+Source: https://ftp.mozilla.org/pub/firefox/releases/3.6.28/source/
+
+### HTTPS: the TLS bridge
+
+Firefox 2 and 3.6 speak TLS 1.0 only (NSS 3.11 and 3.12), and TLS 1.2 arrived in Firefox 27,
+which needs a newer GTK than 7.10 has. So `jewbuntu-web-tools` also carries
+**jewbuntu-tlsbridge** (`packaging/gutsy/tlsbridge/`), a small program built on the same
+OpenSSL 3.5:
+
+- It listens on `127.0.0.1:3129` only. Firefox sends every HTTPS request there
+  (3.6: `distribution.ini`; Firefox 2: `/etc/firefox/pref/jewbuntu-tlsbridge.js`); plain HTTP
+  goes direct as before.
+- For each request it connects to the real site with TLS 1.2 or 1.3, checks the certificate
+  against Mozilla's list and the site's name, then answers Firefox with TLS 1.0 and a
+  certificate for that site signed by an authority that exists on this computer only.
+- Firefox can no longer see the real certificate, so the bridge refuses any site whose
+  certificate fails, and shows Firefox a page saying why (expired, wrong name, self-signed).
+  Revocation is not checked, as with Lynx and curl.
+- The authority is made at first start (`/etc/init.d/jewbuntu-tlsbridge`, a few seconds on a
+  Pentium III). Its key is in `/var/lib/jewbuntu-tlsbridge`, readable only by the `jbtls`
+  system account the bridge runs as. Nothing is shipped on the CD (the remaster fails if it
+  is), and an installed system makes its own at first boot.
+- Trust: the start script puts the authority in `/etc/firefox/profile`, the template Firefox
+  copies into new profiles, with Ubuntu's own `certutil` (libnss3-tools). Existing profiles
+  are updated at login, as their owner (`/etc/xdg/autostart/jewbuntu-tlsbridge-trust.desktop`),
+  skipping any profile Firefox has open. Root scripts never touch home directories.
+- No site names are logged. Purging the package removes the authority, its key and the template
+  store it made.
+
+HTTPS then connects, but pages still have to work in a 2012 browser. Simple sites and mobile
+pages usually do; sites that need today's JavaScript or layout will be blank or broken. Lynx
+remains the better choice for reading.
+
+Anti-bot filters (SiteGround's, among others) drop any request that says Firefox 2, 3.6 or even
+4, before the site sees it, which looks like a blank page; shulgo.com and bluefringes.com did in
+testing. Firefox 52, the last for Pentium III-class computers, gets through, so both Firefoxes
+introduce themselves as `Firefox/52.0 Jewbuntu-Classic/7.10` (`general.useragent.override`).
 
 ## Please be honest with users about security
 
 Ubuntu 7.10 stopped getting security updates in April 2009. The welcome page says so: fine for
 writing, reading, learning and light browsing; not for banking or anything private; keep it
-behind a home router. Lynx and curl themselves are current, but the rest of the system is not.
+behind a home router. Lynx, curl and the TLS bridge are current, but Firefox 2 and the rest of
+the system are not: a page can still attack the 2006 browser even over a well-checked connection.
 
 ## Building (developers)
 
@@ -107,9 +154,13 @@ are published next to the ISO.
 
 ## Known gaps
 
-- Firefox 2 can't open most sites (see above). There's no fix for that on 7.10.
-- Not tested yet: installing to a hard disk, real Pentium II/III machines and their graphics
-  chips, sound and printing. The live CD was tested in QEMU as a Pentium III without SSE2, with
+- Firefox 3.6 reaches HTTPS sites through the TLS bridge, but many of today's sites need more
+  JavaScript and CSS than a 2012 browser has (see above).
+- Sites that prefer IPv6 (Wikipedia, cdn.jsdelivr.net) stalled at "Waiting for…" in the UTM
+  test, where IPv6 isn't carried. The bridge tries addresses in the order DNS gives them, 15
+  seconds each; trying IPv4 first is the suspected fix (not confirmed).
+- Not tested yet: real Pentium II/III machines and their graphics chips, sound and printing.
+  Installing to a hard disk was tested in UTM (docs/test-results/2026-11-22-gutsy-c2-utm.md). The live CD was tested in QEMU as a Pentium III without SSE2, with
   512 MB and with 256 MB (docs/test-results/2026-11-19-gutsy-qemu.md).
 - The boot menu's own colours (orange text) come from Ubuntu's gfxboot theme, which is compiled;
   only its background and labels are Jewbuntu's.

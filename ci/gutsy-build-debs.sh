@@ -170,6 +170,13 @@ SH
   tar -xzf /out/opt-jewbuntu.tar.gz -C $T
   ln -s /opt/jewbuntu/bin/lynx $T/usr/bin/lynx
   install -D -m644 $G/jewbuntu-lynx.desktop $T/usr/share/applications/jewbuntu-lynx.desktop
+  # The TLS bridge: Firefox 2 opens HTTPS sites through it (packaging/gutsy/tlsbridge).
+  install -D -m755 $G/tlsbridge/jewbuntu-tlsbridge.init $T/etc/init.d/jewbuntu-tlsbridge
+  install -D -m755 $G/tlsbridge/trust $T/usr/lib/jewbuntu-tlsbridge/trust
+  install -D -m644 $G/tlsbridge/jewbuntu-tlsbridge-trust.desktop $T/etc/xdg/autostart/jewbuntu-tlsbridge-trust.desktop
+  install -D -m644 $G/tlsbridge/jewbuntu-tlsbridge.js $T/etc/firefox/pref/jewbuntu-tlsbridge.js
+  install -D -m644 $G/tlsbridge/jewbuntu-tlsbridge.c $T/usr/share/doc/jewbuntu-web-tools/jewbuntu-tlsbridge.c
+  echo /etc/init.d/jewbuntu-tlsbridge > $T/DEBIAN/conffiles
   SIZE=$(du -sk $T/opt $T/usr | awk "{s+=\$1} END {print s}")
   cat > $T/DEBIAN/control <<CTL
 Package: jewbuntu-web-tools
@@ -177,21 +184,109 @@ Version: $VERSION
 Architecture: i386
 Maintainer: Jewbuntu Developers <maintainers@jewbuntu.invalid>
 Installed-Size: $SIZE
+Depends: adduser, libnss3-tools
 Conflicts: lynx
 Replaces: lynx
 Provides: lynx, www-browser
 Section: web
 Priority: optional
 Homepage: https://github.com/rhecht/jewbuntu
-Description: Current Lynx and curl for Ubuntu 7.10 (Jewbuntu Classic)
- Ubuntu 7.10 can no longer open most HTTPS sites: its OpenSSL only speaks TLS 1.0. This
- package adds Lynx 2.9.3 (text web browser) and curl 8.23.0, statically built with OpenSSL
- 3.5 (TLS 1.2 and 1.3) and musl for plain i686 CPUs, with Mozilla'"'"'s current list of
- certificate authorities. Everything lives in /opt/jewbuntu; /usr/bin/lynx points there.
+Description: Today'"'"'s HTTPS for Ubuntu 7.10: Lynx, curl and a bridge for Firefox (Jewbuntu Classic)
+ Ubuntu 7.10 can no longer open most HTTPS sites: its OpenSSL and Firefox 2 only speak TLS
+ 1.0. This package adds Lynx 2.9.3 (text web browser) and curl 8.23.0, statically built with
+ OpenSSL 3.5 (TLS 1.2 and 1.3) and musl for plain i686 CPUs, with Mozilla'"'"'s current list of
+ certificate authorities, and jewbuntu-tlsbridge: a helper on 127.0.0.1 that connects to HTTPS
+ sites for Firefox with current encryption, checks their certificates, and hands Firefox the
+ page with a certificate from an authority made on this computer only. Everything lives in
+ /opt/jewbuntu; /usr/bin/lynx points there.
 CTL
+  cat > $T/DEBIAN/postinst <<"SH"
+#!/bin/sh
+set -e
+if [ "$1" = configure ]; then
+  getent passwd jbtls >/dev/null || adduser --system --quiet --no-create-home \
+    --home /var/lib/jewbuntu-tlsbridge --gecos "Jewbuntu TLS bridge" jbtls
+  update-rc.d jewbuntu-tlsbridge defaults 12 88 >/dev/null
+  # Not started while the live CD is being built (policy-rc.d), so no authority is ever shipped.
+  if [ -x /usr/sbin/invoke-rc.d ]; then invoke-rc.d jewbuntu-tlsbridge start || true
+  else /etc/init.d/jewbuntu-tlsbridge start || true; fi
+fi
+exit 0
+SH
+  cat > $T/DEBIAN/prerm <<"SH"
+#!/bin/sh
+set -e
+if [ -x /usr/sbin/invoke-rc.d ]; then invoke-rc.d jewbuntu-tlsbridge stop || true
+else /etc/init.d/jewbuntu-tlsbridge stop || true; fi
+exit 0
+SH
+  cat > $T/DEBIAN/postrm <<"SH"
+#!/bin/sh
+set -e
+if [ "$1" = purge ]; then
+  update-rc.d jewbuntu-tlsbridge remove >/dev/null || true
+  # The authority and keys, and the certificate store this package made for new Firefox profiles.
+  # Profiles in home directories are left alone; their copy of the authority is harmless once
+  # the key is gone.
+  rm -rf /var/lib/jewbuntu-tlsbridge
+  if [ -f /etc/firefox/profile/.jewbuntu-tlsbridge ]; then
+    rm -f /etc/firefox/profile/cert8.db /etc/firefox/profile/key3.db \
+          /etc/firefox/profile/secmod.db /etc/firefox/profile/.jewbuntu-tlsbridge
+  fi
+  getent passwd jbtls >/dev/null && deluser --quiet --system jbtls >/dev/null || true
+fi
+exit 0
+SH
+  chmod 755 $T/DEBIAN/postinst $T/DEBIAN/prerm $T/DEBIAN/postrm
   find $T -type d -exec chmod 755 {} +
 
-  mkdir -p /out/debs; rm -f /out/debs/jewbuntu-classic-desktop_*.deb /out/debs/jewbuntu-web-tools_*.deb
+  ### jewbuntu-firefox: Mozilla'"'"'s Firefox 3.6.28 (2012), the newest Firefox that runs on 7.10 as it is
+  F=$B/firefox; mkdir -p $F/DEBIAN $F/opt $F/usr/bin
+  FFTAR=/out/sources/firefox-3.6.28.tar.bz2
+  echo "c82eeab7b78813a0da7dc4eca4212247bb0acdf881236f837e1c46ffd8ccbb63  $FFTAR" | sha256sum -c -
+  tar -xjf $FFTAR -C $F/opt && mv $F/opt/firefox $F/opt/firefox-3.6
+  # Settings through Mozilla'"'"'s own customisation file; Mozilla'"'"'s files are not changed.
+  install -D -m644 $G/firefox/distribution.ini $F/opt/firefox-3.6/distribution/distribution.ini
+  install -m755 $G/firefox/firefox $F/usr/bin/firefox
+  FFV=3.6.28-0jewbuntu1
+  SIZE=$(du -sk $F/opt $F/usr | awk "{s+=\$1} END {print s}")
+  cat > $F/DEBIAN/control <<CTL
+Package: jewbuntu-firefox
+Version: $FFV
+Architecture: i386
+Maintainer: Jewbuntu Developers <maintainers@jewbuntu.invalid>
+Installed-Size: $SIZE
+Depends: jewbuntu-web-tools, libgtk2.0-0 (>= 2.10), libdbus-glib-1-2, libstdc++6
+Section: web
+Priority: optional
+Homepage: https://github.com/rhecht/jewbuntu
+Description: Firefox 3.6 for Ubuntu 7.10, through the TLS bridge (Jewbuntu Classic)
+ Mozilla'"'"'s official Firefox 3.6.28 build for Linux, unchanged, in /opt/firefox-3.6. It draws
+ today'"'"'s pages much better than Ubuntu 7.10'"'"'s Firefox 2 and runs JavaScript far faster. The
+ firefox command starts it; Firefox 2 stays installed as firefox.ubuntu. HTTPS goes through
+ jewbuntu-tlsbridge, set in Mozilla'"'"'s own customisation file (distribution.ini).
+CTL
+  cat > $F/DEBIAN/preinst <<"SH"
+#!/bin/sh
+set -e
+if [ "$1" = install ] || [ "$1" = upgrade ]; then
+  dpkg-divert --package jewbuntu-firefox --add --rename --divert /usr/bin/firefox.ubuntu /usr/bin/firefox >/dev/null
+fi
+exit 0
+SH
+  cat > $F/DEBIAN/postrm <<"SH"
+#!/bin/sh
+set -e
+if [ "$1" = remove ] || [ "$1" = abort-install ] || [ "$1" = disappear ]; then
+  dpkg-divert --package jewbuntu-firefox --remove --rename --divert /usr/bin/firefox.ubuntu /usr/bin/firefox >/dev/null
+fi
+exit 0
+SH
+  chmod 755 $F/DEBIAN/preinst $F/DEBIAN/postrm
+  find $F -type d -exec chmod 755 {} +
+
+  mkdir -p /out/debs; rm -f /out/debs/jewbuntu-classic-desktop_*.deb /out/debs/jewbuntu-web-tools_*.deb /out/debs/jewbuntu-firefox_*.deb
+  dpkg-deb -Zgzip --root-owner-group -b $F /out/debs/jewbuntu-firefox_${FFV}_i386.deb >/dev/null
   dpkg-deb -Zgzip --root-owner-group -b $D /out/debs/jewbuntu-classic-desktop_${VERSION}_all.deb >/dev/null
   dpkg-deb -Zgzip --root-owner-group -b $T /out/debs/jewbuntu-web-tools_${VERSION}_i386.deb >/dev/null
   ls -la /out/debs'

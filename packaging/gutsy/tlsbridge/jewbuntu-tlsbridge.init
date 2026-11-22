@@ -1,0 +1,70 @@
+#!/bin/sh
+### BEGIN INIT INFO
+# Provides:          jewbuntu-tlsbridge
+# Required-Start:    $local_fs $syslog
+# Required-Stop:     $local_fs
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: HTTPS helper that lets Firefox 2 open today's sites
+### END INIT INFO
+#
+# Jewbuntu Classic. On first start this makes the computer's own certificate authority
+# (/var/lib/jewbuntu-tlsbridge, key readable only by the jbtls account), puts it in the template
+# Firefox copies into new profiles (/etc/firefox/profile), and starts the bridge on 127.0.0.1:3129.
+# Each person's existing Firefox profiles are handled at login, as that person
+# (/etc/xdg/autostart/jewbuntu-tlsbridge-trust.desktop).
+
+BIN=/opt/jewbuntu/bin/jewbuntu-tlsbridge
+TRUST=/usr/lib/jewbuntu-tlsbridge/trust
+STATE=/var/lib/jewbuntu-tlsbridge
+RUNAS=jbtls
+PIDFILE=/var/run/jewbuntu-tlsbridge.pid
+TEMPLATE=/etc/firefox/profile
+
+[ -x "$BIN" ] || exit 0
+. /lib/lsb/init-functions
+
+setup()
+{
+	mkdir -p "$STATE"
+	chown "$RUNAS" "$STATE"
+	chmod 755 "$STATE"
+	# Makes the authority only if it is missing (a few seconds on a Pentium III, once).
+	start-stop-daemon --start --quiet --chuid "$RUNAS" --exec "$BIN" -- init "$STATE" || return 1
+	[ -d "$TEMPLATE" ] && "$TRUST" --create "$TEMPLATE" >/dev/null 2>&1 || true
+}
+
+case "$1" in
+start)
+	log_daemon_msg "Starting the HTTPS helper for Firefox" "jewbuntu-tlsbridge"
+	setup && start-stop-daemon --start --quiet --oknodo --background --make-pidfile \
+		--pidfile "$PIDFILE" --chuid "$RUNAS" --exec "$BIN" -- serve "$STATE"
+	log_end_msg $?
+	;;
+stop)
+	log_daemon_msg "Stopping the HTTPS helper for Firefox" "jewbuntu-tlsbridge"
+	start-stop-daemon --stop --quiet --oknodo --retry 5 --pidfile "$PIDFILE" --exec "$BIN"
+	rm -f "$PIDFILE"
+	log_end_msg $?
+	;;
+restart|force-reload)
+	$0 stop
+	$0 start
+	;;
+status)
+	# Read the pid file rather than ask start-stop-daemon, which cannot inspect another account's
+	# process when an ordinary user asks.
+	pid=$(cat "$PIDFILE" 2>/dev/null)
+	if [ -n "$pid" ] && [ -d "/proc/$pid" ] && grep -q jewbuntu-tlsbridge "/proc/$pid/cmdline" 2>/dev/null; then
+		echo "jewbuntu-tlsbridge is running"
+	else
+		echo "jewbuntu-tlsbridge is not running"
+		exit 3
+	fi
+	;;
+*)
+	echo "Usage: $0 {start|stop|restart|status}" >&2
+	exit 1
+	;;
+esac
+exit 0

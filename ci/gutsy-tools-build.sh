@@ -2,9 +2,10 @@
 # Jewbuntu Classic (Ubuntu 7.10 i386), step 2: a current Lynx and curl for a 2007 system.
 #
 # Ubuntu 7.10's own OpenSSL (0.9.8e) speaks only TLS 1.0, which today's HTTPS sites refuse, so
-# its Firefox 2, Lynx 2.8.6 and Python 2.5 can no longer open them. These two programs are built
+# its Firefox 2, Lynx 2.8.6 and Python 2.5 can no longer open them. These programs are built
 # statically against OpenSSL 3.5 (TLS 1.2/1.3) with musl libc, for plain i686 (no SSE2, so a
 # Pentium II/III runs them), and installed under /opt/jewbuntu with Mozilla's current CA list.
+# Also built here: jewbuntu-tlsbridge, the local HTTPS helper Firefox 2 goes through.
 #
 # Output: dist/gutsy/opt-jewbuntu.tar.gz (the /opt/jewbuntu tree) and dist/gutsy/sources/
 # (the exact source tarballs, offered next to the ISO as the GPL asks for Lynx).
@@ -35,6 +36,7 @@ EOF
 # Debian's i386 port targets plain i686 without SSE, and its musl-gcc inherits that baseline.
 docker run --rm --platform linux/386 \
   -v "$SRC:/src:ro" -v "$OUT:/out" -v "$ROOT/packaging/gutsy/lynx:/lynxcfg:ro" \
+  -v "$ROOT/packaging/gutsy/tlsbridge:/tlsbridge:ro" \
   debian:bookworm sh -euc '
   export DEBIAN_FRONTEND=noninteractive
   apt-get update -qq >/dev/null
@@ -94,6 +96,11 @@ docker run --rm --platform linux/386 \
   install -D -m644 samples/lynx.lss /stage$P/etc/lynx-default.lss
   cat /lynxcfg/lynx-jewbuntu.cfg >> /stage$P/etc/lynx.cfg
   install -m644 /lynxcfg/jewbuntu.lss /stage$P/etc/lynx.lss   # Lynx requires its default .lss to exist
+
+  # The TLS bridge for Firefox 2 (packaging/gutsy/tlsbridge), on the same OpenSSL.
+  musl-gcc $CFLAGS -std=gnu99 -Wall -I$S/include /tlsbridge/jewbuntu-tlsbridge.c \
+      -static -L$S/lib -lssl -lcrypto -o /stage$P/bin/jewbuntu-tlsbridge
+  mkdir -p /tmp/tb && /stage$P/bin/jewbuntu-tlsbridge init /tmp/tb && /stage$P/bin/jewbuntu-tlsbridge version
 
   strip /stage$P/bin/*
   install -D -m644 /src/cacert.pem /stage$P/etc/ssl/cert.pem

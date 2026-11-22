@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Secure connections for Firefox
+Comment=Lets Firefox trust this computer's HTTPS helper (Jewbuntu Classic)
+Exec=/usr/lib/jewbuntu-tlsbridge/trust --user
+NoDisplay=true
+X-GNOME-Autostart-enabled=true

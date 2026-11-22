@@ -1,0 +1,19 @@
+#!/bin/sh
+# Jewbuntu Classic: "firefox" starts Firefox 3.6.28 (Mozilla's last 3.6, 2012) instead of Ubuntu
+# 7.10's Firefox 2, which stays installed as /usr/bin/firefox.ubuntu (dpkg-divert, package
+# jewbuntu-firefox). Both use ~/.mozilla/firefox; 3.6 upgrades a Firefox 2 profile the first time.
+#
+# HTTPS goes through the computer's TLS bridge (jewbuntu-tlsbridge). Before Firefox starts, the
+# person's profiles get the bridge's authority, as that person; a first start makes the profile
+# first, so the very first page is already trusted.
+
+FF=/opt/firefox-3.6/firefox
+TRUST=/usr/lib/jewbuntu-tlsbridge/trust
+
+if [ -x "$TRUST" ]; then
+	if ! grep -q '^Path=' "$HOME/.mozilla/firefox/profiles.ini" 2>/dev/null; then
+		"$FF" -CreateProfile default >/dev/null 2>&1
+	fi
+	"$TRUST" --user >/dev/null 2>&1
+fi
+exec "$FF" "$@"

@@ -69,12 +69,15 @@ EOF
   cp /tmp/disc.list $N/etc/apt/sources.list.d/jewbuntu-build.list
   mv $N/etc/apt/sources.list $N/etc/apt/sources.list.jb; touch $N/etc/apt/sources.list
   for i in 1 2 3; do inroot apt-get update -qq && break || sleep 10; done
-  inroot apt-get install -y -q --force-yes gtk2-engines-murrine gtk2-engines-pixbuf culmus python-simplejson 2>&1 | tail -3
+  inroot apt-get install -y -q --force-yes gtk2-engines-murrine gtk2-engines-pixbuf culmus python-simplejson libnss3-tools 2>&1 | tail -3
 
   log "Jewbuntu packages"
   mkdir -p $N/tmp/jb && cp /out/debs/*.deb $N/tmp/jb/
   inroot sh -c "dpkg -i /tmp/jb/*.deb" 2>&1 | tail -5
   inroot dpkg -l jewbuntu-classic-desktop jewbuntu-web-tools | tail -2
+  # The TLS bridge makes each computer its own authority at first start; none may be on the disc.
+  [ ! -e $N/var/lib/jewbuntu-tlsbridge/ca.key ] && [ ! -e $N/etc/firefox/profile/cert8.db ]
+  echo "TLS bridge: no authority on the disc (made at first start)"
   rm -rf $N/tmp/jb
 
   log "login screen and live session"
