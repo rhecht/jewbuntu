@@ -41,7 +41,12 @@ installer), plus:
 
 The live session's account is `jewbuntu` and the computer is called `jewbuntu`. apt points at
 `old-releases.ubuntu.com`, where Ubuntu 7.10's packages now live (the original 2007 entries
-are kept in `/etc/apt/sources.list.original-2007`).
+are kept in `/etc/apt/sources.list.original-2007`). The installer is preseeded to use
+old-releases too (`preseed/ubuntu.seed`), so an installed system gets working apt sources,
+including the 7.10 security updates.
+
+The screen is at least 800x600 (the installer's minimum) and 1024x768 in a virtual machine:
+`packaging/gutsy/casper/21jewbuntu_xmodes` runs in the initrd after casper writes `xorg.conf`.
 
 ## The web in 2026 on a 2007 system: why Lynx
 
@@ -89,7 +94,10 @@ How it works:
   by `packaging/gutsy/make-icons.py`.
 - **Remaster**: a copy of the root filesystem gets the packages in a chroot, then is packed with
   **squashfs-tools 3.2-r2** (the version Ubuntu 7.10 shipped), built from source, because the 2.6.22 kernel only mounts squashfs format 3:0,
-  with 64 KB blocks like the original. The CD keeps Ubuntu's kernel, initrd and installer.
+  with 64 KB blocks like the original. The CD keeps Ubuntu's kernel, initrd and installer;
+  the initrd only gets the boot splash, `casper.conf` and the screen-size script; the
+  installer gets the old-releases mirror (preseed, and one line in its time zone step) and a
+  small patch so its window fits 800x600.
   The Windows autorun extras (2007 Windows installers for Firefox, Thunderbird and AbiWord, and
   the K-Meleon browser) are removed: they are outdated and unsafe, and freeing their 30 MB keeps
   the ISO within a 700 MB CD-R.
@@ -118,3 +126,20 @@ are published next to the ISO.
 - GTK 2.12 stops reading an rc file at its first unknown option; murrine 0.53 predates
   `textstyle`, `glowstyle` and friends, and the pixmap engine predates `direction`.
 - usplash passes theme colour numbers through as raw pixels in 16-bit modes; draw with images.
+- Casper 7.10 rewrites `xorg.conf` at every boot (`casper-bottom/20xconfig`). Its mode list skips
+  800x600, and without monitor details (EDID) X gets no sync ranges and starts at 640x480, where
+  Ubiquity's buttons fall off the screen. Fixed after 20xconfig, not in the squashfs.
+- Ubiquity 1.6 writes the installed sources from `mirror/http/hostname` and
+  `apt-setup/security_host`, but its time zone step (`/usr/share/ubiquity/tzsetup`) sets
+  `mirror/country` to the chosen country, and choose-mirror then picks that country's mirror
+  (us.archive.ubuntu.com) over a preseeded host. The remaster drops that line. Its GTK frontend
+  is called `gtk_ui`.
+- The 2007 choose-mirror only knows `mirror/country` = `enter information manually`; the later
+  value `manual` is not a country to it, so it still used the installer's country
+  (gb.archive.ubuntu.com, all commented out as "failed to verify"). As a safety net
+  `ubiquity/success_command` runs `preseed/jewbuntu-apt-sources.sh` after the install, which
+  points any leftover archive or security line at old-releases and switches it back on.
+- Ubiquity's window is as tall as its tallest page (the time zone map, 562 pixels), so with a
+  title bar it does not fit 800x600. On short screens the remaster's patch drops the title bar
+  and moves the window to the top of the work area once it is mapped: metacity centres a window
+  taller than the work area, and the glade file asks GTK to keep it centred.

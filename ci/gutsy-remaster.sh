@@ -101,6 +101,53 @@ EOF
     cd / && ls -la /tmp/initrd.new
   fi
 
+  log "installer: fits an 800x600 screen"
+  # The Ubiquity window is as tall as its tallest page (the time zone map): 562 pixels of
+  # content plus a 29 pixel title bar below the 24 pixel top bar ends at 615 on an 800x600
+  # screen, with the Forward button cut off. Without the title bar it ends at 586.
+  python3 - $N/usr/lib/ubiquity/ubiquity/frontend/gtk_ui.py <<"PY"
+import sys
+p = sys.argv[1]; s = open(p, encoding="latin-1").read()
+anchor = "        self.live_installer.show()\n        self.allow_change_step(False)\n"
+assert s.count(anchor) == 1, "ubiquity anchor not found"
+before = ("        # Jewbuntu Classic: on screens under 700 pixels tall (800x600) the window, as tall\n"
+          "        # as its tallest page, fits only without its title bar, at the top of the work area.\n"
+          "        jb_root = gtk.gdk.get_default_root_window()\n"
+          "        if jb_root.get_screen().get_height() < 700:\n"
+          "            self.live_installer.set_decorated(False)\n"
+          "            try:\n"
+          "                jb_top = jb_root.property_get(\"_NET_WORKAREA\")[2][1]\n"
+          "            except Exception:\n"
+          "                jb_top = 24\n"
+          "            jb_left = (jb_root.get_screen().get_width()\n"
+          "                       - self.live_installer.size_request()[0]) // 2\n"
+          "            # Metacity centres a window taller than the work area (the dock is part of\n"
+          "            # neither), so it is moved once it is on screen; the window must not ask GTK\n"
+          "            # to keep it centred.\n"
+          "            self.live_installer.set_position(gtk.WIN_POS_NONE)\n"
+          "            def jb_place(*ignored):\n"
+          "                self.live_installer.move(max(0, jb_left), jb_top)\n"
+          "                return False\n"
+          "            self.live_installer.connect(\"map-event\",\n"
+          "                lambda *ignored: gobject.timeout_add(300, jb_place) and False)\n"
+          "            gobject.timeout_add(3000, jb_place)\n")
+open(p, "w", encoding="latin-1").write(s.replace(anchor, before + anchor))
+PY
+  rm -f $N/usr/lib/ubiquity/ubiquity/frontend/gtk_ui.pyc
+  # The time zone step set mirror/country to the chosen country, so the mirror chooser picked
+  # that country mirror (us.archive.ubuntu.com, which no longer has 7.10) over the preseeded
+  # old-releases host, and the installer commented out every main line.
+  python3 - $N/usr/share/ubiquity/tzsetup <<"PY"
+import sys
+p = sys.argv[1]; s = open(p, encoding="latin-1").read()
+line = "db_set mirror/country \"$country\"\n"
+assert s.count(line) == 1, "tzsetup line not found"
+s = s.replace(line, "# Jewbuntu Classic: keep the preseeded old-releases mirror (was: " + line.strip() + ")\n:\n")
+open(p, "w", encoding="latin-1").write(s)
+PY
+  grep -n "mirror/country" $N/usr/share/ubiquity/tzsetup
+  grep -n -B1 "set_decorated" $N/usr/lib/ubiquity/ubiquity/frontend/gtk_ui.py
+
   log "Firefox: welcome page as home page, no BBC live bookmark"
   # The ubufox extension sets the home page after the system pref files are read, so it goes
   # into the template for new profiles. The live bookmark fetched a BBC feed at every start and
@@ -125,6 +172,23 @@ EOF
   cd $W/newiso
   rm -rf bin programs disctree pics start.exe start.ini start.bmp autorun.inf wubi-cdboot.exe ubuntu.ico
   cp /tmp/manifest casper/filesystem.manifest
+  # The installer writes the apt sources of the installed system from these (50mirror.ubuntu and
+  # 90security generators). archive.ubuntu.com and security.ubuntu.com no longer carry 7.10, so
+  # the installer warned "Cannot access security updates" and left dead sources behind. Every
+  # boot entry loads this file (file=/cdrom/preseed/ubuntu.seed).
+  # The 2007 mirror chooser only knows the long value "enter information manually"; the newer
+  # "manual" is not a country to it, so it fell back to the country mirror (gb.archive...).
+  # The success command runs after the install as a safety net (see the script).
+  install -m 755 /pkg/gutsy/preseed/jewbuntu-apt-sources.sh preseed/jewbuntu-apt-sources.sh
+  cat >> preseed/ubuntu.seed <<"EOF"
+# Jewbuntu Classic: Ubuntu 7.10 now lives on old-releases.ubuntu.com (updates and security too).
+d-i	mirror/country	string	enter information manually
+d-i	mirror/http/hostname	string	old-releases.ubuntu.com
+d-i	mirror/http/directory	string	/ubuntu
+d-i	apt-setup/security_host	string	old-releases.ubuntu.com
+ubiquity	ubiquity/success_command	string	sh /cdrom/preseed/jewbuntu-apt-sources.sh /target
+EOF
+  cat preseed/ubuntu.seed
   [ -f /tmp/initrd.new ] && cp /tmp/initrd.new casper/initrd.gz
   # Packages the installer removes after installing (casper, ubiquity ...), as on the original.
   cut -d" " -f1 $W/iso/casper/filesystem.manifest | sort > /tmp/all-old
