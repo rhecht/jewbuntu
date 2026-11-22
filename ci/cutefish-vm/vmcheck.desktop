@@ -1,0 +1,5 @@
+[Desktop Entry]
+Type=Application
+Name=Jewbuntu test VM check
+Exec=/bin/sh /run/live/medium/jewbuntu/vmcheck.sh
+NoDisplay=true

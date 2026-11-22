@@ -29,10 +29,11 @@ install -m755 "$C/jewbuntu-cutefish-session" "$P/usr/bin/"
 install -m644 "$C/jewbuntu-cutefish.desktop" "$P/etc/xdg/autostart/"
 install -m644 "$C/launchpad.svg" "$P/usr/share/cutefish-compositor/shell/launchpad.svg"
 # The same Star of David wallpapers as Ubuntu's defaults (blue = light, purple = dark), taken from
-# the skin repository's committed files.
-git -C "$SKIN" show HEAD:wallpaper/Jewbuntu-star-blue.png > "$P/usr/share/backgrounds/cutefishos/jewbuntu-star-blue.png"
-git -C "$SKIN" show HEAD:wallpaper/Jewbuntu-star-purple.png > "$P/usr/share/backgrounds/cutefishos/jewbuntu-star-purple.png"
-chmod 644 "$P/usr/share/backgrounds/cutefishos/"*.png
+# the skin repository's committed files and converted to JPEG in the container below: Cutefish's
+# desktop draws JPEG wallpapers but not PNG ones.
+mkdir -p "$TMP/walls"
+git -C "$SKIN" show HEAD:wallpaper/Jewbuntu-star-blue.png > "$TMP/walls/jewbuntu-star-blue.png"
+git -C "$SKIN" show HEAD:wallpaper/Jewbuntu-star-purple.png > "$TMP/walls/jewbuntu-star-purple.png"
 cat > "$P/usr/share/doc/jewbuntu-cutefish/copyright" <<'EOF'
 Jewbuntu skin for Cutefish. https://jewbuntu.com
 Launchpad icon and helper: Jewbuntu Developers, original work.
@@ -72,6 +73,12 @@ EOF
 
 chmod -R a+rX "$TMP"
 docker run --rm -v "$TMP:/w" -v "$OUT:/out" -v "$SRC:/sg:ro" "$IMAGE" sh -euc '
+  command -v pngtopnm >/dev/null && command -v cjpeg >/dev/null || { apt-get update -q >/dev/null 2>&1; apt-get install -y -q libjpeg-turbo-progs netpbm >/dev/null 2>&1; }
+  for w in jewbuntu-star-blue jewbuntu-star-purple; do
+    pngtopnm /w/walls/$w.png | cjpeg -quality 92 -optimize > /w/jewbuntu-cutefish/usr/share/backgrounds/cutefishos/$w.jpg
+    chmod 644 /w/jewbuntu-cutefish/usr/share/backgrounds/cutefishos/$w.jpg
+  done
+  file /w/jewbuntu-cutefish/usr/share/backgrounds/cutefishos/*.jpg
   cd /sg && TZ=America/Toronto python3 -m unittest discover -s tests 2>&1 | tail -3
   for p in jewbuntu-cutefish shulgo-xfce; do
     dpkg-deb --root-owner-group -Zxz --build /w/$p /out/ >/dev/null

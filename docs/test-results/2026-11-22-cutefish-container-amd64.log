@@ -1,11 +1,11 @@
 == Debian 13.7 amd64, cutefish-compositor 1.0~git20261122132522.9c7abd7-1+ci20261122142247
 == install
-PASS  apt installs jewbuntu-branding_0.1.0~m1.29+26.04_all.deb jewbuntu-core_0.1.0~m1.29+26.04_all.deb jewbuntu-cutefish_0.1.0~m1.29+cutefish1_all.deb shulgo-xfce_1.0.0.r202611201940_all.deb 
+PASS  apt installs jewbuntu-branding_0.1.0~m1.29+26.04_all.deb jewbuntu-core_0.1.0~m1.29+26.04_all.deb jewbuntu-cutefish_0.1.0~m1.29+cutefish2_all.deb shulgo-xfce_1.0.0.r202611201940_all.deb 
 PASS  Launchpad picture diverted by jewbuntu-cutefish
 PASS  Launchpad picture is the Star of David
 PASS  Cutefish's own Launchpad picture kept aside, unchanged
-PASS  light wallpaper installed
-PASS  dark wallpaper installed
+PASS  light wallpaper installed (JPEG, which Cutefish draws)
+PASS  dark wallpaper installed (JPEG)
 PASS  Cutefish's default wallpaper untouched
 PASS  autostart entry jewbuntu-cutefish.desktop
 PASS  autostart entry jewbuntu-startup-sound.desktop
@@ -22,12 +22,12 @@ PASS  fresh: light mode switches back to blue
 PASS  fresh: a wallpaper the user picks is never switched
 == jingle
    jewbuntu-startup-sound: played (pw-play exit 0)
-2026-11-22T20:42:54 played (pw-play exit 0)
+2026-11-22T21:17:47 played (pw-play exit 0)
 PASS  startup jingle plays at sign-in (PipeWire dummy output)
 PASS  jingle plays only once per boot
 == ShulGo
    
-   (__main__.py:969): dbind-WARNING **: 20:42:56.003: AT-SPI: Error retrieving accessibility bus address: org.freedesktop.DBus.Error.ServiceUnknown: The name org.a11y.Bus was not provided by any .service files
+   (__main__.py:986): dbind-WARNING **: 21:17:49.766: AT-SPI: Error retrieving accessibility bus address: org.freedesktop.DBus.Error.ServiceUnknown: The name org.a11y.Bus was not provided by any .service files
    ShulGo for Xfce 1.0.0
    python 3.13.5
    GTK 3.24.49
@@ -53,9 +53,10 @@ PASS  chooser: an account's own wallpaper is kept at first login
 PASS  chooser: --apply sets the Jewbuntu wallpaper on request
 PASS  chooser: --undo goes back to Cutefish's default
 PASS  chooser: --undo is remembered
+PASS  chooser: a wallpaper left by the PNG build is moved to the JPEG
 == remove
 PASS  apt remove
 PASS  Cutefish's own Launchpad picture is back
 PASS  no diversion left
 PASS  home files kept on removal
-== amd64: 34 passed, 0 failed
+== amd64: 35 passed, 0 failed

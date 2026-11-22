@@ -18,8 +18,8 @@ if DEBIAN_FRONTEND=noninteractive apt-get install -y -q /pkgs/*.deb > /tmp/apt.l
 check "Launchpad picture diverted by jewbuntu-cutefish" sh -c "dpkg-divert --list $SHELLDIR/launchpad.svg | grep -q jewbuntu-cutefish"
 check "Launchpad picture is the Star of David" grep -q "Star of David" $SHELLDIR/launchpad.svg
 check "Cutefish's own Launchpad picture kept aside, unchanged" sh -c "[ \"\$(sha256sum $SHELLDIR/launchpad.svg.cutefish | cut -d' ' -f1)\" = $ORIG_SUM ]"
-check "light wallpaper installed" test -s $BG/jewbuntu-star-blue.png
-check "dark wallpaper installed" test -s $BG/jewbuntu-star-purple.png
+check "light wallpaper installed (JPEG, which Cutefish draws)" sh -c "file $BG/jewbuntu-star-blue.jpg | grep -q JPEG"
+check "dark wallpaper installed (JPEG)" sh -c "file $BG/jewbuntu-star-purple.jpg | grep -q JPEG"
 check "Cutefish's default wallpaper untouched" test -s $BG/default.jpg
 for f in jewbuntu-cutefish.desktop jewbuntu-startup-sound.desktop shulgo-xfce.desktop; do
   check "autostart entry $f" test -f /etc/xdg/autostart/$f
@@ -55,13 +55,13 @@ setwp() { run_as "$1" "gdbus call --session --dest org.cutefish.Services --objec
 su fresh -c /tmp/session.sh
 check "fresh: Cutefish default wallpaper before Jewbuntu runs" wp_is fresh default.jpg
 run_as fresh "nohup jewbuntu-cutefish-session > ~/jcs.log 2>&1 &"; sleep 4
-check "fresh: Jewbuntu blue wallpaper set at first login (light mode)" wp_is fresh jewbuntu-star-blue.png
-check "fresh: saved in Cutefish's own settings file" grep -q "Wallpaper=$BG/jewbuntu-star-blue.png" /home/fresh/.config/cutefish/services.conf
+check "fresh: Jewbuntu blue wallpaper set at first login (light mode)" wp_is fresh jewbuntu-star-blue.jpg
+check "fresh: saved in Cutefish's own settings file" grep -q "Wallpaper=$BG/jewbuntu-star-blue.jpg" /home/fresh/.config/cutefish/services.conf
 check "fresh: state file written" grep -q '"applied": true' /home/fresh/.local/state/jewbuntu/cutefish-skin.json
 setwp fresh "setDarkMode true"; sleep 3
-check "fresh: dark mode switches to the purple wallpaper" wp_is fresh jewbuntu-star-purple.png
+check "fresh: dark mode switches to the purple wallpaper" wp_is fresh jewbuntu-star-purple.jpg
 setwp fresh "setDarkMode false"; sleep 3
-check "fresh: light mode switches back to blue" wp_is fresh jewbuntu-star-blue.png
+check "fresh: light mode switches back to blue" wp_is fresh jewbuntu-star-blue.jpg
 setwp fresh "setWallpaper '$BG/wallpaper-2.jpg'"; sleep 1
 setwp fresh "setDarkMode true"; sleep 3
 check "fresh: a wallpaper the user picks is never switched" wp_is fresh wallpaper-2.jpg
@@ -105,6 +105,11 @@ check "chooser: --apply sets the Jewbuntu wallpaper on request" wp_is chooser je
 run_as chooser "jewbuntu-cutefish-session --undo" >/dev/null 2>&1
 check "chooser: --undo goes back to Cutefish's default" wp_is chooser default.jpg
 check "chooser: --undo is remembered" grep -q '"undone": true' /home/chooser/.local/state/jewbuntu/cutefish-skin.json
+
+# --- an account the first build (PNG wallpapers, which Cutefish never drew) had set up
+setwp chooser "setWallpaper '$BG/jewbuntu-star-blue.png'"; sleep 1
+run_as chooser "jewbuntu-cutefish-session --status >/dev/null; nohup jewbuntu-cutefish-session > ~/jcs2.log 2>&1 &"; sleep 4
+check "chooser: a wallpaper left by the PNG build is moved to the JPEG" wp_is chooser jewbuntu-star-blue.jpg
 
 echo "== remove"
 DEBIAN_FRONTEND=noninteractive apt-get remove -y -q jewbuntu-cutefish shulgo-xfce > /tmp/rm.log 2>&1 && ok "apt remove" || bad "apt remove"

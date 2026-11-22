@@ -28,8 +28,12 @@ import time
 from pathlib import Path
 
 BACKGROUNDS = "/usr/share/backgrounds/cutefishos"
-LIGHT = BACKGROUNDS + "/jewbuntu-star-blue.png"
-DARK = BACKGROUNDS + "/jewbuntu-star-purple.png"
+# JPEG: Cutefish's desktop draws JPEG wallpapers but not PNG ones (seen on Cutefish 1.0 nightly
+# 2026-11-17: a PNG falls back to the plain background colour, the same picture as JPEG draws).
+LIGHT = BACKGROUNDS + "/jewbuntu-star-blue.jpg"
+DARK = BACKGROUNDS + "/jewbuntu-star-purple.jpg"
+# The first build (0.1.0~m1.29+cutefish1) set PNG files, which never drew and are gone now.
+OLD_PNG = (BACKGROUNDS + "/jewbuntu-star-blue.png", BACKGROUNDS + "/jewbuntu-star-purple.png")
 OURS = (LIGHT, DARK)
 CUTEFISH_DEFAULT = BACKGROUNDS + "/default.jpg"
 
@@ -117,8 +121,9 @@ def first_run():
     current = wallpaper()
     if current is None:
         return "Cutefish settings service not reachable"
-    if current in OURS:
+    if current in OURS or current in OLD_PNG:
         save_state({"applied": True, "version": 1})
+        sync()
         return "Jewbuntu wallpaper already set"
     if is_cutefish_default(current):
         ok = set_wallpaper(wanted(dark_mode()))
@@ -131,6 +136,8 @@ def first_run():
 def sync(dark=None):
     """Match light/dark, only while a Jewbuntu wallpaper is showing."""
     current = wallpaper()
+    if current in OLD_PNG:
+        return set_wallpaper(wanted(dark_mode() if dark is None else dark))
     if current not in OURS:
         return False
     want = wanted(dark_mode() if dark is None else dark)
@@ -176,7 +183,7 @@ def main(argv):
         print("Jewbuntu wallpaper set." if ok else "Could not set the wallpaper.")
         return 0 if ok else 1
     if arg == "--undo":
-        if wallpaper() in OURS:
+        if wallpaper() in OURS or wallpaper() in OLD_PNG:
             set_wallpaper(CUTEFISH_DEFAULT)
         save_state({"applied": False, "version": 1, "undone": True})
         print("Back to Cutefish's default wallpaper. Jewbuntu won't set its wallpaper again for this account.")

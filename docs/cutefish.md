@@ -58,7 +58,9 @@ default wallpaper back.
   a fixed path. `jewbuntu-cutefish` replaces that file with `dpkg-divert`, Debian's own mechanism
   for this: Cutefish's file is kept, and goes on being updated, as `launchpad.svg.cutefish`, and
   removing the package moves it back. Cutefish updates never overwrite the Star of David.
-- **Wallpapers.** The two pictures go in `/usr/share/backgrounds/cutefishos/`, so they appear in
+- **Wallpapers.** The two pictures go in `/usr/share/backgrounds/cutefishos/` as JPEG (Cutefish's
+  desktop draws JPEG wallpapers but not PNG ones: a PNG falls back to the plain background colour),
+  so they appear in
   Settings > Wallpaper. Cutefish keeps each account's wallpaper in
   `~/.config/cutefish/services.conf` and has no system-wide default, so a small helper,
   `jewbuntu-cutefish-session`, runs at sign-in (from `/etc/xdg/autostart`) as the user:
@@ -90,8 +92,21 @@ service and PipeWire, and checks the install, the diversion, the first-login wal
 switching, that a chosen wallpaper is kept, `--apply`/`--undo`, the jingle (played to a null
 output), ShulGo, and clean removal.
 
-Limit: Cutefish's top bar, its tray and its screenshot service run only with a real display, so in
-a container ShulGo is checked against a stand-in tray watcher (`ci/sni-watcher-standin.py`). That
-shows it registers its tray item, its menu and its `shulgo` icon over the protocol Cutefish's tray
-implements; seeing it drawn in Cutefish's top bar, and seeing the Launchpad button and wallpapers on
-screen, needs Cutefish on a real screen or in a VM. Results: `docs/test-results/2026-11-22-cutefish-*`.
+Cutefish's top bar, its tray and its screenshot service run only with a real display, so in a
+container ShulGo is checked against a stand-in tray watcher (`ci/sni-watcher-standin.py`).
+
+On a real Cutefish screen, in a UTM VM with no one at the keyboard:
+
+```bash
+ci/cutefish-vm-iso.sh ~/Downloads/cutefish-1.0-nightly-…-arm64.iso dist/release-cutefish/jewbuntu-cutefish-installer-0.1.0-m1.29.run dist/cutefish-vm/test.iso
+ci/cutefish-utm.sh dist/cutefish-vm/test.iso && utmctl start "Jewbuntu Cutefish test"
+curl -O http://GUEST:8765/status.txt -O http://GUEST:8765/1-light.png -O http://GUEST:8765/2-dark.png
+```
+
+The test ISO (never published) uses live-config's `hooks=` boot option to run the one-file
+installer before the login screen, holds the login screen until it has finished, and then the live
+system's automatic sign-in is the first sign-in after installing. A small autostart check
+(`ci/cutefish-vm/vmcheck.sh`) records the state, closes the live installer window, takes Cutefish's
+own screenshots in light and dark mode, and serves them on port 8765. Don't restart
+`cutefish-dm` in the live system: sessions started after that get no runtime directory and fail.
+Results: `docs/test-results/2026-11-22-cutefish-*`.
