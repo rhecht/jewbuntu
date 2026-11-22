@@ -61,6 +61,21 @@ sh jewbuntu-asahi-installer-0.1.0-m1.29.run --uninstall
 Without the file: `jewbuntu skin undo`, then `sudo dnf remove 'jewbuntu-*'`.
 Details and what works differently from Ubuntu: [docs/asahi.md](docs/asahi.md).
 
+### Cutefish (Intel/AMD and ARM)
+
+[Cutefish](https://cutefish.org) already looks like a Mac, so on Cutefish Jewbuntu is a light skin
+on top: a Star of David as the dock's Launchpad ("start") button, the Star of David wallpapers
+(blue in light mode, purple in dark), the Jewbuntu jingle when you sign in, and ShulGo's minyan
+widget in the top bar. One file serves both amd64 and arm64. On Cutefish, download
+`jewbuntu-cutefish-installer-VERSION.run` from
+[SourceForge](https://sourceforge.net/projects/jewbuntu/files/) and run:
+
+```bash
+sh ~/Downloads/jewbuntu-cutefish-installer-*.run
+```
+
+**Uninstall:** run the same file with `--uninstall`. Details: [docs/cutefish.md](docs/cutefish.md).
+
 ### Jewbuntu Classic (the oldest 32-bit PCs)
 
 The original 2007 Jewbuntu CD (Ubuntu 7.10), remastered with the Jewbuntu look for PCs from

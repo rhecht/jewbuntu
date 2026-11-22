@@ -1,0 +1,18 @@
+PASS  --list shows the packages
+PASS  --help
+PASS  refuses without Cutefish
+PASS  refusal changed nothing
+PASS  install with --yes
+PASS  jewbuntu-cutefish installed
+PASS  shulgo-xfce installed
+PASS  jewbuntu-branding installed
+PASS  jewbuntu-core installed
+PASS  Star of David Launchpad button
+PASS  --uninstall
+PASS  jewbuntu-cutefish removed
+PASS  shulgo-xfce removed
+PASS  jewbuntu-branding removed
+PASS  jewbuntu-core removed
+PASS  Cutefish Launchpad button back
+PASS  Cutefish itself still installed
+== installer (amd64): 17 passed, 0 failed

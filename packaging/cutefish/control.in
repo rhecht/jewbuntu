@@ -1,0 +1,16 @@
+Package: jewbuntu-cutefish
+Version: @VERSION@
+Architecture: all
+Maintainer: Jewbuntu Developers <maintainers@jewbuntu.invalid>
+Section: x11
+Priority: optional
+Depends: cutefish-compositor, cutefish-core, jewbuntu-branding, python3, libglib2.0-bin
+Recommends: shulgo-xfce
+Homepage: https://jewbuntu.com
+Description: Jewbuntu skin for Cutefish
+ A light Jewbuntu skin over the Cutefish desktop (Debian 13, amd64 and arm64).
+ Cutefish already looks like a Mac, so this only adds:
+  - a Star of David as the dock's Launchpad ("start") button
+  - the blue (light mode) and purple (dark mode) Star of David wallpapers
+  - Jewbuntu's short startup jingle at sign-in (from jewbuntu-branding)
+  - ShulGo's minyan widget in the top bar (recommended package shulgo-xfce)

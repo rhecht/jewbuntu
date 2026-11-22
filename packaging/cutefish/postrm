@@ -1,0 +1,12 @@
+#!/bin/sh
+# Puts Cutefish's own Launchpad picture back (see preinst). Never touches home directories:
+# each account's wallpaper stays as it is; 'jewbuntu-cutefish-session --undo' resets it.
+set -e
+case "$1" in
+  remove|abort-install|disappear)
+    dpkg-divert --package jewbuntu-cutefish --remove --rename \
+      --divert /usr/share/cutefish-compositor/shell/launchpad.svg.cutefish \
+      /usr/share/cutefish-compositor/shell/launchpad.svg
+    ;;
+esac
+exit 0

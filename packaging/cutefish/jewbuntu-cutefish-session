@@ -1,0 +1,193 @@
+#!/usr/bin/python3
+"""Jewbuntu on Cutefish: the Star of David wallpapers, light and dark, for this account.
+
+Started at login from /etc/xdg/autostart/jewbuntu-cutefish.desktop and runs as the user (never as
+root). Cutefish has one wallpaper setting per account and no system-wide default, so:
+
+  - The first time it runs for an account, it sets the blue Star of David wallpaper (purple in
+    dark mode), but only if the account still has Cutefish's own default wallpaper. A wallpaper
+    you chose yourself is left alone.
+  - While you're logged in, it switches between the blue and purple wallpaper when Cutefish
+    switches between light and dark mode. It does that only while one of the two Jewbuntu
+    wallpapers is showing, so choosing any other wallpaper in Settings ends the switching.
+
+It talks to Cutefish's own settings service (org.cutefish.Services, Appearance) through the
+`gdbus` command and writes nothing besides ~/.local/state/jewbuntu/cutefish-skin.json.
+
+  jewbuntu-cutefish-session            what the autostart entry runs (stays running, idle)
+  jewbuntu-cutefish-session --apply    use the Jewbuntu wallpapers now
+  jewbuntu-cutefish-session --undo     back to Cutefish's default wallpaper; stops reapplying
+  jewbuntu-cutefish-session --status   what it would do, and why
+"""
+import json
+import os
+import re
+import subprocess
+import sys
+import time
+from pathlib import Path
+
+BACKGROUNDS = "/usr/share/backgrounds/cutefishos"
+LIGHT = BACKGROUNDS + "/jewbuntu-star-blue.png"
+DARK = BACKGROUNDS + "/jewbuntu-star-purple.png"
+OURS = (LIGHT, DARK)
+CUTEFISH_DEFAULT = BACKGROUNDS + "/default.jpg"
+
+DEST = "org.cutefish.Services"
+OBJ = "/org/cutefish/Services/Appearance"
+IFACE = "org.cutefish.Services.Appearance"
+WAIT_FOR_SERVICE_S = 90
+
+
+def state_file():
+    base = os.environ.get("XDG_STATE_HOME") or os.path.join(os.path.expanduser("~"), ".local/state")
+    return Path(base) / "jewbuntu" / "cutefish-skin.json"
+
+
+def load_state():
+    try:
+        return json.loads(state_file().read_text())
+    except (OSError, ValueError):
+        return None
+
+
+def save_state(doc):
+    path = state_file()
+    path.parent.mkdir(parents=True, exist_ok=True)
+    tmp = path.with_suffix(".tmp")
+    tmp.write_text(json.dumps(doc, indent=2) + "\n")
+    os.replace(tmp, path)
+
+
+def gdbus(*args, timeout=10):
+    try:
+        res = subprocess.run(["gdbus", "call", "--session", "--dest", DEST, "--object-path", OBJ, *args],
+                             capture_output=True, text=True, timeout=timeout)
+    except (OSError, subprocess.SubprocessError):
+        return None
+    return res.stdout.strip() if res.returncode == 0 else None
+
+
+def get_prop(name):
+    """The property's value as text: "(<'/path'>,)" -> /path, "(<true>,)" -> true."""
+    out = gdbus("--method", "org.freedesktop.DBus.Properties.Get", IFACE, name)
+    if out is None:
+        return None
+    m = re.match(r"^\(<(.*)>,\)$", out)
+    if not m:
+        return None
+    val = m.group(1)
+    if len(val) >= 2 and val[0] == val[-1] == "'":
+        val = val[1:-1]
+    return val
+
+
+def wallpaper():
+    return get_prop("wallpaper")
+
+
+def dark_mode():
+    return get_prop("isDarkMode") == "true"
+
+
+def set_wallpaper(path):
+    return gdbus("--method", IFACE + ".setWallpaper", path) is not None
+
+
+def wanted(dark):
+    return DARK if dark else LIGHT
+
+
+def wait_for_service(deadline_s=WAIT_FOR_SERVICE_S):
+    end = time.monotonic() + deadline_s
+    while True:
+        if wallpaper() is not None:
+            return True
+        if time.monotonic() > end:
+            return False
+        time.sleep(1)
+
+
+def is_cutefish_default(path):
+    return path in ("", CUTEFISH_DEFAULT)
+
+
+def first_run():
+    """Decide once per account. Returns a short reason for the log and --status."""
+    current = wallpaper()
+    if current is None:
+        return "Cutefish settings service not reachable"
+    if current in OURS:
+        save_state({"applied": True, "version": 1})
+        return "Jewbuntu wallpaper already set"
+    if is_cutefish_default(current):
+        ok = set_wallpaper(wanted(dark_mode()))
+        save_state({"applied": ok, "version": 1})
+        return "set the Jewbuntu wallpaper" if ok else "could not set the wallpaper"
+    save_state({"applied": False, "version": 1, "kept": current})
+    return "kept the wallpaper you chose (%s)" % current
+
+
+def sync(dark=None):
+    """Match light/dark, only while a Jewbuntu wallpaper is showing."""
+    current = wallpaper()
+    if current not in OURS:
+        return False
+    want = wanted(dark_mode() if dark is None else dark)
+    if current != want:
+        return set_wallpaper(want)
+    return False
+
+
+def follow():
+    """Watch darkModeChanged. `gdbus monitor` ends when the service restarts; then start again."""
+    while True:
+        if not wait_for_service(deadline_s=3600):
+            continue
+        sync()
+        try:
+            proc = subprocess.Popen(["gdbus", "monitor", "--session", "--dest", DEST, "--object-path", OBJ],
+                                    stdout=subprocess.PIPE, text=True)
+        except OSError:
+            return 1
+        for line in proc.stdout:
+            if IFACE + ".darkModeChanged" in line:
+                sync(dark="(true," in line)
+        proc.wait()
+        time.sleep(2)
+
+
+def main(argv):
+    arg = argv[1] if len(argv) > 1 else ""
+    if arg in ("-h", "--help"):
+        print(__doc__.strip())
+        return 0
+    if arg == "--status":
+        print("state:", json.dumps(load_state()))
+        print("wallpaper:", wallpaper())
+        print("dark mode:", dark_mode())
+        return 0
+    if not wait_for_service():
+        print("jewbuntu-cutefish-session: Cutefish settings service not found; nothing changed", file=sys.stderr)
+        return 1
+    if arg == "--apply":
+        ok = set_wallpaper(wanted(dark_mode()))
+        save_state({"applied": ok, "version": 1})
+        print("Jewbuntu wallpaper set." if ok else "Could not set the wallpaper.")
+        return 0 if ok else 1
+    if arg == "--undo":
+        if wallpaper() in OURS:
+            set_wallpaper(CUTEFISH_DEFAULT)
+        save_state({"applied": False, "version": 1, "undone": True})
+        print("Back to Cutefish's default wallpaper. Jewbuntu won't set its wallpaper again for this account.")
+        return 0
+    if arg:
+        print("Unknown option: %s (try --help)" % arg, file=sys.stderr)
+        return 2
+    if load_state() is None:
+        print("jewbuntu-cutefish-session:", first_run(), file=sys.stderr)
+    return follow()
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv))

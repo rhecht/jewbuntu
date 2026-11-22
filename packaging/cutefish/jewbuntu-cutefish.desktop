@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Jewbuntu wallpaper
+Comment=Star of David wallpaper for Cutefish, blue in light mode and purple in dark mode
+Exec=/usr/bin/jewbuntu-cutefish-session
+NoDisplay=true
+X-GNOME-Autostart-enabled=true

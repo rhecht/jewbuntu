@@ -278,6 +278,22 @@ security updates since 2009, which the welcome page says plainly.
 | Live desktop with 256 MB RAM | Tested emulated | Boots to the full desktop |
 | Install to disk (Ubiquity), real old hardware | Not tested | n/a |
 
+## Cutefish: a light skin (started 2026-11-19, built 2026-11-22)
+
+Cutefish 1.0 (Debian 13, own Wayland compositor and toolkit, nightly only) already looks like a Mac,
+so Jewbuntu adds only four touches. Design and steps: docs/cutefish.md. One installer for amd64 and
+arm64 (every package is Architecture: all).
+
+| Item | State | Test status |
+| --- | --- | --- |
+| Star of David Launchpad ("start") button: `jewbuntu-cutefish` diverts `/usr/share/cutefish-compositor/shell/launchpad.svg` (dpkg-divert, restored on removal) | Implemented (0.1.0~m1.29+cutefish1) | Auto-verified (diversion, file, restore on removal). **Not yet seen on screen** (the shell needs a real display) |
+| Star of David wallpapers, blue light / purple dark, in Settings > Wallpaper; `jewbuntu-cutefish-session` sets them once per account (only over Cutefish's default) and follows light/dark while one is showing; `--apply/--undo/--status` | Implemented | Auto-verified against Cutefish's own settings service (headless compositor): first login, saved in `services.conf`, dark/light switch, chosen wallpaper kept, apply/undo. Not yet seen on screen |
+| Jingle at sign-in (`jewbuntu-branding` m1.29, unchanged) | Implemented | Auto-verified: plays through PipeWire to a null output, once per boot |
+| ShulGo tray (`shulgo-xfce` .deb built by `ci/cutefish-build.sh` from shulgo-widgets ea1cca8, same layout as ShulGo's PKGBUILD; no rewrite needed: Cutefish's tray speaks StatusNotifierItem + DBusMenu) | Implemented | ShulGo's own tests 162 OK; in the container it registers its tray item with a DBusMenu and the `shulgo` icon against a stand-in watcher (Cutefish's tray runs only with a display). **Not yet seen in Cutefish's top bar** |
+| One-file installer `jewbuntu-cutefish-installer-0.1.0-m1.29.run` (refuses without Cutefish, `--no-shulgo`, `--uninstall`) | Implemented | Installer test 17/17 on arm64 and on amd64 (emulated) |
+| Container test `ci/cutefish-test.sh` | 34/34 on arm64 (Cutefish nightly 2026-11-19) and amd64 (nightly 2026-11-22, emulated) | docs/test-results/2026-11-22-cutefish-* |
+| Published: `jewbuntu-cutefish-installer-0.1.0-m1.29.run` + `.sha256` on SourceForge 0.1.0-m1.29 (2026-11-22, 2,611,503 bytes, sha256 e3ac786b…bb2143f; jewbuntu-cutefish 0.1.0~m1.29+cutefish1, shulgo-xfce 1.0.0.r202611201940 from ea1cca8, jewbuntu-branding/-core 0.1.0~m1.29+26.04); SourceForge root README has a Cutefish section. Not on GitHub Releases | Published | Real Cutefish screen (VM or hardware): **Not tested** |
+
 ## Blockers / needs from Rafi
 
 - **VM host**: the installed VMware Fusion 12.2.0 is Intel-only and cannot run VMs on the M1. Install UTM (or Fusion 13+) for an arm64 VM. Say which OS the HP runs, to decide whether it can host the amd64 VM.

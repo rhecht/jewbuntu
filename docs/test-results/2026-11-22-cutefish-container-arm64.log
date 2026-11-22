@@ -1,0 +1,61 @@
+== Debian 13.7 arm64, cutefish-compositor 1.0~git20261119073645.ecfaa2e-1+ci20261119131855
+== install
+PASS  apt installs jewbuntu-branding_0.1.0~m1.29+26.04_all.deb jewbuntu-core_0.1.0~m1.29+26.04_all.deb jewbuntu-cutefish_0.1.0~m1.29+cutefish1_all.deb shulgo-xfce_1.0.0.r202611201940_all.deb 
+PASS  Launchpad picture diverted by jewbuntu-cutefish
+PASS  Launchpad picture is the Star of David
+PASS  Cutefish's own Launchpad picture kept aside, unchanged
+PASS  light wallpaper installed
+PASS  dark wallpaper installed
+PASS  Cutefish's default wallpaper untouched
+PASS  autostart entry jewbuntu-cutefish.desktop
+PASS  autostart entry jewbuntu-startup-sound.desktop
+PASS  autostart entry shulgo-xfce.desktop
+PASS  jingle file present
+PASS  ShulGo icon in hicolor
+== a desktop session (headless compositor, Cutefish settings service, PipeWire)
+PASS  fresh: Cutefish default wallpaper before Jewbuntu runs
+PASS  fresh: Jewbuntu blue wallpaper set at first login (light mode)
+PASS  fresh: saved in Cutefish's own settings file
+PASS  fresh: state file written
+PASS  fresh: dark mode switches to the purple wallpaper
+PASS  fresh: light mode switches back to blue
+PASS  fresh: a wallpaper the user picks is never switched
+== jingle
+   jewbuntu-startup-sound: played (pw-play exit 0)
+2026-11-22T20:35:28 played (pw-play exit 0)
+PASS  startup jingle plays at sign-in (PipeWire dummy output)
+PASS  jingle plays only once per boot
+== ShulGo
+   
+   (__main__.py:420): dbind-WARNING **: 20:35:29.053: AT-SPI: Error retrieving accessibility bus address: org.freedesktop.DBus.Error.ServiceUnknown: The name org.a11y.Bus was not provided by any .service files
+   ShulGo for Xfce 1.0.0
+   python 3.13.5
+   GTK 3.24.49
+   tray: AyatanaAppIndicator3
+   display: wayland-1
+   icon: found in the icon theme
+   api key: not set yet
+   place: not chosen yet
+   settings: /home/fresh/.config/jewbuntu/shulgo-xfce.conf
+   cache: /home/fresh/.cache/jewbuntu/shulgo-xfce.json
+   top bar: on — nothing written yet (it appears on the first refresh)
+     helper: /usr/bin/shulgo-bar
+     panel: add Generic Monitor to the panel, command  shulgo-bar , every 15 s. This cannot be checked from here.
+PASS  ShulGo finds its tray library (AyatanaAppIndicator3)
+   tray items: (<[':1.39/org/ayatana/NotificationItem/shulgo_xfce']>,)
+PASS  ShulGo registers as a tray item (stand-in watcher)
+   menu: (<objectpath '/org/ayatana/NotificationItem/shulgo_xfce/Menu'>,)
+PASS  ShulGo's tray item has a DBusMenu (what Cutefish's tray opens)
+   icon: (<'shulgo'>,)
+PASS  ShulGo's tray icon is named shulgo (installed in hicolor)
+PASS  ShulGo still running
+PASS  chooser: an account's own wallpaper is kept at first login
+PASS  chooser: --apply sets the Jewbuntu wallpaper on request
+PASS  chooser: --undo goes back to Cutefish's default
+PASS  chooser: --undo is remembered
+== remove
+PASS  apt remove
+PASS  Cutefish's own Launchpad picture is back
+PASS  no diversion left
+PASS  home files kept on removal
+== arm64: 34 passed, 0 failed
