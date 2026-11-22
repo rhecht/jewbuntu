@@ -64,7 +64,7 @@ Architecture: all
 Maintainer: ShulGo <info@shulgo.com>
 Section: utils
 Priority: optional
-Depends: python3, python3-gi, gir1.2-gtk-3.0, gir1.2-ayatanaappindicator3-0.1
+Depends: python3, python3-gi, gir1.2-gtk-3.0, gir1.2-ayatanaappindicator3-0.1, gir1.2-dbusmenu-gtk3-0.4
 Homepage: https://shulgo.com
 Description: The next minyan near you in the tray, with today's zmanim, from ShulGo
  GTK3 tray widget (StatusNotifierItem). Built for Jewbuntu on Cutefish from

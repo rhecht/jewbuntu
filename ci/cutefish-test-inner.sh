@@ -93,6 +93,11 @@ echo "$MENU" | grep -q "objectpath" && ok "ShulGo's tray item has a DBusMenu (wh
 ICON="$(run_as fresh "gdbus call --session --dest $SVC --object-path $OBJ --method org.freedesktop.DBus.Properties.Get org.kde.StatusNotifierItem IconName" 2>&1)"
 echo "   icon: $ICON"
 echo "$ICON" | grep -q shulgo && ok "ShulGo's tray icon is named shulgo (installed in hicolor)" || bad "tray icon name: $ICON"
+# Cutefish's tray opens the menu on a left-click only when the item says ItemIsMenu (owner test
+# 2026-11-22: with libayatana's item, left-click did nothing).
+IIM="$(run_as fresh "gdbus call --session --dest $SVC --object-path $OBJ --method org.freedesktop.DBus.Properties.Get org.kde.StatusNotifierItem ItemIsMenu" 2>&1)"
+echo "   ItemIsMenu: $IIM"
+echo "$IIM" | grep -q true && ok "ShulGo's tray item says ItemIsMenu (left-click opens the menu on Cutefish)" || bad "no ItemIsMenu on ShulGo's item"
 pgrep -u fresh -f shulgo_xfce >/dev/null && ok "ShulGo still running" || { bad "ShulGo exited"; tail -5 /home/fresh/shulgo.log; }
 
 # --- account 2: had already chosen a wallpaper before Jewbuntu was installed
