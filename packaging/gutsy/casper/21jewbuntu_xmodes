@@ -1,0 +1,70 @@
+#!/bin/sh
+# Jewbuntu Classic: screen sizes for the live session (runs right after casper's 20xconfig).
+#
+# Ubuntu 7.10's X configuration, written at every boot by 20xconfig, lists screen sizes from
+# 2048x1280 down to 640x480 but leaves out 800x600, the installer's minimum. When the graphics
+# card reports no monitor (virtual machines, and some old PCs), X also gets no sync ranges, falls
+# back to its safe defaults and ends up at 640x480, where the installer's buttons are off the
+# bottom of the screen.
+#   - every PC: 800x600 is added to the list (allowed by X's safe defaults, so nothing new is
+#     asked of an old monitor)
+#   - virtual machines (QEMU/UTM, Bochs, VMware, VirtualBox, Hyper-V): sync ranges that allow
+#     1024x768 at 60 Hz, and the list becomes 1024x768, 800x600, 640x480
+# A real monitor's own details (DDC) are left alone. The installer copies this file to the
+# installed system.
+
+PREREQ="20xconfig"
+DESCRIPTION="Checking screen sizes..."
+
+prereqs()
+{
+	echo "$PREREQ"
+}
+
+case $1 in
+prereqs)
+	prereqs
+	exit 0
+	;;
+esac
+
+. /scripts/casper-functions
+
+CONF=/root/etc/X11/xorg.conf
+[ -f "$CONF" ] || exit 0
+
+log_begin_msg "$DESCRIPTION"
+
+vm=0
+for f in /sys/class/dmi/id/sys_vendor /sys/class/dmi/id/product_name /proc/ide/hd?/model \
+	/proc/scsi/scsi /proc/cpuinfo; do
+	[ -r "$f" ] || continue
+	case "$(cat "$f" 2>/dev/null)" in
+	*QEMU*|*Bochs*|*BOCHS*|*VMware*|*VirtualBox*|*VBOX*|*innotek*|*"Virtual Machine"*)
+		vm=1
+		;;
+	esac
+done
+
+chroot /root /usr/bin/awk -v vm="$vm" '
+	/^[ \t]*Section[ \t]+"Monitor"/ { inmon = 1 }
+	inmon && /^[ \t]*HorizSync/ { hasync = 1 }
+	/^[ \t]*Modes[ \t]/ {
+		if (vm == 1) {
+			sub(/Modes.*/, "Modes\t\t\"1024x768\" \"800x600\" \"640x480\"")
+		} else if ($0 !~ /"800x600"/) {
+			sub(/"640x480"/, "\"800x600\" \"640x480\"")
+		}
+	}
+	/^[ \t]*EndSection/ && inmon {
+		if (vm == 1 && !hasync) {
+			print "\tHorizSync\t28-51"
+			print "\tVertRefresh\t43-75"
+		}
+		inmon = 0
+	}
+	{ print }
+' /etc/X11/xorg.conf > /root/etc/X11/xorg.conf.jb && \
+	mv /root/etc/X11/xorg.conf.jb "$CONF"
+
+log_end_msg

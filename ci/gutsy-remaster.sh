@@ -94,6 +94,9 @@ EOF
     # Live session account and computer name (casper 7.10 reads these from its own casper.conf,
     # not from boot options).
     cp $N/etc/casper.conf etc/casper.conf
+    # Screen sizes: 800x600 for the installer on every PC, 1024x768 in virtual machines (runs
+    # after casper writes xorg.conf; see the script).
+    install -m 755 /pkg/gutsy/casper/21jewbuntu_xmodes scripts/casper-bottom/21jewbuntu_xmodes
     find . | cpio -o -H newc --quiet | gzip -9 > /tmp/initrd.new
     cd / && ls -la /tmp/initrd.new
   fi
