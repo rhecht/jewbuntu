@@ -1,5 +1,10 @@
 #!/bin/sh
 set -e
+F=/usr/share/cinnamon/applets/menu@cinnamon.org/settings-override.json
+if [ "$1" = remove ] || [ "$1" = abort-install ] || [ "$1" = disappear ]; then
+  rm -f "$F" "$F.jewbuntu-new"
+  dpkg-divert --package jewbuntu-mint --remove --rename --divert "$F.mint" "$F" >/dev/null
+fi
 if [ "$1" = remove ] || [ "$1" = purge ]; then
   glib-compile-schemas /usr/share/glib-2.0/schemas 2>/dev/null || true
   gtk-update-icon-cache -q -f /usr/share/icons/hicolor 2>/dev/null || true

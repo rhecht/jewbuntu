@@ -72,11 +72,15 @@ copyright "Lubuntu 18.04 (LXDE)" > "$P/usr/share/doc/jewbuntu-lubuntu-lxde/copyr
 
 # --- jewbuntu-mint (Cinnamon)
 P="$TMP/jewbuntu-mint"; S="$F/mint"
-install -d "$P/DEBIAN" "$P/usr/share/glib-2.0/schemas" "$P/usr/share/backgrounds/jewbuntu" \
+install -d "$P/DEBIAN" "$P/usr/bin" "$P/etc/xdg/autostart" "$P/usr/share/glib-2.0/schemas" "$P/usr/share/backgrounds/jewbuntu" \
   "$P/usr/share/cinnamon-background-properties" "$P/usr/share/icons/hicolor/scalable/apps" \
   "$P/usr/share/sounds/jewbuntu" "$P/usr/share/doc/jewbuntu-mint"
-sed "s/@VERSION@/$BASEVER+mint1/" "$S/control.in" > "$P/DEBIAN/control"
-install -m755 "$S/postinst" "$S/postrm" "$P/DEBIAN/"
+sed "s/@VERSION@/$BASEVER+mint2/" "$S/control.in" > "$P/DEBIAN/control"
+install -m755 "$S/preinst" "$S/postinst" "$S/postrm" "$P/DEBIAN/"
+install -m644 "$S/triggers" "$P/DEBIAN/"
+echo /etc/xdg/autostart/jewbuntu-mint.desktop > "$P/DEBIAN/conffiles"
+install -m755 "$S/jewbuntu-mint-session" "$P/usr/bin/"
+install -m644 "$S/jewbuntu-mint.desktop" "$P/etc/xdg/autostart/"
 install -m644 "$S/zz_jewbuntu-mint.gschema.override" "$P/usr/share/glib-2.0/schemas/"
 install -m644 "$S/jewbuntu.xml" "$P/usr/share/cinnamon-background-properties/"
 install -m644 "$F/common/jewbuntu-start.svg" "$F/common/jewbuntu-start-symbolic.svg" "$P/usr/share/icons/hicolor/scalable/apps/"

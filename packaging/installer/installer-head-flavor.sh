@@ -58,6 +58,9 @@ if [ "$MODE" = uninstall ]; then
   if [ "$JB_FLAVOR" = lubuntu ] && [ -n "$SUDO" ] && command -v jewbuntu-lubuntu-session >/dev/null; then
     jewbuntu-lubuntu-session --undo >/dev/null 2>&1 || true
   fi
+  if [ "$JB_FLAVOR" = mint ] && [ -n "$SUDO" ] && command -v jewbuntu-mint-session >/dev/null; then
+    jewbuntu-mint-session --undo >/dev/null 2>&1 || true
+  fi
   REMOVE=""
   for p in $PKGS; do installed "$p" && REMOVE="$REMOVE $p"; done
   [ -n "$REMOVE" ] || { say "No Jewbuntu packages are installed."; exit 0; }

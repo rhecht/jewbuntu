@@ -1,0 +1,11 @@
+#!/bin/sh
+# Mint's menu applet takes its icon from mint-artwork's settings-override.json (Mint logo, custom
+# icon on), not from the GSettings default. That file is moved aside with dpkg-divert (Mint's copy
+# keeps being updated as settings-override.json.mint) and a copy with the Star of David as the
+# default is made from it in postinst. Removing jewbuntu-mint puts Mint's back.
+set -e
+F=/usr/share/cinnamon/applets/menu@cinnamon.org/settings-override.json
+if [ "$1" = install ] || [ "$1" = upgrade ]; then
+  dpkg-divert --package jewbuntu-mint --add --rename --divert "$F.mint" "$F" >/dev/null
+fi
+exit 0

@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Jewbuntu skin for Linux Mint
+Comment=Gives an existing menu button the Star of David, once
+Exec=/usr/bin/jewbuntu-mint-session
+OnlyShowIn=X-Cinnamon;
+NoDisplay=true
+X-GNOME-Autostart-Delay=8

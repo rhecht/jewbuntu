@@ -4,7 +4,7 @@ Architecture: all
 Maintainer: Jewbuntu Developers <maintainers@jewbuntu.invalid>
 Section: x11
 Priority: optional
-Depends: cinnamon | cinnamon-core, libglib2.0-bin
+Depends: cinnamon | cinnamon-core, libglib2.0-bin, python3
 Recommends: shulgo-xfce
 Homepage: https://jewbuntu.com
 Description: Jewbuntu skin for Linux Mint (Cinnamon)

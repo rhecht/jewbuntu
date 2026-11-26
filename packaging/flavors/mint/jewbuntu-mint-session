@@ -1,0 +1,62 @@
+#!/usr/bin/python3
+"""Jewbuntu on Linux Mint: the Star of David menu button for an account that already had Mint's
+menu set up before Jewbuntu was installed. Runs at sign-in as the user (from
+/etc/xdg/autostart/jewbuntu-mint.desktop), once per account; never as root.
+
+Only a menu button still showing Mint's default logo is changed; an icon you picked is kept.
+Cinnamon notices the change straight away.
+
+  jewbuntu-mint-session            what the autostart entry runs (once per account)
+  jewbuntu-mint-session --undo     Mint's logo again
+"""
+import glob
+import json
+import os
+import sys
+
+MINT = "linuxmint-logo-ring-symbolic"
+OURS = "jewbuntu-start"
+HOME = os.path.expanduser("~")
+CONF = os.environ.get("XDG_CONFIG_HOME") or os.path.join(HOME, ".config")
+STATE = os.path.join(os.environ.get("XDG_STATE_HOME") or os.path.join(HOME, ".local/state"),
+                     "jewbuntu", "mint-skin")
+
+
+def files():
+    return glob.glob(os.path.join(CONF, "cinnamon/spices/menu@cinnamon.org/*.json"))
+
+
+def swap(old, new):
+    changed = 0
+    for path in files():
+        try:
+            d = json.load(open(path))
+            if d.get("menu-icon", {}).get("value") != old:
+                continue
+            d["menu-icon"]["value"] = new
+            tmp = path + ".jewbuntu-tmp"
+            json.dump(d, open(tmp, "w"), indent=4)
+            os.replace(tmp, path)
+            changed += 1
+        except (OSError, ValueError, AttributeError):
+            continue
+    return changed
+
+
+def mark(text):
+    os.makedirs(os.path.dirname(STATE), exist_ok=True)
+    with open(STATE, "w") as f:
+        f.write(text + "\n")
+
+
+def main():
+    if sys.argv[1:] == ["--undo"]:
+        swap(OURS, MINT)
+        mark("undone")
+        return
+    if os.path.exists(STATE):
+        return
+    mark("applied %d" % swap(MINT, OURS))
+
+
+main()

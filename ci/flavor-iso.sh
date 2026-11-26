@@ -105,7 +105,7 @@ docker run --rm --privileged -e FLAVOR="$FLAVOR" -e COMP="$COMP" -e OUTNAME="$OU
           printf "%s = " "$k"; inroot env GSETTINGS_BACKEND=memory gsettings get $k
         done
         test "$(inroot env GSETTINGS_BACKEND=memory gsettings get org.cinnamon app-menu-icon-name)" = "'"'"'jewbuntu-start'"'"'"
-        grep -n "app-menu-icon-name" $N/usr/share/cinnamon/applets/menu@cinnamon.org/applet.js | head -3 || echo "(menu applet does not read app-menu-icon-name)"
+        python3 -c "import json,sys; d=json.load(open(sys.argv[1])); print(\"menu applet default icon:\", d[\"menu-icon\"][\"default\"]); assert d[\"menu-icon\"][\"default\"]==\"jewbuntu-start\"" $N/usr/share/cinnamon/applets/menu@cinnamon.org/settings-override.json
         echo "mint checks: OK" ;;
     esac
   }
