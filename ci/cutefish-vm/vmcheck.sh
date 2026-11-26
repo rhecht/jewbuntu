@@ -13,6 +13,10 @@ A="--session --dest org.cutefish.Services --object-path /org/cutefish/Services/A
   echo "== wallpaper helper"; jewbuntu-cutefish-session --status
   echo "== jingle"; cat ~/.local/state/jewbuntu/startup-sound.last
   echo "== tray"; gdbus call --session --dest org.kde.StatusNotifierWatcher --object-path /StatusNotifierWatcher --method org.freedesktop.DBus.Properties.Get org.kde.StatusNotifierWatcher RegisteredStatusNotifierItems
+  N=$(gdbus call --session --dest org.kde.StatusNotifierWatcher --object-path /StatusNotifierWatcher --method org.freedesktop.DBus.Properties.Get org.kde.StatusNotifierWatcher RegisteredStatusNotifierItems | grep -o "org.kde.StatusNotifierItem-[0-9]*-1")
+  echo "== ShulGo item ($N)"
+  for p in ItemIsMenu Menu ToolTip IconName; do echo -n "$p: "; gdbus call --session --dest "$N" --object-path /StatusNotifierItem --method org.freedesktop.DBus.Properties.Get org.kde.StatusNotifierItem $p; done
+  shulgo-xfce --check 2>/dev/null | grep -E "^tray"
   echo "== processes"; pgrep -a -f "shulgo_xfce|jewbuntu-cutefish-session"
   echo "== env"; echo "XDG_CURRENT_DESKTOP=$XDG_CURRENT_DESKTOP WAYLAND_DISPLAY=$WAYLAND_DISPLAY"
 } > $O/status.txt 2>&1

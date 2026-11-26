@@ -1,10 +1,10 @@
-Sun Nov 22 09:21:26 PM UTC 2026
+Sun Nov 22 10:21:01 PM UTC 2026
 aarch64
 == packages
 jewbuntu-branding	0.1.0~m1.29+26.04
 jewbuntu-core	0.1.0~m1.29+26.04
 jewbuntu-cutefish	0.1.0~m1.29+cutefish2
-shulgo-xfce	1.0.0.r202611201940
+shulgo-xfce	1.0.0.r202611222205
 == launchpad
 diversion of /usr/share/cutefish-compositor/shell/launchpad.svg to /usr/share/cutefish-compositor/shell/launchpad.svg.cutefish by jewbuntu-cutefish
 1
@@ -13,12 +13,20 @@ state: {"applied": true, "version": 1}
 wallpaper: /usr/share/backgrounds/cutefishos/jewbuntu-star-blue.jpg
 dark mode: False
 == jingle
-2026-11-22T21:20:53 played (pw-play exit 0)
+2026-11-22T22:20:29 played (pw-play exit 0)
 == tray
-(<[':1.32/org/ayatana/NotificationItem/shulgo_xfce']>,)
+(<['org.kde.StatusNotifierItem-1618-1/StatusNotifierItem']>,)
+== ShulGo item (org.kde.StatusNotifierItem-1618-1)
+ItemIsMenu: (<true>,)
+Menu: (<objectpath '/StatusNotifierItem/Menu'>,)
+ToolTip: (<('', @a(iiay) [], 'ShulGo', 'ShulGo: not linked')>,)
+IconName: (<'shulgo'>,)
+tray library: AyatanaAppIndicator3
+tray item: ShulGo’s own (ItemIsMenu, menu over DBusMenu) — a Wayland session, where no other kind of item is read
+tray listening: yes
 == processes
-1592 /usr/bin/python3 /usr/bin/jewbuntu-cutefish-session
-1598 python3 -s -m shulgo_xfce
+1613 /usr/bin/python3 /usr/bin/jewbuntu-cutefish-session
+1618 python3 -s -m shulgo_xfce
 == env
 XDG_CURRENT_DESKTOP=Cutefish WAYLAND_DISPLAY=cutefish-0
 == after dark mode

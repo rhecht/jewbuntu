@@ -17,7 +17,15 @@ items = []
 def call(conn, sender, path, iface, method, params, inv):
     if method == "RegisterStatusNotifierItem":
         arg = params.unpack()[0]
-        items.append(arg if arg.startswith(":") or arg.startswith("org.") else sender + arg)
+        # As Cutefish's watcher does: a path means "this path on the caller's connection"; a bare bus
+        # name means that name at the default path /StatusNotifierItem.
+        if arg.startswith("/"):
+            item = sender + arg
+        elif "/" in arg:
+            item = arg
+        else:
+            item = arg + "/StatusNotifierItem"
+        items.append(item)
         conn.emit_signal(None, "/StatusNotifierWatcher", "org.kde.StatusNotifierWatcher",
                          "StatusNotifierItemRegistered", GLib.Variant("(s)", (items[-1],)))
     inv.return_value(None)

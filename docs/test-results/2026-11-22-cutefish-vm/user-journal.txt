@@ -1,8 +1,8 @@
-Nov 22 21:20:42 cutefish systemd[1442]: Starting jewbuntu-migrate.service - Migrate Jewbuntu user settings to the installed schema...
-Nov 22 21:20:43 cutefish systemd[1442]: Finished jewbuntu-migrate.service - Migrate Jewbuntu user settings to the installed schema.
-Nov 22 21:20:43 cutefish systemd[1442]: Startup finished in 1.118s.
-Nov 22 21:20:47 cutefish cutefish-compositor[1508]: Output scheduling "Virtual-1" duration-ms 1528 process-CPU-ms 1392.29 refresh-Hz 74.9938 pacing-Hz 74.9938 period-ns 13334427 renders 0 KMS-commits 0 normal-commits 0 unique-completions 0 missed-slots 0 late-demand 0 requests 52 coalesced 51 failures 0 stale-completions 0 skipped 0 direct-scanout-frames 0 overlay-frames 0 plane-test-failures 0 scanout-import-failures 0 hardware-cursor true last-kernel-sequence 0 last-kernel-time-ms 0 draw-budget-ms 4.44481 slowest-draw-ms 0 reasons startup/resume/scene/surface/decoration 0 0 47 5 0
-Nov 22 21:20:48 cutefish systemd[1442]: Started app-cutefish-shulgo\x2dxfce-1598.scope.
-Nov 22 21:20:49 cutefish cutefish-appruntime[1592]: jewbuntu-cutefish-session: set the Jewbuntu wallpaper
-Nov 22 21:20:53 cutefish cutefish-appruntime[1595]: jewbuntu-startup-sound: played (pw-play exit 0)
-Nov 22 21:20:57 cutefish cutefish-appruntime[1590]: dbus-daemon[1590]: Activating service name='org.a11y.atspi.Registry' requested by ':1.0' (uid=1000 pid=1598 comm="python3 -s -m shulgo_xfce")
+Nov 22 22:20:18 cutefish systemd[1460]: Starting jewbuntu-migrate.service - Migrate Jewbuntu user settings to the installed schema...
+Nov 22 22:20:19 cutefish systemd[1460]: Finished jewbuntu-migrate.service - Migrate Jewbuntu user settings to the installed schema.
+Nov 22 22:20:19 cutefish systemd[1460]: Startup finished in 952ms.
+Nov 22 22:20:22 cutefish cutefish-compositor[1526]: Output scheduling "Virtual-1" duration-ms 1437 process-CPU-ms 1310.19 refresh-Hz 74.9938 pacing-Hz 74.9938 period-ns 13334427 renders 0 KMS-commits 0 normal-commits 0 unique-completions 0 missed-slots 0 late-demand 0 requests 52 coalesced 51 failures 0 stale-completions 0 skipped 0 direct-scanout-frames 0 overlay-frames 0 plane-test-failures 0 scanout-import-failures 0 hardware-cursor true last-kernel-sequence 0 last-kernel-time-ms 0 draw-budget-ms 4.44481 slowest-draw-ms 0 reasons startup/resume/scene/surface/decoration 0 0 47 5 0
+Nov 22 22:20:24 cutefish systemd[1460]: Started app-cutefish-shulgo\x2dxfce-1618.scope.
+Nov 22 22:20:24 cutefish cutefish-appruntime[1613]: jewbuntu-cutefish-session: set the Jewbuntu wallpaper
+Nov 22 22:20:28 cutefish cutefish-appruntime[1611]: dbus-daemon[1611]: Activating service name='org.a11y.atspi.Registry' requested by ':1.0' (uid=1000 pid=1618 comm="python3 -s -m shulgo_xfce")
+Nov 22 22:20:29 cutefish cutefish-appruntime[1615]: jewbuntu-startup-sound: played (pw-play exit 0)
