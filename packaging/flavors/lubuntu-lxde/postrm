@@ -1,0 +1,9 @@
+#!/bin/sh
+set -e
+if [ "$1" = remove ] || [ "$1" = abort-install ] || [ "$1" = disappear ]; then
+  for f in /usr/share/lubuntu/wallpapers/lubuntu-default-wallpaper.png \
+           /usr/share/lubuntu/images/lubuntu-logo.png; do
+    dpkg-divert --package jewbuntu-lubuntu-lxde --remove --rename --divert "$f.lubuntu" "$f" >/dev/null
+  done
+fi
+exit 0

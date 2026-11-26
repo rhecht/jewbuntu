@@ -1,0 +1,28 @@
+#!/bin/sh
+# panel-icon IN OUT ICON: copy an LXQt panel.conf, giving its menu button (fancymenu/mainmenu
+# sections) a custom icon. Everything else is copied line for line, untouched.
+# panel-icon --has IN       exit 0 if a menu button there already has its own icon
+# panel-icon --strip IN OUT ICON   remove ICON (and the ownIcon key beside it) again
+set -eu
+case "$1" in
+  --has)
+    awk '/^\[.*\]$/ { s = substr($0, 2, length($0) - 2); next }
+         s ~ /^(fancymenu|mainmenu)/ && $0 == "ownIcon=true" { f = 1 }
+         END { exit f ? 0 : 1 }' "$2" ;;
+  --strip)
+    awk -v icon="$4" '
+      FNR == NR { if ($0 ~ /^\[.*\]$/) s = substr($0, 2, length($0) - 2)
+                  else if (s ~ /^(fancymenu|mainmenu)/ && $0 == "icon=" icon) ours[s] = 1
+                  next }
+      FNR == 1 { s = "" }
+      /^\[.*\]$/ { s = substr($0, 2, length($0) - 2); print; next }
+      (s in ours) && ($0 == "icon=" icon || $0 == "ownIcon=true") { next }
+      { print }' "$2" "$2" > "$3.tmp" && mv "$3.tmp" "$3" ;;
+  *)
+    awk -v icon="$3" '
+      /^\[.*\]$/ { s = substr($0, 2, length($0) - 2); print
+                   if (s ~ /^(fancymenu|mainmenu)/) { print "ownIcon=true"; print "icon=" icon }
+                   next }
+      s ~ /^(fancymenu|mainmenu)/ && ($0 ~ /^ownIcon=/ || $0 ~ /^icon=/) { next }
+      { print }' "$1" > "$2.tmp" && mv "$2.tmp" "$2" ;;
+esac

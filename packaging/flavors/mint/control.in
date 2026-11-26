@@ -1,0 +1,17 @@
+Package: jewbuntu-mint
+Version: @VERSION@
+Architecture: all
+Maintainer: Jewbuntu Developers <maintainers@jewbuntu.invalid>
+Section: x11
+Priority: optional
+Depends: cinnamon | cinnamon-core, libglib2.0-bin
+Recommends: shulgo-xfce
+Homepage: https://jewbuntu.com
+Description: Jewbuntu skin for Linux Mint (Cinnamon)
+ A light Jewbuntu skin over Linux Mint's Cinnamon desktop. Mint itself is not
+ changed and keeps getting Mint's and Ubuntu's updates. Only Cinnamon's
+ defaults change, so every setting you chose yourself is kept:
+  - a Star of David as the menu button on the panel
+  - the blue Star of David wallpaper on the desktop and the login screen
+  - Jewbuntu's short jingle as the sign-in sound
+  - ShulGo's minyan widget in the panel (recommended package shulgo-xfce)

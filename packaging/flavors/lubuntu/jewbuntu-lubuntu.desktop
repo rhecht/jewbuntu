@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Jewbuntu skin for Lubuntu
+Comment=Gives an existing panel layout the Star of David menu button, once
+Exec=/usr/bin/jewbuntu-lubuntu-session
+OnlyShowIn=LXQt;
+NoDisplay=true
+X-LXQt-Module=false

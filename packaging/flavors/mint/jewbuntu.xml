@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE wallpapers SYSTEM "gnome-wp-list.dtd">
+<wallpapers>
+  <wallpaper deleted="false">
+    <name>Jewbuntu Star of David (blue)</name>
+    <filename>/usr/share/backgrounds/jewbuntu/jewbuntu-star-blue.png</filename>
+    <options>zoom</options>
+  </wallpaper>
+  <wallpaper deleted="false">
+    <name>Jewbuntu Star of David (purple)</name>
+    <filename>/usr/share/backgrounds/jewbuntu/jewbuntu-star-purple.png</filename>
+    <options>zoom</options>
+  </wallpaper>
+</wallpapers>

@@ -1,0 +1,16 @@
+#!/bin/sh
+# The default panel layout for new accounts: Lubuntu's own (now panel.conf.lubuntu) with the
+# Star of David as the menu button. Made from Lubuntu's file each time, so a Lubuntu update to the
+# layout comes through (the trigger below fires when Lubuntu updates its copy).
+set -e
+gen() {
+  src=/etc/xdg/xdg-Lubuntu/lxqt/panel.conf.lubuntu
+  dst=/etc/xdg/xdg-Lubuntu/lxqt/panel.conf
+  [ -f "$src" ] || return 0
+  /usr/lib/jewbuntu/lubuntu/panel-icon "$src" "$dst.jewbuntu-new" /usr/share/jewbuntu/lubuntu/jewbuntu-start.svg
+  chmod 644 "$dst.jewbuntu-new"; mv "$dst.jewbuntu-new" "$dst"
+}
+case "$1" in
+  configure|triggered) gen ;;
+esac
+exit 0

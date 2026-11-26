@@ -1,0 +1,12 @@
+#!/bin/sh
+set -e
+if [ "$1" = remove ] || [ "$1" = abort-install ] || [ "$1" = disappear ]; then
+  # The generated panel layout is ours, not dpkg's; it has to go before Lubuntu's comes back.
+  rm -f /etc/xdg/xdg-Lubuntu/lxqt/panel.conf /etc/xdg/xdg-Lubuntu/lxqt/panel.conf.jewbuntu-new
+  for f in /usr/share/lubuntu/wallpapers/lubuntu-default-wallpaper.png \
+           /usr/share/sddm/themes/lubuntu/wall.png \
+           /etc/xdg/xdg-Lubuntu/lxqt/panel.conf; do
+    dpkg-divert --package jewbuntu-lubuntu --remove --rename --divert "$f.lubuntu" "$f" >/dev/null
+  done
+fi
+exit 0

@@ -1,0 +1,32 @@
+#!/bin/sh
+# The Jewbuntu jingle, once per boot, at sign-in (Lubuntu 18.04 edition; the Ubuntu edition's
+# player needs a newer Python). Never raises the volume, stays quiet when the output is muted,
+# and fails silently without sound.
+#
+#   jewbuntu-startup-sound            what the autostart entry runs
+#   jewbuntu-startup-sound off|on     switch it off or on for this account
+#   jewbuntu-startup-sound preview    play it now
+set -u
+SOUND=/usr/share/jewbuntu/sounds/jewbuntu-startup.wav
+OFF="${XDG_CONFIG_HOME:-$HOME/.config}/jewbuntu/startup-sound-off"
+RUN="${XDG_RUNTIME_DIR:-/tmp}"
+MARK="$RUN/jewbuntu-startup-sound-played"
+play() {
+  command -v paplay >/dev/null || return 0
+  # Wait for PulseAudio (up to 20 s); a muted default output means quiet.
+  i=0; while ! pactl info >/dev/null 2>&1; do i=$((i + 1)); [ $i -ge 20 ] && return 0; sleep 1; done
+  if LANG=C pactl list sinks 2>/dev/null | grep -q "Mute: yes"; then return 0; fi
+  paplay --volume=45875 "$SOUND" >/dev/null 2>&1 || true   # 70% of the current volume
+}
+case "${1:-}" in
+  off) mkdir -p "$(dirname "$OFF")"; : > "$OFF"; echo "The startup jingle is off." ;;
+  on) rm -f "$OFF"; echo "The startup jingle is on (once per boot, at sign-in)." ;;
+  preview) play ;;
+  "")
+    [ -e "$OFF" ] && exit 0
+    [ -e "$MARK" ] && exit 0
+    : > "$MARK" 2>/dev/null || true
+    play ;;
+  *) echo "usage: jewbuntu-startup-sound [off|on|preview]" >&2; exit 2 ;;
+esac
+exit 0

@@ -1,0 +1,13 @@
+#!/bin/sh
+# Lubuntu's default wallpaper, its login-screen picture and its default panel layout are moved
+# aside with dpkg-divert (Lubuntu's own copies keep being updated under the .lubuntu name) so the
+# Jewbuntu ones take their place. Removing jewbuntu-lubuntu puts Lubuntu's back.
+set -e
+if [ "$1" = install ] || [ "$1" = upgrade ]; then
+  for f in /usr/share/lubuntu/wallpapers/lubuntu-default-wallpaper.png \
+           /usr/share/sddm/themes/lubuntu/wall.png \
+           /etc/xdg/xdg-Lubuntu/lxqt/panel.conf; do
+    dpkg-divert --package jewbuntu-lubuntu --add --rename --divert "$f.lubuntu" "$f" >/dev/null
+  done
+fi
+exit 0

@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+  <!-- Jewbuntu start-menu button: a Star of David in Jewbuntu blue (#0088FF) with a white edge, so
+       it reads on dark and light panels alike. Original artwork. -->
+  <g fill="none" stroke-linejoin="round">
+    <g stroke="#FFFFFF" stroke-opacity="0.92" stroke-width="9">
+      <path d="M32 7 L54.5 46 H9.5 Z"/>
+      <path d="M32 57 L9.5 18 H54.5 Z"/>
+    </g>
+    <g stroke="#0088FF" stroke-width="5">
+      <path d="M32 7 L54.5 46 H9.5 Z"/>
+      <path d="M32 57 L9.5 18 H54.5 Z"/>
+    </g>
+  </g>
+</svg>

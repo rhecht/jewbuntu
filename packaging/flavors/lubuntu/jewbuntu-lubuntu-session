@@ -1,0 +1,33 @@
+#!/bin/sh
+# Jewbuntu on Lubuntu: the Star of David menu button for an account that already had its own
+# panel layout before Jewbuntu was installed. Runs at sign-in as the user (from
+# /etc/xdg/autostart/jewbuntu-lubuntu.desktop), once per account; never as root.
+#
+# New accounts need nothing from it: they start from the system default layout, which already
+# has the Star of David. A menu button with an icon you picked yourself is left alone.
+#
+#   jewbuntu-lubuntu-session            what the autostart entry runs (once per account)
+#   jewbuntu-lubuntu-session --undo     Lubuntu's own menu button again (after the next sign-in)
+#   jewbuntu-lubuntu-session --status   what it sees
+set -eu
+ICON=/usr/share/jewbuntu/lubuntu/jewbuntu-start.svg
+TOOL=/usr/lib/jewbuntu/lubuntu/panel-icon
+CONF="${XDG_CONFIG_HOME:-$HOME/.config}/lxqt/panel.conf"
+STATE="${XDG_STATE_HOME:-$HOME/.local/state}/jewbuntu/lubuntu-skin"
+mark() { mkdir -p "$(dirname "$STATE")"; echo "$1" > "$STATE"; }
+case "${1:-}" in
+  --undo)
+    [ -f "$CONF" ] && grep -qxF "icon=$ICON" "$CONF" && "$TOOL" --strip "$CONF" "$CONF" "$ICON"
+    mark undone; echo "Lubuntu's own menu button comes back at your next sign-in." ;;
+  --status)
+    echo "panel layout: $CONF"; [ -f "$CONF" ] || echo "  (none yet: the system default is used)"
+    [ -f "$CONF" ] && grep -qxF "icon=$ICON" "$CONF" && echo "  Star of David menu button: yes"
+    echo "state: $(cat "$STATE" 2>/dev/null || echo 'not run yet')" ;;
+  "")
+    [ -e "$STATE" ] && exit 0
+    if [ ! -f "$CONF" ]; then mark default
+    elif "$TOOL" --has "$CONF"; then mark kept
+    else cp -p "$CONF" "$CONF.before-jewbuntu"; "$TOOL" "$CONF" "$CONF" "$ICON"; mark applied
+    fi ;;
+  *) echo "usage: jewbuntu-lubuntu-session [--undo|--status]" >&2; exit 2 ;;
+esac

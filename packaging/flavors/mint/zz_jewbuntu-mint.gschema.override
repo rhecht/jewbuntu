@@ -1,0 +1,20 @@
+# Jewbuntu skin for Linux Mint: Cinnamon defaults only (anything set per account wins).
+# Sorts after Mint's own mint-artwork.gschema.override, so these values are the defaults.
+[org.cinnamon.desktop.background]
+picture-uri='file:///usr/share/backgrounds/jewbuntu/jewbuntu-star-blue.png'
+picture-options='zoom'
+
+[org.gnome.desktop.background]
+picture-uri='file:///usr/share/backgrounds/jewbuntu/jewbuntu-star-blue.png'
+picture-options='zoom'
+
+[x.dm.slick-greeter]
+background='/usr/share/backgrounds/jewbuntu/jewbuntu-star-blue.png'
+
+[org.cinnamon]
+app-menu-icon-name='jewbuntu-start'
+system-icon='jewbuntu-start'
+
+[org.cinnamon.sounds]
+login-enabled=true
+login-file='/usr/share/sounds/jewbuntu/jewbuntu-startup.oga'

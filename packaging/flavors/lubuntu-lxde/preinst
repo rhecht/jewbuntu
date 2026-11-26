@@ -1,0 +1,12 @@
+#!/bin/sh
+# Lubuntu's default wallpaper and menu-button picture are moved aside with dpkg-divert (Lubuntu's
+# own files are kept under the .lubuntu name) so the Jewbuntu ones take their place. Every account
+# still on Lubuntu's defaults sees them; removing jewbuntu-lubuntu-lxde puts Lubuntu's back.
+set -e
+if [ "$1" = install ] || [ "$1" = upgrade ]; then
+  for f in /usr/share/lubuntu/wallpapers/lubuntu-default-wallpaper.png \
+           /usr/share/lubuntu/images/lubuntu-logo.png; do
+    dpkg-divert --package jewbuntu-lubuntu-lxde --add --rename --divert "$f.lubuntu" "$f" >/dev/null
+  done
+fi
+exit 0
