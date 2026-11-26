@@ -18,10 +18,10 @@ case "$action" in
     ISO="$1"; RAM="${2:-3072}"; ARCH="${3:-x86_64}"
     if [ "$ARCH" = i386 ]; then CPU="-cpu pentium3"; SMP=1; else CPU="-cpu max"; SMP=4; fi
     docker rm -f $NAME >/dev/null 2>&1 || true
-    docker run -d --name $NAME -v "$(cd "$(dirname "$ISO")" && pwd)/$(basename "$ISO"):/disc.iso:ro" \
+    docker run -d --init --name $NAME -v "$(cd "$(dirname "$ISO")" && pwd)/$(basename "$ISO"):/disc.iso:ro" \
       -v "$OUT:/shots" -v "$ROOT/ci/gutsy-qemu.py:/qemu.py:ro" jewbuntu-gutsy-qemu \
       qemu-system-$ARCH $CPU -m "$RAM" -machine pc -accel tcg,thread=multi -smp $SMP \
-        -cdrom /disc.iso -boot d -vga std -display none -usb -device usb-tablet \
+        -cdrom /disc.iso -boot d -vga ${VGA:-std} -display none -usb -device usb-tablet \
         -netdev user,id=n0 -device e1000,netdev=n0 -audiodev none,id=a0 \
         -monitor unix:/tmp/mon.sock,server,nowait >/dev/null
     echo "started $NAME: $(basename "$ISO"), ${RAM} MB, $ARCH (TCG)"

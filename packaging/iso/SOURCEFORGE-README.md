@@ -30,15 +30,17 @@ during installation.
 
 ## Which file?
 
-All four files are in the **`0.1.0-m1.29`** folder below, next to their `.sha256` checksums.
+All the files are in the **`0.1.0-m1.29`** folder below, next to their `.sha256` checksums.
 
 | You have | Download |
 |---|---|
 | An Intel/AMD PC, and you want a fresh install | **`jewbuntu-0.1.0-m1.29-intel-amd-64bit.iso`** (6.5 GB) |
 | A computer already running Ubuntu 26.04, Intel/AMD **or ARM** | **`jewbuntu-installer-0.1.0-m1.29.run`** (10 MB). In Terminal, run `sh ~/Downloads/jewbuntu-installer-0.1.0-m1.29.run`, then log out and back in. It's also on [GitHub Releases](https://github.com/rhecht/jewbuntu/releases/latest). |
 | An Apple Silicon Mac (M1/M2) running **Fedora Asahi Remix 45, GNOME edition** | **`jewbuntu-asahi-installer-0.1.0-m1.29.run`** (15 MB). See [Asahi Linux](#asahi-linux-apple-silicon-macs) below. Also on [GitHub Releases](https://github.com/rhecht/jewbuntu/releases/latest). |
-| An **old 32-bit laptop** (about 2001, e.g. Pentium III, 256 MB) running **Arch Linux 32** | **`jewbuntu-arch32-installer-0.1.0-m1.29.run`**. **Not for modern web browsing.** See [Old 32-bit laptops](#old-32-bit-laptops-arch-linux-32) below. |
-| An **old PC from about 1998–2008** (Pentium II/III or newer, 256 MB) with a **CD drive**, and nothing installed you need to keep | **`jewbuntu-classic-7.10-c1-32bit.iso`** (715 MB, in the **`jewbuntu-classic-7.10-c1`** folder): a live CD that also installs. See [Jewbuntu Classic](#jewbuntu-classic-the-2007-cd-for-the-oldest-pcs) below. |
+| A computer running **Cutefish** (Intel/AMD **or ARM**) | **`jewbuntu-cutefish-installer-0.1.0-m1.29.run`** (0.5 MB): a light Jewbuntu skin over Cutefish's own Mac-like look. See [Cutefish](#cutefish-intelamd-and-arm) below. |
+| A PC running (or ready for) **Lubuntu** or **Linux Mint**, including **32-bit PCs** that can run Lubuntu 18.04 | Ready-made ISOs and one-file installers for **Lubuntu 26.10**, **Lubuntu 27.04 (daily)**, **Lubuntu 18.04 32-bit** and **Linux Mint 22.3**. See [Lubuntu and Linux Mint](#lubuntu-and-linux-mint) below. |
+| An **old 32-bit laptop** (about 2001, e.g. Pentium III, 256 MB) running **Arch Linux 32** | **`jewbuntu-arch32-installer-0.1.0-m1.29.run`**. **Web browsing is limited: use Lynx (text-based) or a newer device.** See [Old 32-bit laptops](#old-32-bit-laptops-arch-linux-32) below. |
+| An **old PC from about 1998–2008** (Pentium II/III or newer, 256 MB) with a **CD drive**, and nothing installed you need to keep | **`jewbuntu-classic-7.10-c2-32bit.iso`** (729 MB, in the **`jewbuntu-classic-7.10-c2`** folder): a live CD that also installs. **Web browsing is limited: use Lynx (text-based) or a newer device.** See [Jewbuntu Classic](#jewbuntu-classic-the-2007-cd-for-the-oldest-pcs) below. |
 
 ## System requirements
 
@@ -163,6 +165,75 @@ own welcome tour, and the login screen theme is switched off automatically after
 upgrade to a GNOME version Jewbuntu doesn't support yet. Details:
 [docs/asahi.md](https://github.com/rhecht/jewbuntu/blob/main/docs/asahi.md).
 
+## Cutefish (Intel/AMD and ARM)
+
+[Cutefish](https://cutefish.org) already looks like a Mac, so on Cutefish Jewbuntu is a light
+skin on top of it. It adds:
+
+- a **Star of David** as the dock's Launchpad ("start") button
+- the **Star of David wallpapers**: blue in light mode, purple in dark mode
+- the short **Jewbuntu jingle** when you sign in
+- **ShulGo's minyan widget** in the top bar
+
+The same file works on Intel/AMD and ARM computers. Cutefish keeps getting its own updates.
+
+1. Install Cutefish ([cutefish.org](https://cutefish.org): the ISO, or on Debian 13 add
+   Cutefish's repository and install `cutefish-desktop`).
+2. Download `jewbuntu-cutefish-installer-0.1.0-m1.29.run` and its `.sha256`, then in Terminal,
+   in the download folder:
+   - `sha256sum -c jewbuntu-cutefish-installer-0.1.0-m1.29.run.sha256` (optional check)
+   - `sh jewbuntu-cutefish-installer-0.1.0-m1.29.run`
+3. The wallpaper changes straight away; log out and back in to see the new Launchpad button.
+   A wallpaper you chose yourself is kept.
+4. ShulGo: click its icon in the top bar, then **Link this computer**, and approve the code on
+   your phone at shulgo.com/link.
+
+**Uninstall:** `sh jewbuntu-cutefish-installer-0.1.0-m1.29.run --uninstall`. Cutefish's own
+Launchpad button comes back; your files stay. Details:
+[docs/cutefish.md](https://github.com/rhecht/jewbuntu/blob/main/docs/cutefish.md).
+
+## Lubuntu and Linux Mint
+
+Four more editions with a light Jewbuntu skin over a distribution that already works: the
+distribution keeps its own installer, look and updates, and Jewbuntu adds:
+
+- a **Star of David** as the start-menu button on the panel
+- the **blue Star of David wallpaper** on the desktop and the login screen (only in place of the
+  default picture; a wallpaper you chose yourself is kept)
+- the short **Jewbuntu jingle** when you sign in
+- **ShulGo's minyan widget** in the panel
+
+Each comes two ways: a **ready-made ISO** (the distribution's own live ISO with Jewbuntu already
+in it: write it to a USB stick, try it, install it with the distribution's own installer) or a
+**one-file installer** for a computer that already runs that distribution.
+
+| Edition | ISO | Installer for an existing system |
+|---|---|---|
+| **Lubuntu 26.10** "Stonking Stingray" (current release, 64-bit) | `jewbuntu-lubuntu-26.10-0.1.0-m1.29-64bit.iso` (4.0 GB) | `jewbuntu-lubuntu-installer-0.1.0-m1.29.run` (Lubuntu 22.04 or newer) |
+| **Lubuntu 27.04** "Tenacious T-Rex" (daily development build, 64-bit) | `jewbuntu-lubuntu-27.04-daily-0.1.0-m1.29-64bit.iso` (4.0 GB) | the same `jewbuntu-lubuntu-installer` |
+| **Lubuntu 18.04** (the last 32-bit Ubuntu, for old laptops) | `jewbuntu-lubuntu-18.04-0.1.0-m1.29-32bit.iso` (1.2 GB) | `jewbuntu-lubuntu18-32bit-installer-0.1.0-m1.29.run` (also works on 64-bit 18.04) |
+| **Linux Mint 22.3** "Zena", Cinnamon (64-bit) | `jewbuntu-mint-22.3-0.1.0-m1.29-64bit.iso` (3.1 GB) | `jewbuntu-mint-installer-0.1.0-m1.29.run` |
+
+**Installer:** download it and its `.sha256`, then in Terminal, in the download folder:
+- `sha256sum -c FILE.run.sha256` (optional check)
+- `sh FILE.run`, then log out and back in.
+- ShulGo: click its icon in the panel, then **Link this computer**, and approve the code on your
+  phone at shulgo.com/link.
+- **Uninstall:** `sh FILE.run --uninstall`. The distribution's own menu button and wallpaper come
+  back; your files stay.
+
+Notes:
+- Lubuntu 27.04 is Ubuntu's development series: expect daily changes until its release in April
+  2027.
+- Lubuntu 18.04 no longer gets free security updates from Ubuntu (it is in paid Extended Security
+  Maintenance). It is here so 32-bit PCs that can run nothing newer stay useful. **Web browsing on
+  its 2020 Firefox is limited: use a newer device for banking and other sensitive sites.**
+- On Lubuntu 26.10/27.04, the installer's "minimal installation" choice leaves the skin out; run
+  the `.run` installer afterwards to add it.
+- On Mint, the jingle is Cinnamon's own sign-in sound: System Settings > Sounds turns it off.
+
+Details: [docs/flavors.md](https://github.com/rhecht/jewbuntu/blob/main/docs/flavors.md).
+
 ## Old 32-bit laptops (Arch Linux 32)
 
 A light edition for laptops from about 2001: a **Pentium III (or newer) with 256 MB** of memory,
@@ -170,11 +241,12 @@ running [Arch Linux 32](https://www.archlinux32.org) with the Xfce desktop. It g
 Jewbuntu look in a version old graphics chips can draw (no transparency), Hebrew typing, and
 **ShulGo's next minyan right on the top bar**, with zmanim in its menu.
 
-> **Not for modern web browsing.** No current browser runs on a laptop this old: Firefox needs
-> far more memory, and Chrome doesn't exist for these processors. The included **Dillo** and
-> **Lynx** (text only) show simple pages like news and Wikipedia, but not today's web apps
-> (Gmail, shopping, banking, the full ShulGo website). This edition puts the information on
-> the bar instead.
+> **Web browsing is limited.** No current browser runs on a laptop this old: Firefox needs
+> far more memory, and Chrome doesn't exist for these processors. Today's websites are built
+> for much newer browsers, so many pages look broken or don't work here. For reading, use
+> **Lynx**, the included text-based web browser (Dillo, also included, shows simple pages with
+> pictures). For web apps, shopping, banking and the full ShulGo site, use a newer device.
+> This edition puts ShulGo's information on the bar instead.
 
 1. Install Arch Linux 32 (i686) with Xfce: see the [guide](https://github.com/rhecht/jewbuntu/blob/main/docs/arch32.md).
    Your CPU needs SSE (Pentium III or newer); a swap file is recommended.
@@ -197,20 +269,32 @@ stay.
 
 The original 2007 Jewbuntu CD (Ubuntu 7.10), remastered with the Jewbuntu look. It's a live CD
 that also installs, it fits a 700 MB CD-R, and it runs on any **i686 PC (Pentium II/III or newer,
-no SSE2 needed) with 256 MB** of memory. Everything is in the **`jewbuntu-classic-7.10-c1`**
+no SSE2 needed) with 256 MB** of memory. Everything is in the **`jewbuntu-classic-7.10-c2`**
 folder, with its own README.
+
+> **Web browsing is limited.** Today's websites are built for much newer browsers, so many
+> pages look broken or don't work here, even with the disc's Firefox 3.6 and its
+> secure-connection helper. For reading, use **Lynx**, the included text-based web browser. For
+> web apps, shopping, banking and the full ShulGo site, use a newer device.
 
 - The Jewbuntu look (skin, icons, wallpapers, a Mac-style top bar and dock, Jewbuntu boot and login
   screens), English and Hebrew typing (**Alt+Shift**), and **ShulGo** in the top bar.
-- **Lynx**, a current text browser with today's encryption, because the 2007 Firefox on the disc
-  can't open most websites any more.
+- **Lynx**, a current text-based web browser with today's encryption, and **Firefox 3.6** with a
+  secure-connection helper (the TLS bridge) that opens today's HTTPS sites for it and checks
+  their certificates.
+- An installer that fits today's screens and gives the installed system working software
+  sources.
 - **Ubuntu 7.10 has had no security updates since 2009.** Use it for writing, reading and light
   browsing, not for banking.
 
-Burn `jewbuntu-classic-7.10-c1-32bit.iso` to a CD-R **as a disc image**, start the PC from it and
+Burn `jewbuntu-classic-7.10-c2-32bit.iso` to a CD-R **as a disc image**, start the PC from it and
 choose **Start or install Jewbuntu Classic**.
-SHA-256: `73f4ce3c7b11d1045ca730c24971137a520c13fff0c5c7c009c3fd8ad509cd46`.
+SHA-256: `2130b99387a7fc4911c9f24deadace10aa49ae97296c11cdee0d38fbfbb619fb`.
 Details: [docs/gutsy.md](https://github.com/rhecht/jewbuntu/blob/main/docs/gutsy.md).
+Known issues: some sites that prefer IPv6 (Wikipedia, some font servers) stalled in Firefox in
+our virtual-machine test; and this exact ISO wasn't installed to a hard disk (an earlier c2 build
+with the same installer was). See the folder's README.
+The previous release (c1) stays in the `jewbuntu-classic-7.10-c1` folder.
 
 ## Status
 
@@ -232,16 +316,24 @@ Details: [docs/gutsy.md](https://github.com/rhecht/jewbuntu/blob/main/docs/gutsy
   starting, Arch updates, removal). An earlier build ran in an emulated Pentium III with 256 MB
   (UTM): it boots to the login screen in under a minute and uses about 125 MB when idle.
 
-- Jewbuntu Classic 7.10 (c1): the live CD in an emulated Pentium III without SSE2, with 512 MB
-  and with 256 MB: boot, desktop, Lynx and curl over HTTPS, Hebrew typing, the login screen and
-  ShulGo's tray icon. Installing it to a hard disk was not tested.
+- Jewbuntu Classic 7.10: c1's live CD in an emulated Pentium III without SSE2, with 512 MB and
+  with 256 MB (boot, desktop, Lynx and curl over HTTPS, Hebrew typing, the login screen, ShulGo's
+  tray icon); c2 in UTM (live CD at 1024x768, the installer to a hard disk, working software
+  sources on the installed system, Firefox over HTTPS through the secure-connection helper).
+
+- Lubuntu and Linux Mint (0.1.0-m1.29): the packages installed inside each distribution's own live
+  system while the ISOs were built, with the results checked there (diversions, default wallpaper
+  and menu-button paths, panel layout, Cinnamon defaults, ShulGo on each Python). The Lubuntu 18.04
+  ISO booted to its live desktop in an emulated Pentium III (Star of David wallpaper and menu
+  button, ShulGo in the tray); the Mint ISO booted to its live Cinnamon desktop (Star of David wallpaper and menu button, ShulGo in the tray).
 
 **Not yet tested:**
 - real PC hardware, including Secure Boot (Ubuntu's signed boot files are unchanged)
 - Asahi on a real Apple Silicon Mac
 - the Arch Linux 32 edition on a real old laptop
-- Jewbuntu Classic installed to a hard disk, and on real old PCs
+- Jewbuntu Classic on real old PCs
 - Hebrew typing in apps
+- the Lubuntu and Mint ISOs installed to a disk, and on real hardware
 
 Licence: Jewbuntu's own code is open source (see GitHub). Ubuntu and its packages keep
 their own licences.
