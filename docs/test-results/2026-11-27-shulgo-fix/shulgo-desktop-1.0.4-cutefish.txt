@@ -1,0 +1,2 @@
+ShulGo desktop 1.0.4 arm64 (draft desktop-v1.0.4, sha256 4b048d5f…), Cutefish real screen, 2026-11-27.
+PASS: app.asar has warmUp (2) and WARM_UP_MS (2). Cold start: click 1 two toplevels, survivor painted 76 ms -> visible; click 2 closes; after right-click+Esc the same (85 ms); blur hides, one click reopens (21 ms), closes, opens (17 ms); nothing at startup.

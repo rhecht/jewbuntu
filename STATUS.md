@@ -303,9 +303,11 @@ installer, on SourceForge 0.1.0-m1.29 (docs/flavors.md).
   duplicate tray icon). The five Lubuntu files were replaced on SourceForge under the same names.
   Verified: 26.10 image live desktop + Lynx in UTM, 18.04 image live desktop + Lynx in an emulated
   Pentium III; 27.04 image built and checked inside, not booted (docs/test-results/2026-11-26-lubuntu-lynx/).
-- Open (ShulGo's side): on LXQt left-click on the ShulGo icon does nothing (right-click opens the
-  menu), and a linked copy can still show "Nobody has approved this yet." while a second link
-  request is pending (dist/lubuntu-vm/shulgo-xfce-lubuntu-report.md).
+- 2026-11-27 afternoon: ShulGo fixed (shulgo-widgets 9f8265b, desktop 1.0.4): on LXQt a left-click
+  opens the menu, one icon, and a linked copy no longer says "Nobody has approved this yet.". All
+  four images and installers plus the Cutefish installer were rebuilt and replaced on SourceForge
+  under the same names. Verified: left-click menu in the Lubuntu 26.10 VM with the fixed files;
+  the rebuilt files were checked inside but not booted (docs/test-results/2026-11-27-shulgo-fix/).
 
 ## Blockers / needs from Rafi
 

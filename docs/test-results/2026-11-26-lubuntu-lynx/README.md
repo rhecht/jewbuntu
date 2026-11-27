@@ -1,5 +1,8 @@
 # Lubuntu editions with Lynx: images and installers (2026-11-26/27)
 
+These files were replaced on 2026-11-27 by the ShulGo-fix rebuild (same names, new checksums):
+see ../2026-11-27-shulgo-fix/.
+
 Packages: `jewbuntu-lubuntu 0.1.0~m1.29+lubuntu2`, `jewbuntu-lubuntu-lxde 0.1.0~m1.29+lubuntu18.2`
 (both add `lynx` and the "Lynx Web Browser" menu entry), `shulgo-xfce 1.0.0.r202611260814+jb1`
 (shulgo-widgets 9dd4d71, autostart entry with `X-LXQt-Need-Tray=true`).
