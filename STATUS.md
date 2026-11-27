@@ -294,6 +294,19 @@ arm64 (every package is Architecture: all).
 | Container test `ci/cutefish-test.sh` (now also checks ItemIsMenu) | 36/36 on arm64 (Cutefish nightly 2026-11-19) and amd64 (nightly 2026-11-22, emulated) | docs/test-results/2026-11-22-cutefish-* |
 | amd64 on a real screen, real hardware, an installed (not live) Cutefish | Not tested | n/a |
 
+## Lubuntu and Linux Mint: light skins (built and published 2026-11-26)
+
+Four editions (Lubuntu 26.10, 27.04 daily, 18.04 i386; Linux Mint 22.3), each an ISO plus a one-file
+installer, on SourceForge 0.1.0-m1.29 (docs/flavors.md).
+- 2026-11-27: both Lubuntu editions rebuilt with **Lynx** and a "Lynx Web Browser" menu entry (Firefox
+  kept; packages +lubuntu2 / +lubuntu18.2) and shulgo-xfce +jb1 (`X-LXQt-Need-Tray=true`, fixing a
+  duplicate tray icon). The five Lubuntu files were replaced on SourceForge under the same names.
+  Verified: 26.10 image live desktop + Lynx in UTM, 18.04 image live desktop + Lynx in an emulated
+  Pentium III; 27.04 image built and checked inside, not booted (docs/test-results/2026-11-26-lubuntu-lynx/).
+- Open (ShulGo's side): on LXQt left-click on the ShulGo icon does nothing (right-click opens the
+  menu), and a linked copy can still show "Nobody has approved this yet." while a second link
+  request is pending (dist/lubuntu-vm/shulgo-xfce-lubuntu-report.md).
+
 ## Blockers / needs from Rafi
 
 - **VM host**: the installed VMware Fusion 12.2.0 is Intel-only and cannot run VMs on the M1. Install UTM (or Fusion 13+) for an arm64 VM. Say which OS the HP runs, to decide whether it can host the amd64 VM.

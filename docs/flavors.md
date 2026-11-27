@@ -100,3 +100,5 @@ menus are the distributions' own.
 
 `ci/flavor-vm.sh` boots an ISO in a headless QEMU inside Docker (emulated x86, no UTM) and takes
 screenshots through QEMU's monitor. Results: `docs/test-results/2026-11-26-flavors.md`.
+Lynx rebuild (2026-11-27): `docs/test-results/2026-11-26-lubuntu-lynx/`; the Lubuntu 26.10 image reached its
+live desktop in a UTM VM (emulated x86_64, virtio-vga), after about 20 minutes of snapd seeding.
