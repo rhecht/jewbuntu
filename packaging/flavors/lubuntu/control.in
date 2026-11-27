@@ -4,7 +4,7 @@ Architecture: all
 Maintainer: Jewbuntu Developers <maintainers@jewbuntu.invalid>
 Section: x11
 Priority: optional
-Depends: lxqt-panel, pcmanfm-qt, jewbuntu-branding
+Depends: lxqt-panel, pcmanfm-qt, jewbuntu-branding, lynx
 Recommends: shulgo-xfce
 Homepage: https://jewbuntu.com
 Description: Jewbuntu skin for Lubuntu (LXQt)
@@ -15,3 +15,4 @@ Description: Jewbuntu skin for Lubuntu (LXQt)
     (in place of Lubuntu's default picture; a wallpaper you chose is kept)
   - Jewbuntu's short startup jingle at sign-in (from jewbuntu-branding)
   - ShulGo's minyan widget in the panel (recommended package shulgo-xfce)
+  - Lynx, a light text web browser, in the menu (Firefox stays)

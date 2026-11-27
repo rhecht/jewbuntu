@@ -36,12 +36,19 @@ Jingle: Jewbuntu's 8-bit arrangement of the traditional melody "Hava Nagila" (se
 EOF
 }
 
+# Lynx, the text web browser, with a "Lynx Web Browser" menu entry (as on Arch Linux 32)
+lynx_files() {
+  install -d "$1/usr/share/applications" "$1/usr/share/jewbuntu/lynx"
+  install -m644 "$F/common/lynx/jewbuntu-lynx.desktop" "$1/usr/share/applications/"
+  install -m644 "$F/common/lynx/lynx.cfg" "$F/common/lynx/jewbuntu.lss" "$1/usr/share/jewbuntu/lynx/"
+}
+
 # --- jewbuntu-lubuntu (LXQt)
 P="$TMP/jewbuntu-lubuntu"; S="$F/lubuntu"
 install -d "$P/DEBIAN" "$P/usr/bin" "$P/usr/lib/jewbuntu/lubuntu" "$P/etc/xdg/autostart" \
   "$P/usr/share/jewbuntu/lubuntu" "$P/usr/share/backgrounds/jewbuntu" "$P/usr/share/lubuntu/wallpapers" \
   "$P/usr/share/sddm/themes/lubuntu" "$P/usr/share/doc/jewbuntu-lubuntu"
-sed "s/@VERSION@/$BASEVER+lubuntu1/" "$S/control.in" > "$P/DEBIAN/control"
+sed "s/@VERSION@/$BASEVER+lubuntu2/" "$S/control.in" > "$P/DEBIAN/control"
 install -m755 "$S/preinst" "$S/postinst" "$S/postrm" "$P/DEBIAN/"
 install -m644 "$S/triggers" "$P/DEBIAN/"
 echo /etc/xdg/autostart/jewbuntu-lubuntu.desktop > "$P/DEBIAN/conffiles"
@@ -53,13 +60,14 @@ install -m644 "$TMP/walls/"*.png "$P/usr/share/backgrounds/jewbuntu/"
 ln -s /usr/share/backgrounds/jewbuntu/jewbuntu-star-blue.png "$P/usr/share/lubuntu/wallpapers/lubuntu-default-wallpaper.png"
 ln -s /usr/share/backgrounds/jewbuntu/jewbuntu-star-blue.png "$P/usr/share/sddm/themes/lubuntu/wall.png"
 copyright "Lubuntu (LXQt)" > "$P/usr/share/doc/jewbuntu-lubuntu/copyright"
+lynx_files "$P"
 
 # --- jewbuntu-lubuntu-lxde (18.04)
 P="$TMP/jewbuntu-lubuntu-lxde"; S="$F/lubuntu-lxde"
 install -d "$P/DEBIAN" "$P/usr/bin" "$P/etc/xdg/autostart" "$P/usr/share/jewbuntu/lubuntu" \
   "$P/usr/share/jewbuntu/sounds" "$P/usr/share/backgrounds/jewbuntu" "$P/usr/share/lubuntu/wallpapers" \
   "$P/usr/share/lubuntu/images" "$P/usr/share/doc/jewbuntu-lubuntu-lxde"
-sed "s/@VERSION@/$BASEVER+lubuntu18.1/" "$S/control.in" > "$P/DEBIAN/control"
+sed "s/@VERSION@/$BASEVER+lubuntu18.2/" "$S/control.in" > "$P/DEBIAN/control"
 install -m755 "$S/preinst" "$S/postrm" "$P/DEBIAN/"
 echo /etc/xdg/autostart/jewbuntu-startup-sound.desktop > "$P/DEBIAN/conffiles"
 install -m755 "$S/jewbuntu-startup-sound" "$P/usr/bin/"
@@ -69,6 +77,7 @@ install -m644 "$TMP/walls/"*.png "$P/usr/share/backgrounds/jewbuntu/"
 ln -s /usr/share/backgrounds/jewbuntu/jewbuntu-star-blue.png "$P/usr/share/lubuntu/wallpapers/lubuntu-default-wallpaper.png"
 ln -s /usr/share/jewbuntu/lubuntu/jewbuntu-start-48.png "$P/usr/share/lubuntu/images/lubuntu-logo.png"
 copyright "Lubuntu 18.04 (LXDE)" > "$P/usr/share/doc/jewbuntu-lubuntu-lxde/copyright"
+lynx_files "$P"
 
 # --- jewbuntu-mint (Cinnamon)
 P="$TMP/jewbuntu-mint"; S="$F/mint"
@@ -101,12 +110,15 @@ install -m644 "$SRC"/shulgo_xfce/*.py "$G/usr/lib/shulgo-xfce/shulgo_xfce/"
 install -m755 "$SRC/bin/shulgo-xfce" "$SRC/bin/shulgo-bar" "$G/usr/bin/"
 install -m644 "$SRC/packaging/shulgo-xfce.desktop" "$G/usr/share/applications/"
 install -m644 "$SRC/packaging/shulgo-xfce-autostart.desktop" "$G/etc/xdg/autostart/shulgo-xfce.desktop"
+# LXQt: start only once the panel's tray exists. Started earlier, libayatana falls back to an XEmbed
+# icon and Lubuntu then shows two ShulGo icons (seen 2026-11-26). Other desktops ignore the key.
+grep -q "^X-LXQt-Need-Tray=" "$G/etc/xdg/autostart/shulgo-xfce.desktop" || echo "X-LXQt-Need-Tray=true" >> "$G/etc/xdg/autostart/shulgo-xfce.desktop"
 install -m644 "$SRC/packaging/shulgo.svg" "$G/usr/share/icons/hicolor/scalable/apps/"
 install -m644 "$SRC/README.md" "$G/usr/share/doc/shulgo-xfce/"
 echo /etc/xdg/autostart/shulgo-xfce.desktop > "$G/DEBIAN/conffiles"
 cat > "$G/DEBIAN/control" <<EOF
 Package: shulgo-xfce
-Version: $SGVER.r$WHEN
+Version: $SGVER.r$WHEN+jb1
 Architecture: all
 Maintainer: ShulGo <info@shulgo.com>
 Section: utils

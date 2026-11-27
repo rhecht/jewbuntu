@@ -1,0 +1,16 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Lynx Web Browser
+Name[he]=דפדפן Lynx
+GenericName=Text Web Browser
+GenericName[he]=דפדפן טקסט
+Comment=Read websites as text in a terminal window: fast and light, for news, Wikipedia and search
+Comment[he]=קריאת אתרים כטקסט בחלון מסוף: מהיר וקל, לחדשות, ויקיפדיה וחיפוש
+Exec=lynx -cfg=/usr/share/jewbuntu/lynx/lynx.cfg -lss=/usr/share/jewbuntu/lynx/jewbuntu.lss %u
+TryExec=lynx
+Terminal=true
+Icon=web-browser
+Categories=Network;WebBrowser;
+Keywords=web;internet;browser;text;lynx;
+StartupNotify=false

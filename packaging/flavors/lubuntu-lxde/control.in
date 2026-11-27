@@ -4,7 +4,7 @@ Architecture: all
 Maintainer: Jewbuntu Developers <maintainers@jewbuntu.invalid>
 Section: x11
 Priority: optional
-Depends: lxpanel, pcmanfm
+Depends: lxpanel, pcmanfm, lynx
 Recommends: shulgo-xfce, pulseaudio-utils
 Homepage: https://jewbuntu.com
 Description: Jewbuntu skin for Lubuntu 18.04 (LXDE, 32-bit and 64-bit)
@@ -15,3 +15,4 @@ Description: Jewbuntu skin for Lubuntu 18.04 (LXDE, 32-bit and 64-bit)
     (in place of Lubuntu's default picture; a wallpaper you chose is kept)
   - Jewbuntu's short startup jingle at sign-in, once per boot
   - ShulGo's minyan widget in the panel (recommended package shulgo-xfce)
+  - Lynx, a light text web browser, in the menu (Firefox stays)

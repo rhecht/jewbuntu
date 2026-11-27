@@ -145,6 +145,9 @@ cat <<EOF
 EOF
 [ "$SHULGO" = 1 ] && echo "  - ShulGo: click its icon in the panel, then Link this computer, and approve the code on your phone at shulgo.com/link."
 case "$JB_FLAVOR" in
+  lubuntu|lubuntu18) echo "  - Lynx: a light text web browser, under Internet > Lynx Web Browser (Firefox is still there)." ;;
+esac
+case "$JB_FLAVOR" in
   lubuntu) echo "  - Jingle: 'jewbuntu startup-sound off' turns it off." ;;
   lubuntu18) echo "  - Jingle: 'jewbuntu-startup-sound off' turns it off." ;;
   mint) echo "  - Jingle: it is Cinnamon's sign-in sound now; System Settings > Sounds turns it off." ;;

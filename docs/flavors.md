@@ -10,10 +10,15 @@ Jewbuntu adds four touches.
 - **The Jewbuntu jingle at sign-in**: the short 8-bit Hava Nagila.
 - **ShulGo's minyan widget** in the panel (`shulgo-xfce`, the GTK3 tray widget).
 
+The two Lubuntu editions also add **Lynx**, a text web browser, as "Lynx Web Browser" under
+Internet: it opens in the desktop's terminal with Jewbuntu's settings (a search page made for text
+browsers, readable colours), as on the Arch Linux 32 edition. Firefox stays; Lynx is there for old
+PCs where Firefox is slow (added 2026-11-26, packages `+lubuntu2` and `+lubuntu18.2`).
+
 | Edition | Base | Download | Packages |
 | --- | --- | --- | --- |
-| Lubuntu (LXQt) | Lubuntu 26.10 "Stonking Stingray" and the 27.04 "Tenacious T-Rex" daily, amd64 | ISO for each, plus `jewbuntu-lubuntu-installer` (any Lubuntu 22.04 or newer) | `jewbuntu-lubuntu`, `jewbuntu-branding`, `jewbuntu-core`, `shulgo-xfce` |
-| Lubuntu 18.04 (LXDE) | Lubuntu 18.04.5, the last 32-bit Ubuntu (i386; the installer also works on amd64 18.04) | ISO plus `jewbuntu-lubuntu18-32bit-installer` | `jewbuntu-lubuntu-lxde`, `shulgo-xfce` |
+| Lubuntu (LXQt) | Lubuntu 26.10 "Stonking Stingray" and the 27.04 "Tenacious T-Rex" daily, amd64 | ISO for each, plus `jewbuntu-lubuntu-installer` (any Lubuntu 22.04 or newer) | `jewbuntu-lubuntu`, `jewbuntu-branding`, `jewbuntu-core`, `shulgo-xfce`, `lynx` |
+| Lubuntu 18.04 (LXDE) | Lubuntu 18.04.5, the last 32-bit Ubuntu (i386; the installer also works on amd64 18.04) | ISO plus `jewbuntu-lubuntu18-32bit-installer` | `jewbuntu-lubuntu-lxde`, `shulgo-xfce`, `lynx` |
 | Linux Mint (Cinnamon) | Linux Mint 22.3 "Zena", amd64 | ISO plus `jewbuntu-mint-installer` | `jewbuntu-mint`, `shulgo-xfce` |
 
 The ISOs are the distributions' own live ISOs with the packages already installed: boot, try,
